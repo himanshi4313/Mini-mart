@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Mart Jodhpur</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <div id="splash-screen">
+    <div class="splash-icon"><i class="fa-solid fa-shop"></i></div>
+    <div class="splash-title">Mini Mart Jodhpur</div>
+    <div class="splash-subtitle">Ghar Ki Zaroorat Puri Kare Ghar Baithe</div>
+  </div>
+
+  <div class="header-search">
+    <div class="logo-section">
+      <i class="fa-solid fa-basket-shopping logo-icon"></i>
+      <span class="logo-text">Mini<span>Mart</span></span>
+    </div>
+    <div class="search-container">
+      <i class="fa-solid fa-magnifying-glass search-icon-inside"></i>
+      <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
+    </div>
+  </div>
+
+  <div id="adminAuthModal" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+      <h3><i class="fa-solid fa-lock" style="color: #00704A;"></i> Admin Authentication</h3>
+      <p>Only authorized shopkeepers can access this area.</p>
+      <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password">
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeAuthModal()">Cancel</button>
+        <button class="login-btn" onclick="verifyAdminPassword()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-content">
+    
+    <div id="home-view">
+      <div class="banner">
+        <img id="bannerImg" src="images/banner1.jpg" alt="Banner">
+        <div class="bannerText">
+          <h1>Mini Mart Jodhpur</h1>
+          <p>Sardarpura Branch, Jodhpur, Rajasthan 342003</p>
+          <h3>Guaranteed Quality Products</h3>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <h3>Special Offers For You 🔥</h3>
+        <p>Explore top deals with high discounts tailored for you</p>
+        <div id="productList"></div>
+      </div>
+    </div>
+
+    <div id="category-view" style="display: none;">
+      <div class="content-area">
+        <h3>All Categories</h3>
+        <p>Browse products by department</p>
+        <div id="categoryTabs" class="category-grid"></div>
+        <div id="categoryProductList" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+
+    <div id="cart-view" style="display: none;">
+      <div class="content-area">
+        <h3>Your Shopping Cart 🛒</h3>
+        <p>Review items before placing your order</p>
+        <div id="cartList"></div>
+        <div id="cartSummary" class="cart-summary" style="display: none;">
+          <div class="summary-row"><span>Total Items:</span><span id="totalItems">0</span></div>
+          <div class="summary-row"><span>Total Amount:</span><span id="totalAmount">₹0</span></div>
+          <button class="checkout-btn" onclick="showCheckoutPage()">Proceed to Checkout</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="checkout-view" style="display: none;">
+      <div class="content-area">
+        <h3>Delivery Details 📦</h3>
+        <p>Please enter your details for fast delivery</p>
+        <div class="checkout-form">
+          <label>Full Name</label>
+          <input type="text" id="custName" placeholder="Enter your name">
+          <label>Mobile Number</label>
+          <input type="tel" id="custMobile" placeholder="Enter mobile number">
+          <label>Delivery Address</label>
+          <textarea id="custAddress" rows="3" placeholder="Enter complete address"></textarea>
+          <button class="place-order-btn" onclick="placeOrder()">Place Order (COD)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="admin-view" style="display: none;">
+      <div class="content-area">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="margin:0;">Shopkeeper Dashboard 🛠️</h3>
+          <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Lock Dashboard</button>
+        </div>
+
+        <h3 style="color:#00704A;"><i class="fa-solid fa-receipt"></i> Active Customer Orders</h3>
+        <div class="admin-table-wrapper" style="margin-bottom: 35px;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Contact</th>
+                <th>Address</th>
+                <th>Items Summary</th>
+                <th>Total Bill</th>
+              </tr>
+            </thead>
+            <tbody id="adminOrderTableBody"></tbody>
+          </table>
+        </div>
+        
+        <div class="checkout-form" style="margin-bottom: 35px;">
+          <h4 id="formTitle" style="margin-top:0; color:var(--primary-color); font-size:16px;"><i class="fa-solid fa-plus-circle"></i> Add New Product</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label>Product Name</label>
+              <input type="text" id="pName" placeholder="e.g., Fortune Oil">
+            </div>
+            <div>
+              <label>Category</label>
+              <input type="text" id="pCategory" placeholder="e.g., Grocery, Dairy">
+            </div>
+            <div>
+              <label>Price (₹)</label>
+              <input type="number" id="pPrice" placeholder="Original price">
+            </div>
+            <div>
+              <label>Discount (%)</label>
+              <input type="number" id="pDiscount" placeholder="0 if none" value="0">
+            </div>
+            <div>
+              <label>Stock Qty</label>
+              <input type="number" id="pStock" placeholder="Available units">
+            </div>
+            <div>
+              <label>Image Filename</label>
+              <input type="text" id="pIdentity" placeholder="e.g., oil.jpg">
+            </div>
+          </div>
+          <button id="saveProductBtn" class="place-order-btn" onclick="saveProductAction()" style="margin-top:10px;">Save to Database</button>
+        </div>
+
+        <h3>Live Inventory (Click <i class="fa-solid fa-pen-to-square" style="color:#00704A"></i> to Edit / <i class="fa-solid fa-trash-can" style="color:red"></i> to Remove)</h3>
+        <div id="adminInventoryGrid" class="admin-inventory-grid"></div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer" style="background-color: #f9f9f9; padding: 30px 15px; margin-top: 40px; margin-bottom: 70px; border-top: 1px solid #eee; text-align: center; font-family: sans-serif;">
+    <div style="max-width: 600px; margin: 0 auto;">
+      <h3 style="color: #00704A; margin-bottom: 10px;">About Mini Mart Jodhpur</h3>
+      <p style="color: #555; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+        Sardarpura se seedhe aapke ghar tak! Hum dete hain sabse sasta aur sabsay accha saaman. Kisi bhi prashn ya sahayata ke liye niche diye buttons se humse turant sampark karein.
+      </p>
+      
+      <div class="footer-buttons" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 20px;">
+        <a href="mailto:bhannu123h@gmail.com" style="display: inline-flex; align-items: center; background-color: #ea4335; color: white; padding: 10px 16px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: bold; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <i class="fa-solid fa-envelope"></i> Email Us
+        </a>
+        
+        <a href="https://wa.me/918769184313" target="_blank" style="display: inline-flex; align-items: center; background-color: #25d366; color: white; padding: 10px 16px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: bold; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        </a>
+
+        <a href="https://www.instagram.com/bhanu2007solanki?igsh=MTI0azI2M205NWxubA==" target="_blank" style="display: inline-flex; align-items: center; background-color: #e1306c; color: white; padding: 10px 16px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: bold; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <i class="fa-brands fa-instagram"></i> Instagram
+        </a>
+      </div>
+      
+      <p style="color: #999; font-size: 12px; margin: 0;">&copy; 2026 Mini Mart Jodhpur. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchPage('home', this)">
+      <div class="icon-wrapper"><i class="fa-solid fa-house"></i></div>
+      <span>Home</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('category', this)">
+      <div class="icon-wrapper"><i class="fa-solid fa-layer-group"></i></div>
+      <span>Category</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('cart', this)">
+      <div class="icon-wrapper">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cartBadge" class="badge">0</span>
+      </div>
+      <span>Cart</span>
+    </div>
+    <div class="nav-item" id="adminNavItem" onclick="handleAdminTabClick(this)">
+      <div class="icon-wrapper"><i class="fa-solid fa-user-gear"></i></div>
+      <span>Admin</span>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
