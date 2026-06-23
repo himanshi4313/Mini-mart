@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -12,10 +13,11 @@ app.use(express.static(path.join(__dirname, './'))); // Isse index.html load hog
 
 // 1. MySQL Database Connection
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '1234', // <--- Yahan apna MySQL password daalo
-    database: 'minimart'
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT
 });
 
 db.connect(err => {
