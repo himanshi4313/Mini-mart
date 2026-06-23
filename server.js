@@ -2,85 +2,63 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const mysql = require('mysql2');
+const path = require('path');
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, './'))); // Isse index.html load hogi
 
-// MySQL Connection
+// 1. MySQL Database Connection
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '1234', // Jo aapne set kiya tha
+    password: '1234', // <--- Yahan apna MySQL password daalo
     database: 'minimart'
 });
 
 db.connect(err => {
-    if (err) console.error("❌ MySQL Connection Failed: " + err.message);
+    if (err) console.error("❌ DB Connection Error:", err);
     else console.log("✅ MySQL Connected!");
 });
 
-// 1. Order Saving Route
-app.post("/orders", (req, res) => {
-    const { orderId, name, mobile, address, itemsSummary, totalAmt } = req.body;
-    const sql = "INSERT INTO orders (orderId, name, mobile, address, itemsSummary, totalAmt) VALUES (?, ?, ?, ?, ?, ?)";
-    
-    db.query(sql, [orderId, name, mobile, address, itemsSummary, totalAmt], (err) => {
-        if (err) {
-            console.error("❌ DB Error:", err);
-            return res.status(500).json({ error: err.message });
-        }
-        res.status(200).json({ message: "Order Saved Successfully" });
-    });
+// 2. Homepage (Taki Cannot GET / na aaye)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 2. Fetch Orders (Admin Dashboard ke liye)
-app.get("/orders", (req, res) => {
-    db.query("SELECT * FROM orders", (err, results) => {
-        if (err) return res.status(500).send(err);
+// 3. Products Fetch Route
+app.get('/products', (req, res) => {
+    db.query("SELECT * FROM products", (err, results) => {
+        if (err) return res.status(500).json(err);
         res.json(results);
     });
 });
 
-// 3. WhatsApp Notification Route (With Button)
+// 4. WhatsApp Notification Route
 app.post("/send-order-notification", async (req, res) => {
-    const { orderDetails, customerMobile } = req.body;
+    const { orderDetails } = req.body;
     const url = `https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8`;
     
-    // Number format fix
-    const chatId = customerMobile.startsWith("91") ? `${customerMobile}@c.us` : `91${customerMobile}@c.us`;
-
     try {
         await axios.post(url, {
-            chatId: chatId,
-            message: orderDetails + "\n\nClick the button below to confirm your order:",
-            buttons: [{ buttonId: 'confirm_order', buttonText: { displayText: '✅ Confirm Order' }, type: 1 }]
+            chatId: "919928769308@c.us",
+            message: orderDetails
         });
         res.status(200).json({ success: true });
     } catch (error) {
-        console.error("❌ WhatsApp Error:", error.message);
         res.status(500).json({ success: false });
     }
 });
 
-// 4. Webhook Route (Jab Customer Button Dabaye)
-app.post("/webhook", async (req, res) => {
-    const data = req.body;
-    const ownerUrl = `https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8`;
-
-    // Agar customer button dabata hai
-    if (data.typeWebhook === 'incomingMessageReceived' && 
-        data.messageData?.extendedTextMessageData?.selectedButtonId === 'confirm_order') {
-        
-        // Owner (Aapko) alert bhejo
-        await axios.post(ownerUrl, {
-            chatId: "918769184313@c.us", 
-            message: "🚨 ALERT: Customer ne order confirm kar diya hai!"
-        });
-        console.log("✅ Owner notified!");
-    }
-    res.status(200).send("OK");
+// 5. Orders Fetch Route
+app.get('/orders', (req, res) => {
+    db.query("SELECT * FROM orders", (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
 });
 
-app.listen(3000, () => console.log("🚀 Server running on port 3000"));
+const PORT = 3000;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
