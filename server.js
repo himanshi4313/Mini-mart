@@ -41,13 +41,16 @@ app.get('/test', (req, res) => {
 });
 
 // TEST PRODUCTS ROUTE
-app.get('/products', (req, res) => {
-  res.json({
-    success: true,
-    message: "Products route working"
-  });
-});
 
+app.get('/products', (req, res) => {
+    db.query("SELECT * FROM products", (err, results) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json(err);
+        }
+        res.json(results);
+    });
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
