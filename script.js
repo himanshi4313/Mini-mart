@@ -22,7 +22,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadAllData() {
-  fetch("mini-mart-production.up.railway.app/products")
+  fetch("https://mini-mart-production.up.railway.app/products")
     .then(res => res.json())
     .then(products => {
         allProducts = products;
