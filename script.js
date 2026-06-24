@@ -178,7 +178,7 @@ function placeOrder() {
     let orderData = { orderId, name, mobile, address, itemsSummary, totalAmt };
 
     // Pehle database mein try karega, agar route missing hai toh catch karke notification chala dega
-    fetch("http://localhost:3000/orders", {
+    fetch("https://mini-mart-production.up.railway.app/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData)
@@ -201,7 +201,7 @@ function placeOrder() {
 function sendWhatsAppNotification(orderId, name, mobile, address, itemsSummary, totalAmt) {
     let textToSend = `*Order ID:* ${orderId}\n*Customer:* ${name}\n*Mobile:* ${mobile}\n*Address:* ${address}\n*Items:* ${itemsSummary}\n*Total Bill:* ₹${totalAmt}`;
 
-    fetch("http://localhost:3000/send-order-notification", {
+    fetch("https://mini-mart-production.up.railway.app/products/send-order-notification", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderDetails: textToSend })
@@ -234,7 +234,7 @@ function handleAdminTabClick(element) {
 
 function verifyAdminPassword() {
     let enteredPassword = document.getElementById("adminPasswordInput").value;
-    if (enteredPassword === "minimart@4313") {
+    if (enteredPassword === "psstore@4313") {
         isAdminAuthenticated = true;
         document.getElementById("adminAuthModal").style.display = "none";
         switchPage('admin', document.getElementById("adminNavItem"));
@@ -318,7 +318,7 @@ function addNewProduct() {
 
     let payload = { name, category, price, discount, stock, image };
 
-    fetch("http://localhost:3000/products", {
+    fetch("https://mini-mart-production.up.railway.app/products/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -347,7 +347,7 @@ function updateExistingProduct() {
 
     let payload = { name, category, price, discount, stock, image };
 
-    fetch(`http://localhost:3000/products/${editProductId}`, {
+    fetch(`https://mini-mart-production.up.railway.app/products/products/${editProductId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -380,7 +380,7 @@ function resetProductForm() {
 function deleteProduct(id) {
     if(!confirm("Are you sure you want to discard this item?")) return;
 
-    fetch(`http://localhost:3000/products/${id}`, {
+    fetch(`https://mini-mart-production.up.railway.app/products/products/${id}`, {
         method: "DELETE"
     })
     .then(res => {
@@ -391,7 +391,7 @@ function deleteProduct(id) {
         }
     });
 }// Apni script.js mein ye check karo:
-const backendUrl = "http://localhost:3000/send-order-notification";
+const backendUrl = "https://mini-mart-production.up.railway.app/products/send-order-notification";
 console.log("Calling backend at:", backendUrl); // Ye console mein dikhna chahiye
 
 fetch(backendUrl, {
@@ -401,7 +401,7 @@ fetch(backendUrl, {
 })
 
 function loadAdminOrders() {
-    fetch("http://localhost:3000/orders")
+    fetch("https://mini-mart-production.up.railway.app/products")
     .then(res => res.json())
     .then(orders => {
         let html = "";
