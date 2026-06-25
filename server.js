@@ -97,7 +97,7 @@ const url =
   "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8";
 
 const response = await axios.post(url, {
-  chatId: "919928769308@c.us",
+  chatId: "918107872665@c.us",
   message: orderDetails
 });
 
@@ -124,5 +124,5 @@ res.status(500).json({
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-console.log("🚀 Server running on port ${PORT}");
+con sole.log("🚀 Server running on port ${PORT}");
 });
