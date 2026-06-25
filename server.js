@@ -39,23 +39,149 @@ app.get("/", (req, res) => {
 app.get("/test", (req, res) => {
     res.json({
         success: true,
-        message: "Server is running"
+        message: "Server Running Successfully"
     });
 });
 
-// Products Route
+// ================= PRODUCTS =================
+
+// Get All Products
 app.get("/products", (req, res) => {
-    db.query("SELECT * FROM products", (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json(err);
-        }
 
-        res.json(results);
-    });
+    db.query(
+        "SELECT * FROM products ORDER BY id DESC",
+        (err, results) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json(err);
+            }
+
+            res.json(results);
+
+        }
+    );
+
 });
 
-// Save Order Route
+// Add Product
+app.post("/products", (req, res) => {
+
+    const {
+        name,
+        price,
+        stock,
+        image,
+        discount,
+        category
+    } = req.body;
+
+    const sql = `
+        INSERT INTO products
+        (name, price, stock, image, discount, category)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [name, price, stock, image, discount, category],
+        (err, result) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                success: true,
+                id: result.insertId
+            });
+
+        }
+    );
+
+});
+
+// Update Product
+app.put("/products/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    const {
+        name,
+        price,
+        stock,
+        image,
+        discount,
+        category
+    } = req.body;
+
+    const sql = `
+        UPDATE products
+        SET
+        name=?,
+        price=?,
+        stock=?,
+        image=?,
+        discount=?,
+        category=?
+        WHERE id=?
+    `;
+
+    db.query(
+        sql,
+        [
+            name,
+            price,
+            stock,
+            image,
+            discount,
+            category,
+            id
+        ],
+        (err) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                success: true
+            });
+
+        }
+    );
+
+});
+
+// Delete Product
+app.delete("/products/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    db.query(
+        "DELETE FROM products WHERE id=?",
+        [id],
+        (err) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                success: true
+            });
+
+        }
+    );
+
+});
+
+// ================= ORDERS =================
+
+// Save Order
 app.post("/orders", (req, res) => {
 
     const {
@@ -90,9 +216,10 @@ app.post("/orders", (req, res) => {
 
         }
     );
+
 });
 
-// Orders Fetch Route
+// Get Orders
 app.get("/orders", (req, res) => {
 
     db.query(
@@ -111,7 +238,8 @@ app.get("/orders", (req, res) => {
 
 });
 
-// WhatsApp Notification Route
+// ================= WHATSAPP =================
+
 app.post("/send-order-notification", async (req, res) => {
 
     try {
@@ -147,7 +275,8 @@ app.post("/send-order-notification", async (req, res) => {
 
 });
 
-// Start Server
+// ================= SERVER =================
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
