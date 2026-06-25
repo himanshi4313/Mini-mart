@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
@@ -14,115 +15,141 @@ app.use(express.static(path.join(__dirname, "./")));
 
 // MySQL Connection
 const db = mysql.createConnection({
-host: process.env.MYSQLHOST,
-user: process.env.MYSQLUSER,
-password: process.env.MYSQLPASSWORD,
-database: process.env.MYSQLDATABASE,
-port: process.env.MYSQLPORT
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT
 });
 
-db.connect(err => {
-if (err) {
-console.error("❌ DB Connection Error:", err);
-} else {
-console.log("✅ MySQL Connected!");
-}
+db.connect((err) => {
+    if (err) {
+        console.error("❌ DB Connection Error:", err);
+    } else {
+        console.log("✅ MySQL Connected!");
+    }
 });
 
 // Home Route
 app.get("/", (req, res) => {
-res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Test Route
 app.get("/test", (req, res) => {
-res.json({
-success: true,
-message: "Server is running"
-});
+    res.json({
+        success: true,
+        message: "Server is running"
+    });
 });
 
 // Products Route
 app.get("/products", (req, res) => {
-db.query("SELECT * FROM products", (err, results) => {
-if (err) {
-console.error(err);
-return res.status(500).json(err);
-}
-res.json(results);
-});
-});
+    db.query("SELECT * FROM products", (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json(err);
+        }
 
-// Orders List Route
-app.get("/orders", (req, res) => {
-db.query("SELECT * FROM orders", (err, results) => {
-if (err) {
-console.error(err);
-return res.status(500).json(err);
-}
-res.json(results);
-});
+        res.json(results);
+    });
 });
 
 // Save Order Route
 app.post("/orders", (req, res) => {
-const { orderId, name, mobile, address, itemsSummary, totalAmt } = req.body;
 
-const sql = "INSERT INTO orders (orderId, name, mobile, address, itemsSummary, totalAmt) VALUES (?, ?, ?, ?, ?, ?)";
+    const {
+        orderId,
+        name,
+        mobile,
+        address,
+        itemsSummary,
+        totalAmt
+    } = req.body;
 
-db.query(
-sql,
-[orderId, name, mobile, address, itemsSummary, totalAmt],
-(err, result) => {
-if (err) {
-console.error(err);
-return res.status(500).json(err);
-}
+    const sql = `
+        INSERT INTO orders
+        (orderId, name, mobile, address, itemsSummary, totalAmt)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
 
-  res.json({
-    success: true,
-    id: result.insertId
-  });
-}
+    db.query(
+        sql,
+        [orderId, name, mobile, address, itemsSummary, totalAmt],
+        (err, result) => {
 
-);
+            if (err) {
+                console.error(err);
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                success: true,
+                id: result.insertId
+            });
+
+        }
+    );
+});
+
+// Orders Fetch Route
+app.get("/orders", (req, res) => {
+
+    db.query(
+        "SELECT * FROM orders ORDER BY id DESC",
+        (err, results) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json(err);
+            }
+
+            res.json(results);
+
+        }
+    );
+
 });
 
 // WhatsApp Notification Route
 app.post("/send-order-notification", async (req, res) => {
-try {
-const { orderDetails } = req.body;
 
-const url =
-  "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8";
+    try {
 
-const response = await axios.post(url, {
-  chatId: "918107872665@c.us",
-  message: orderDetails
-});
+        const { orderDetails } = req.body;
 
-console.log("WhatsApp Sent:", response.data);
+        const url =
+            "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8";
 
-res.json({
-  success: true
-});
+        const response = await axios.post(url, {
+            chatId: "918107872665@c.us",
+            message: orderDetails
+        });
 
-} catch (error) {
-console.error(
-"WhatsApp Error:",
-error.response?.data || error.message
-);
+        console.log("✅ WhatsApp Sent:", response.data);
 
-res.status(500).json({
-  success: false
-});
+        res.json({
+            success: true
+        });
 
-}
+    } catch (error) {
+
+        console.error(
+            "❌ WhatsApp Error:",
+            error.response?.data || error.message
+        );
+
+        res.status(500).json({
+            success: false
+        });
+
+    }
+
 });
 
 // Start Server
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-con sole.log("🚀 Server running on port ${PORT}");
+    console.log(`🚀 Server running on port ${PORT}`);
 });
