@@ -442,17 +442,26 @@ function switchPage(pageId, element) {
   }
 }
 
-let Banners = ["images/banner1.jpg", "images/banner2.jpg", "images/banner3.jpg"];
+let Banners = [
+    "images/banner1.jpg",
+    "images/banner2.jpg",
+    "images/banner3.jpg"
+];
+
 let idx = 0;
+
 setInterval(() => {
-  let img = document.getElementById("bannerImg");
-  if(img) {
-    img.style.opacity = "0";
-    setTimeout(() => {
-      idx++;
-      if (idx >= Banners.length) { idx = 0; }
-      img.src = Banners[idx];
-      img.style.opacity = "1";
-    }, 500);
-  }
-}, 3200);
+    const img = document.getElementById("bannerImg");
+
+    if (img) {
+
+        img.style.opacity = "0.5";
+
+        setTimeout(() => {
+            idx = (idx + 1) % Banners.length;
+            img.src = Banners[idx];
+            img.style.opacity = "1";
+        }, 200);
+
+    }
+}, 4000);
