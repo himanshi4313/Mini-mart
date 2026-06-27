@@ -724,6 +724,18 @@ function loadAdminOrders() {
     });
 
 }
+function showCheckoutPage() {
+
+    if (cart.length === 0) {
+
+        alert("Cart is empty!");
+        return;
+
+    }
+
+    switchPage("checkout");
+
+}
 
 function switchPage(pageId, element) {
 
@@ -771,7 +783,7 @@ function switchPage(pageId, element) {
 let Banners = [
     "images/banner1.jpg",
     "images/banner2.jpg",
-    "images/banner3.jpg"
+    "images/banner3.jpg" 
 ];
 
 let idx = 0;
