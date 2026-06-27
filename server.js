@@ -291,7 +291,7 @@ app.post("/send-order-notification", async (req, res) => {
             "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8";
 
         const response = await axios.post(url, {
-            chatId: "919928769308@c.us",
+            chatId: "918769184313@c.us",
             message: orderDetails
         });
 
