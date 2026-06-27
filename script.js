@@ -744,3 +744,81 @@ setInterval(() => {
     }, 300);
 
 }, 4000);
+
+function placeOrder() {
+
+    let name =
+        document.getElementById("custName").value;
+
+    let mobile =
+        document.getElementById("custMobile").value;
+
+    let address =
+        document.getElementById("custAddress").value;
+
+    if (!name || !mobile || !address) {
+
+        alert("Please fill all details");
+        return;
+
+    }
+
+    if (cart.length === 0) {
+
+        alert("Cart is empty");
+        return;
+
+    }
+
+    let itemsSummary =
+        cart.map(item =>
+            `${item.name} x ${item.qty}`
+        ).join(", ");
+
+    let totalAmt =
+        cart.reduce(
+            (sum, item) =>
+                sum + item.price * item.qty,
+            0
+        );
+
+    fetch(
+        "https://mini-mart-production.up.railway.app/orders",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+                name,
+                mobile,
+                address,
+                itemsSummary,
+                totalAmt
+            })
+        }
+    )
+    .then(res => res.json())
+    .then(data => {
+
+        alert("Order placed successfully!");
+
+        cart = [];
+
+        updateCartUI();
+
+        switchPage("home");
+
+    })
+    .catch(err => {
+
+        console.error(err);
+
+        alert("Order failed!");
+
+    });
+
+}
