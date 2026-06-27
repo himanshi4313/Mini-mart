@@ -46,6 +46,7 @@ app.get("/test", (req, res) => {
 // ================= PRODUCTS =================
 
 // Get All Products
+
 app.get("/products", (req, res) => {
 
     db.query(
@@ -53,8 +54,14 @@ app.get("/products", (req, res) => {
         (err, results) => {
 
             if (err) {
-                console.error(err);
-                return res.status(500).json(err);
+
+                console.log("PRODUCT ERROR:", err);
+
+                return res.status(500).json({
+                    message: err.message,
+                    code: err.code
+                });
+
             }
 
             res.json(results);
@@ -63,7 +70,6 @@ app.get("/products", (req, res) => {
     );
 
 });
-
 // Add Product
 app.post("/products", (req, res) => {
 
