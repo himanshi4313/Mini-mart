@@ -186,7 +186,143 @@ function renderProducts(
 
 function generateCategories(
     products
+) 
+function filterCategory(categoryName, element) {
+
+    if (element) {
+
+        document
+            .querySelectorAll(".store-card")
+            .forEach(card =>
+                card.classList.remove("active-cat")
+            );
+
+        element.classList.add("active-cat");
+
+    }
+
+    let filteredProducts =
+        allProducts.filter(
+            p => p.category === categoryName
+        );
+
+    renderProducts(
+        filteredProducts,
+        "categoryProductList"
+    );
+
+}
+function addToCart(
+    name,
+    price,
+    image,
+    btn
 ) {
+
+    let qtyInput =
+        btn.parentElement.querySelector(".qty");
+
+    let qty =
+        parseInt(qtyInput.value) || 1;
+
+    let existingItem =
+        cart.find(
+            item => item.name === name
+        );
+
+    if (existingItem) {
+
+        existingItem.qty += qty;
+
+    } else {
+
+        cart.push({
+            name: name,
+            price: price,
+            image: image,
+            qty: qty
+        });
+
+    }
+
+    updateCartUI();
+
+    alert(name + " Added To Cart");
+
+}
+function updateCartUI() {
+
+    let totalItems = 0;
+    let totalAmount = 0;
+
+    let html = "";
+
+    cart.forEach((item, index) => {
+
+        totalItems += item.qty;
+
+        totalAmount +=
+            item.price * item.qty;
+
+        html += `
+        <div class="cart-item">
+
+            <img src="images/${item.image}">
+
+            <div class="cart-details">
+
+                <h4>${item.name}</h4>
+
+                <p>
+                    ₹${item.price}
+                    x
+                    ${item.qty}
+                    =
+                    ₹${item.price * item.qty}
+                </p>
+
+            </div>
+
+            <button
+                class="remove-btn"
+                onclick="removeFromCart(${index})"
+            >
+                🗑
+            </button>
+
+        </div>
+        `;
+
+    });
+
+    document.getElementById(
+        "cartBadge"
+    ).innerText = totalItems;
+
+    document.getElementById(
+        "totalItems"
+    ).innerText = totalItems;
+
+    document.getElementById(
+        "totalAmount"
+    ).innerText =
+        "₹" + totalAmount;
+
+    document.getElementById(
+        "cartList"
+    ).innerHTML =
+        html ||
+        "<p>Cart Empty</p>";
+
+}
+function removeFromCart(index) {
+
+    cart.splice(index, 1);
+
+    updateCartUI();
+
+}
+{
 
     let categories =
         [...new Set(
