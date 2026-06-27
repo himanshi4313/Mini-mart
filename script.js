@@ -183,10 +183,59 @@ function renderProducts(
 // ====================
 // CATEGORY SYSTEM
 // ====================
+// ====================
+// CATEGORY SYSTEM
+// ====================
 
-function generateCategories(
-    products
-) {
+function generateCategories(products) {
+
+    let categories = [
+        ...new Set(
+            products
+                .map(p => p.category)
+                .filter(Boolean)
+        )
+    ];
+
+    let html = "";
+
+    categories.forEach((cat, index) => {
+
+        let icon = "fa-solid fa-box";
+
+        if (cat.toLowerCase().includes("grocer")) {
+            icon = "fa-solid fa-basket-shopping";
+        }
+
+        if (cat.toLowerCase().includes("milk")) {
+            icon = "fa-solid fa-bottle-droplet";
+        }
+
+        html += `
+        <div
+            class="store-card ${index === 0 ? "active-cat" : ""}"
+            onclick="filterCategory('${cat}', this)"
+        >
+            <i class="${icon}"></i>
+            <p>${cat}</p>
+        </div>
+        `;
+
+    });
+
+    document.getElementById("categoryTabs").innerHTML = html;
+
+    if (categories.length > 0) {
+        filterCategory(categories[0]);
+    }
+
+}
+
+
+// ====================
+// FILTER CATEGORY
+// ====================
+
 function filterCategory(categoryName, element) {
 
     if (element) {
@@ -212,12 +261,13 @@ function filterCategory(categoryName, element) {
     );
 
 }
-function addToCart(
-    name,
-    price,
-    image,
-    btn
-) {
+
+
+// ====================
+// ADD TO CART
+// ====================
+
+function addToCart(name, price, image, btn) {
 
     let qtyInput =
         btn.parentElement.querySelector(".qty");
@@ -226,9 +276,7 @@ function addToCart(
         parseInt(qtyInput.value) || 1;
 
     let existingItem =
-        cart.find(
-            item => item.name === name
-        );
+        cart.find(item => item.name === name);
 
     if (existingItem) {
 
@@ -250,6 +298,12 @@ function addToCart(
     alert(name + " Added To Cart");
 
 }
+
+
+// ====================
+// UPDATE CART
+// ====================
+
 function updateCartUI() {
 
     let totalItems = 0;
@@ -260,9 +314,7 @@ function updateCartUI() {
     cart.forEach((item, index) => {
 
         totalItems += item.qty;
-
-        totalAmount +=
-            item.price * item.qty;
+        totalAmount += item.price * item.qty;
 
         html += `
         <div class="cart-item">
@@ -274,11 +326,8 @@ function updateCartUI() {
                 <h4>${item.name}</h4>
 
                 <p>
-                    ₹${item.price}
-                    x
-                    ${item.qty}
-                    =
-                    ₹${item.price * item.qty}
+                    ₹${item.price} x ${item.qty}
+                    = ₹${item.price * item.qty}
                 </p>
 
             </div>
@@ -295,26 +344,25 @@ function updateCartUI() {
 
     });
 
-    document.getElementById(
-        "cartBadge"
-    ).innerText = totalItems;
+    document.getElementById("cartBadge").innerText =
+        totalItems;
 
-    document.getElementById(
-        "totalItems"
-    ).innerText = totalItems;
+    document.getElementById("totalItems").innerText =
+        totalItems;
 
-    document.getElementById(
-        "totalAmount"
-    ).innerText =
+    document.getElementById("totalAmount").innerText =
         "₹" + totalAmount;
 
-    document.getElementById(
-        "cartList"
-    ).innerHTML =
-        html ||
-        "<p>Cart Empty</p>";
+    document.getElementById("cartList").innerHTML =
+        html || "<p>Cart Empty</p>";
 
 }
+
+
+// ====================
+// REMOVE FROM CART
+// ====================
+
 function removeFromCart(index) {
 
     cart.splice(index, 1);
@@ -322,6 +370,7 @@ function removeFromCart(index) {
     updateCartUI();
 
 }
+
 
 
     let categories =
