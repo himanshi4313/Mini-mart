@@ -322,7 +322,7 @@ function removeFromCart(index) {
     updateCartUI();
 
 }
-}
+
 
     let categories =
         [...new Set(
