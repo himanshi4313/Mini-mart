@@ -1,4 +1,4 @@
- let cart = [];
+let cart = [];
 let allProducts = [];
 let isAdminAuthenticated = false;
 let editProductId = null;
@@ -6,91 +6,607 @@ let editProductId = null;
 // ====================
 // APP START
 // ====================
+
 window.addEventListener("DOMContentLoaded", () => {
+
+    if (
+        Notification.permission !== "granted" &&
+        Notification.permission !== "denied"
+    ) {
+        Notification.requestPermission();
+    }
+
+    setTimeout(() => {
+
+        const splash =
+            document.getElementById("splash-screen");
+
+        const mainContent =
+            document.getElementById("main-content");
+
+        if (splash && mainContent) {
+
+            splash.style.opacity = "0";
+            splash.style.visibility = "hidden";
+
+            mainContent.style.opacity = "1";
+            mainContent.style.transform =
+                "translateY(0)";
+
+        }
+
+    }, 2500);
+
     loadAllData();
+
 });
 
 // ====================
 // LOAD PRODUCTS
 // ====================
+
 function loadAllData() {
-    fetch("https://mini-mart-production.up.railway.app/products")
+
+    fetch(
+        "https://mini-mart-production.up.railway.app/products"
+    )
     .then(res => res.json())
     .then(products => {
+
         allProducts = products;
-        renderProducts(allProducts, "productList");
+
+        let discountProducts =
+            allProducts.filter(
+                p => p.discount > 0
+            );
+
+        renderProducts(
+            discountProducts,
+            "productList"
+        );
+
         generateCategories(allProducts);
+
+        if (isAdminAuthenticated) {
+
+            renderAdminInventory();
+            loadAdminOrders();
+
+        }
+
     })
-    .catch(err => console.error("Error loading products:", err));
+    .catch(err => {
+
+        console.error(
+            "Error loading products:",
+            err
+        );
+
+    });
+
 }
 
 // ====================
 // RENDER PRODUCTS
 // ====================
-function renderProducts(productsList, targetId) {
+
+function renderProducts(
+    productsList,
+    targetId
+) {
+
     let html = "";
+
     productsList.forEach(product => {
-        let finalPrice = product.price - (product.price * (product.discount || 0) / 100);
+
+        let finalPrice = product.price;
+
+        if (product.discount) {
+
+            finalPrice =
+                product.price -
+                (product.price *
+                    product.discount /
+                    100);
+
+        }
+
         html += `
         <div class="card">
-            <img src="images/${product.image}" onerror="this.src='https://via.placeholder.com/150'">
+
+            <img src="images/${product.image}">
+
             <h2>${product.name}</h2>
-            <p>₹${finalPrice} <del>₹${product.price}</del></p>
-            <input type="number" value="1" min="1" class="qty" id="qty-${product.id}">
-            <button onclick="addToCart('${product.name}', ${finalPrice}, 'qty-${product.id}')">Add to Cart</button>
-        </div>`;
+
+            <p class="offer">
+                ${product.discount || 0}% OFF
+            </p>
+
+            <p>
+                ₹${finalPrice}
+                <del>
+                    ₹${product.price}
+                </del>
+            </p>
+
+            <p
+                style="
+                font-size:11px;
+                color:#666;
+                "
+            >
+                Stock: ${product.stock}
+            </p>
+
+            <input
+                type="number"
+                value="1"
+                min="1"
+                class="qty"
+            >
+
+            <button
+                onclick="
+                addToCart(
+                    '${product.name}',
+                    ${finalPrice},
+                    '${product.image}',
+                    this
+                )
+                "
+            >
+                Add to Cart
+            </button>
+
+        </div>
+        `;
+
     });
-    document.getElementById(targetId).innerHTML = html || "<p>No products found.</p>";
+
+    document.getElementById(
+        targetId
+    ).innerHTML =
+        html ||
+        `
+        <p
+            style="
+            text-align:center;
+            color:#999;
+            "
+        >
+            No products found.
+        </p>
+        `;
+
 }
 
 // ====================
-// CART & WHATSAPP
+// CATEGORY SYSTEM
 // ====================
-function addToCart(name, price, qtyInputId) {
-    let qty = parseInt(document.getElementById(qtyInputId).value) || 1;
-    let item = cart.find(i => i.name === name);
-    if (item) item.qty += qty;
-    else cart.push({ name, price, qty });
-    alert(name + " added to cart!");
+
+function generateCategories(
+    products
+) {
+
+    let categories =
+        [...new Set(
+            products
+            .map(
+                p => p.category
+            )
+            .filter(Boolean)
+        )];
+
+    let html = "";
+
+    categories.forEach(
+        (cat, index) => {
+
+            let icon =
+                "fa-solid fa-box";
+
+            if (
+                cat.toLowerCase()
+                .includes("grocer")
+            ) {
+
+                icon =
+                    "fa-solid fa-basket-shopping";
+
+            }
+
+            if (
+                cat.toLowerCase()
+                .includes("milk")
+            ) {
+
+                icon =
+                    "fa-solid fa-bottle-droplet";
+
+            }
+
+            html += `
+            <div
+                class="
+                store-card
+                ${index === 0
+                    ? "active-cat"
+                    : ""}
+                "
+                onclick="
+                filterCategory(
+                    '${cat}',
+                    this
+                )
+                "
+            >
+
+                <i class="${icon}"></i>
+
+                <p>${cat}</p>
+
+            </div>
+            `;
+
+        }
+    );
+
+    document.getElementById(
+        "categoryTabs"
+    ).innerHTML = html;
+
+    if (
+        categories.length > 0
+    ) {
+
+        filterCategory(
+            categories[0]
+        );
+
+    }
+
 }
-
-function sendOrderToWhatsApp() {
-    if (cart.length === 0) return alert("Cart is empty!");
-    
-    let summary = "🛒 New Order:\n" + cart.map(i => `${i.name} (${i.qty}) - ₹${i.price * i.qty}`).join("\n");
-    let total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-    summary += `\n\nTotal: ₹${total}`;
-
-    // Backend ko call
-    fetch("https://mini-mart-production.up.railway.app/send-order-notification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderDetails: summary })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) alert("Order sent to WhatsApp!");
-        else alert("Failed to send notification.");
-    });
-}
-
-// ====================
-// ADMIN & CATEGORY
-// ====================
-function generateCategories(products) {
-    let cats = [...new Set(products.map(p => p.category).filter(Boolean))];
-    document.getElementById("categoryTabs").innerHTML = cats.map(cat => 
-        `<div class="store-card" onclick="filterCategory('${cat}')"><p>${cat}</p></div>`).join("");
-}
-
-function filterCategory(cat) {
-    renderProducts(allProducts.filter(p => p.category === cat), "productList");
+function handleAdminTabClick(element) {
+    if (isAdminAuthenticated) {
+        switchPage('admin', element);
+    } else {
+        document.getElementById("adminPasswordInput").value = "";
+        document.getElementById("adminAuthModal").style.display = "flex";
+    }
 }
 
 function verifyAdminPassword() {
-    if (document.getElementById("adminPasswordInput").value === "psstore@4313") {
+    let enteredPassword = document.getElementById("adminPasswordInput").value;
+
+    if (enteredPassword === "psstore@4313") {
         isAdminAuthenticated = true;
         document.getElementById("adminAuthModal").style.display = "none";
-        alert("Admin Mode Activated");
-    } else alert("Invalid Password!");
+        switchPage('admin', document.getElementById("adminNavItem"));
+    } else {
+        alert("Invalid Password!");
+    }
 }
+
+function closeAuthModal() {
+    document.getElementById("adminAuthModal").style.display = "none";
+}
+
+function logoutAdmin() {
+    isAdminAuthenticated = false;
+    editProductId = null;
+    resetProductForm();
+
+    alert("Admin Logged Out");
+    switchPage('home', document.querySelector('.nav-item'));
+}
+
+function renderAdminInventory() {
+
+    let html = "";
+
+    allProducts.forEach(product => {
+
+        html += `
+        <div class="cart-item">
+
+            <img src="images/${product.image}">
+
+            <div class="cart-details">
+                <h4>${product.name}</h4>
+
+                <p>
+                    Category: ${product.category}<br>
+                    Stock: ${product.stock}<br>
+                    Price: ₹${product.price}<br>
+                    Discount: ${product.discount}%
+                </p>
+            </div>
+
+            <button
+                onclick="populateEditForm(${product.id})"
+                class="remove-btn"
+                style="background:green;margin-right:10px;"
+            >
+                <i class="fa-solid fa-pen"></i>
+            </button>
+
+            <button
+                onclick="deleteProduct(${product.id})"
+                class="remove-btn"
+            >
+                <i class="fa-solid fa-trash"></i>
+            </button>
+
+        </div>
+        `;
+
+    });
+
+    document.getElementById("adminInventoryGrid").innerHTML =
+        html || "<p>No Products Found</p>";
+}
+
+function populateEditForm(id) {
+
+    let product = allProducts.find(p => p.id === id);
+
+    if (!product) return;
+
+    editProductId = id;
+
+    document.getElementById("pName").value = product.name;
+    document.getElementById("pCategory").value = product.category;
+    document.getElementById("pPrice").value = product.price;
+    document.getElementById("pDiscount").value = product.discount;
+    document.getElementById("pStock").value = product.stock;
+    document.getElementById("pIdentity").value = product.image;
+
+    document.getElementById("saveProductBtn").innerText =
+        "Update Product";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+function saveProductAction() {
+
+    if (editProductId !== null) {
+        updateExistingProduct();
+    } else {
+        addNewProduct();
+    }
+
+}
+
+function addNewProduct() {
+
+    let payload = {
+        name: document.getElementById("pName").value,
+        category: document.getElementById("pCategory").value,
+        price: parseInt(document.getElementById("pPrice").value),
+        discount: parseInt(document.getElementById("pDiscount").value),
+        stock: parseInt(document.getElementById("pStock").value),
+        image: document.getElementById("pIdentity").value
+    };
+
+    fetch("https://mini-mart-production.up.railway.app/products", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(payload)
+
+    })
+    .then(res => {
+
+        if (res.ok) {
+
+            alert("Product Added");
+
+            resetProductForm();
+
+            loadAllData();
+
+        }
+
+    });
+
+}
+function updateExistingProduct() {
+
+    let payload = {
+        name: document.getElementById("pName").value,
+        category: document.getElementById("pCategory").value,
+        price: parseInt(document.getElementById("pPrice").value),
+        discount: parseInt(document.getElementById("pDiscount").value),
+        stock: parseInt(document.getElementById("pStock").value),
+        image: document.getElementById("pIdentity").value
+    };
+
+    fetch(
+        `https://mini-mart-production.up.railway.app/products/${editProductId}`,
+        {
+            method: "PUT",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(payload)
+        }
+    )
+    .then(res => {
+
+        if (res.ok) {
+
+            alert("Product Updated");
+
+            resetProductForm();
+
+            loadAllData();
+
+        }
+
+    });
+
+}
+
+function resetProductForm() {
+
+    editProductId = null;
+
+    document.getElementById("pName").value = "";
+    document.getElementById("pCategory").value = "";
+    document.getElementById("pPrice").value = "";
+    document.getElementById("pDiscount").value = "0";
+    document.getElementById("pStock").value = "";
+    document.getElementById("pIdentity").value = "";
+
+    document.getElementById("saveProductBtn").innerText =
+        "Save Product";
+
+}
+
+function deleteProduct(id) {
+
+    if (!confirm("Delete this product?")) return;
+
+    fetch(
+        `https://mini-mart-production.up.railway.app/products/${id}`,
+        {
+            method: "DELETE"
+        }
+    )
+    .then(res => {
+
+        if (res.ok) {
+
+            alert("Product Deleted");
+
+            loadAllData();
+
+        }
+
+    });
+
+}
+
+function loadAdminOrders() {
+
+    fetch("https://mini-mart-production.up.railway.app/orders")
+
+    .then(res => res.json())
+
+    .then(orders => {
+
+        let html = "";
+
+        orders.forEach(order => {
+
+            html += `
+            <tr>
+
+                <td>${order.orderId}</td>
+                <td>${order.name}</td>
+                <td>${order.mobile}</td>
+                <td>${order.address}</td>
+                <td>${order.itemsSummary}</td>
+                <td>₹${order.totalAmt}</td>
+
+            </tr>
+            `;
+
+        });
+
+        document.getElementById(
+            "adminOrderTableBody"
+        ).innerHTML =
+            html ||
+            `
+            <tr>
+                <td colspan="6">
+                    No Orders Found
+                </td>
+            </tr>
+            `;
+
+    });
+
+}
+
+function switchPage(pageId, element) {
+
+    if (element) {
+
+        document
+            .querySelectorAll(".nav-item")
+            .forEach(item =>
+                item.classList.remove("active")
+            );
+
+        element.classList.add("active");
+
+    }
+
+    document.getElementById("home-view").style.display =
+        "none";
+
+    document.getElementById("category-view").style.display =
+        "none";
+
+    document.getElementById("cart-view").style.display =
+        "none";
+
+    document.getElementById("checkout-view").style.display =
+        "none";
+
+    document.getElementById("admin-view").style.display =
+        "none";
+
+    document.getElementById(
+        pageId + "-view"
+    ).style.display = "block";
+
+    if (pageId === "admin") {
+
+        renderAdminInventory();
+
+        loadAdminOrders();
+
+    }
+
+}
+
+let Banners = [
+    "images/banner1.jpg",
+    "images/banner2.jpg",
+    "images/banner3.jpg"
+];
+
+let idx = 0;
+
+setInterval(() => {
+
+    const img =
+        document.getElementById("bannerImg");
+
+    if (!img) return;
+
+    img.style.opacity = "0.8";
+
+    setTimeout(() => {
+
+        idx = (idx + 1) % Banners.length;
+
+        img.src = Banners[idx];
+
+        img.style.opacity = "1";
+
+    }, 300);
+
+}, 4000);
