@@ -186,7 +186,7 @@ function renderProducts(
 
 function generateCategories(
     products
-) 
+) {
 function filterCategory(categoryName, element) {
 
     if (element) {
@@ -322,7 +322,7 @@ function removeFromCart(index) {
     updateCartUI();
 
 }
-{
+}
 
     let categories =
         [...new Set(
