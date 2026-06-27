@@ -187,6 +187,7 @@ function renderProducts(
 // CATEGORY SYSTEM
 // ====================
 
+
 function generateCategories(products) {
 
     let categories = [
@@ -230,7 +231,6 @@ function generateCategories(products) {
     }
 
 }
-
 
 // ====================
 // FILTER CATEGORY
@@ -304,6 +304,7 @@ function addToCart(name, price, image, btn) {
 // UPDATE CART
 // ====================
 
+
 function updateCartUI() {
 
     let totalItems = 0;
@@ -322,7 +323,6 @@ function updateCartUI() {
             <img src="images/${item.image}">
 
             <div class="cart-details">
-
                 <h4>${item.name}</h4>
 
                 <p>
@@ -356,8 +356,19 @@ function updateCartUI() {
     document.getElementById("cartList").innerHTML =
         html || "<p>Cart Empty</p>";
 
-}
+    const cartSummary =
+        document.getElementById("cartSummary");
 
+    if (cartSummary) {
+
+        cartSummary.style.display =
+            cart.length > 0
+                ? "block"
+                : "none";
+
+    }
+
+}
 
 // ====================
 // REMOVE FROM CART
