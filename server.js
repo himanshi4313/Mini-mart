@@ -182,7 +182,7 @@ app.delete("/products/:id", (req, res) => {
 // ================= ORDERS =================
 
 // Save Order
-app.post("/orders", (req, res) => {
+app.post("/orders", async (req, res) => {
 
     const {
         orderId,
@@ -199,7 +199,8 @@ app.post("/orders", (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(
+    
+db.query(
     sql,
     [
         orderId,
@@ -209,7 +210,6 @@ app.post("/orders", (req, res) => {
         itemsSummary,
         totalAmt
     ],
-
     async (err, result) => {
 
         if (err) {
@@ -217,6 +217,7 @@ app.post("/orders", (req, res) => {
             return res.status(500).json(err);
         }
 
+        // WhatsApp Message
         const message = `
 🛒 NEW ORDER
 
@@ -235,7 +236,7 @@ ${itemsSummary}
             await axios.post(
                 "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8",
                 {
-                    chatId: "919928769308@c.us",
+                    chatId: "918769184313@c.us",
                     message: message
                 }
             );
@@ -246,8 +247,7 @@ ${itemsSummary}
 
             console.log(
                 "❌ WhatsApp Error:",
-                error.response?.data ||
-                error.message
+                error.response?.data || error.message
             );
 
         }
@@ -259,7 +259,7 @@ ${itemsSummary}
 
     }
 );
-
+});
 // Get Orders
 app.get("/orders", (req, res) => {
 
