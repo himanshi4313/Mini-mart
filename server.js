@@ -193,16 +193,13 @@ app.post("/orders", async (req, res) => {
         totalAmt
     } = req.body;
 
-    const sql = `
-        INSERT INTO orders
-        (orderId, name, mobile, address, itemsSummary, totalAmt)
-        VALUES (?, ?, ?, ?, ?, ?)
-    `;
+    
 
-    db.query(
-        sql,
-        async (err, result) => {
-
+   db.query(
+    sql,
+    [orderId, name, mobile, address, itemsSummary, totalAmt],
+    async (err, result) => {
+        
             if (err) {
                 console.error(err);
                 return res.status(500).json(err);
