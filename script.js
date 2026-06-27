@@ -370,6 +370,7 @@ function removeFromCart(index) {
     updateCartUI();
 
 }
+{
 
 
 
