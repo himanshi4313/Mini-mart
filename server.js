@@ -200,31 +200,24 @@ app.post("/orders", (req, res) => {
     `;
 
     db.query(
-        sql,
-        [orderId, name, mobile, address, itemsSummary, totalAmt],
-        async (err, result) => {
+    sql,
+    [
+        orderId,
+        name,
+        mobile,
+        address,
+        itemsSummary,
+        totalAmt
+    ],
 
-            if (err) {
-                console.error(err);
+    async (err, result) => {
 
-                return res.status(500).json({
-                    success: false,
-                    error: err.message
-                });
-            }
-
-            res.json({
-                success: true,
-                id: result.insertId
-            });
-
+        if (err) {
+            console.error(err);
+            return res.status(500).json(err);
         }
-    );
 
-});
-
-            // WhatsApp Message
-            const message = `
+        const message = `
 🛒 NEW ORDER
 
 👤 Name: ${name}
@@ -237,37 +230,36 @@ ${itemsSummary}
 💰 Total: ₹${totalAmt}
 `;
 
-            try {
+        try {
 
-                await axios.post(
-                    "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8",
-                    {
-                        chatId: "918769184313@c.us",
-                        message: message
-                    }
-                );
+            await axios.post(
+                "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8",
+                {
+                    chatId: "919928769308@c.us",
+                    message: message
+                }
+            );
 
-                console.log("✅ WhatsApp Sent");
+            console.log("✅ WhatsApp Sent");
 
-            } catch (error) {
+        } catch (error) {
 
-                console.log(
-                    "❌ WhatsApp Error:",
-                    error.response?.data ||
-                    error.message
-                );
-
-            }
-
-            res.json({
-                success: true,
-                id: result.insertId
-            });
+            console.log(
+                "❌ WhatsApp Error:",
+                error.response?.data ||
+                error.message
+            );
 
         }
-    );
 
-});
+        res.json({
+            success: true,
+            id: result.insertId
+        });
+
+    }
+);
+
 // Get Orders
 app.get("/orders", (req, res) => {
 
