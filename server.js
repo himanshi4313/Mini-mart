@@ -212,13 +212,16 @@ db.query(
     ],
     async (err, result) => {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).json(err);
-        }
+    console.log("🔥 ORDER CALLBACK RUNNING");
 
-        // WhatsApp Message
-        const message = `
+    if (err) {
+        console.error(err);
+        return res.status(500).json(err);
+    }
+
+    console.log("🔥 TRY START HONE WALA HAI");
+
+    const message = `
 🛒 NEW ORDER
 
 👤 Name: ${name}
@@ -231,33 +234,35 @@ ${itemsSummary}
 💰 Total: ₹${totalAmt}
 `;
 
-        try {
+    try {
 
-            await axios.post(
-                "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8",
-                {
-                    chatId: "918769184313@c.us",
-                    message: message
-                }
-            );
+        console.log("🔥 WHATSAPP API KO REQUEST JA RAHI HAI");
 
-            console.log("✅ WhatsApp Sent");
+        const response = await axios.post(
+            "https://api.greenapi.com/waInstance7107659215/sendMessage/4a155d0f286649eba8885e48cf7e28fd9422d2703c1f4df0a8",
+            {
+                chatId: "919928769308@c.us",
+                message: message
+            }
+        );
 
-        } catch (error) {
+        console.log("✅ WhatsApp Sent");
+        console.log(response.data);
 
-            console.log(
-                "❌ WhatsApp Error:",
-                error.response?.data || error.message
-            );
+    } catch (error) {
 
-        }
-
-        res.json({
-            success: true,
-            id: result.insertId
-        });
+        console.log("❌ WhatsApp Error");
+        console.log(error.response?.data);
+        console.log(error.message);
 
     }
+
+    res.json({
+        success: true,
+        id: result.insertId
+    });
+
+}
 );
 });
 // Get Orders
