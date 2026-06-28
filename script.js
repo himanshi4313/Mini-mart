@@ -826,19 +826,13 @@ function placeOrder() {
     });
 
 }
-function showToast(message) {
+function showToast(msg) {
+    const toast = document.getElementById("toast");
 
-    const toast =
-        document.getElementById("toast");
-
-    toast.innerText = message;
-
+    toast.innerText = msg;
     toast.classList.add("show");
 
     setTimeout(() => {
-
         toast.classList.remove("show");
-
-    }, 2500);
-
+    }, 2000);
 }
