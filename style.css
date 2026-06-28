@@ -118,7 +118,7 @@ body{
 }
 
 .logo-text span{
-    color:var(--accent-color);
+    color:#df4b0b !important;
 }
 
 .search-container{
@@ -821,4 +821,65 @@ html{
 
     border-radius:8px;
 
+}
+/* ===== BOTTOM NAVIGATION ===== */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:75px;
+    background:#fff;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    border-top-left-radius:25px;
+    border-top-right-radius:25px;
+    box-shadow:0 -5px 20px rgba(0,0,0,0.1);
+    z-index:9999;
+}
+
+.nav-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#777;
+    font-size:12px;
+    cursor:pointer;
+    flex:1;
+    text-align:center;
+}
+
+.nav-item i{
+    font-size:22px;
+    margin-bottom:4px;
+}
+
+.nav-item span{
+    font-size:12px;
+}
+
+.nav-item.active{
+    color:#00704A;
+}
+
+.icon-wrapper{
+    position:relative;
+}
+
+.badge{
+    position:absolute;
+    top:-8px;
+    right:-10px;
+    background:red;
+    color:white;
+    font-size:10px;
+    min-width:18px;
+    height:18px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
