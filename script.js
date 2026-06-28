@@ -32,6 +32,7 @@ window.addEventListener("DOMContentLoaded", () => {
             mainContent.style.opacity = "1";
             mainContent.style.transform =
                 "translateY(0)";
+                document.querySelector(".bottom-nav").style.display = "flex";
 
         }
 
@@ -295,7 +296,7 @@ function addToCart(name, price, image, btn) {
 
     updateCartUI();
 
-    alert(name + " Added To Cart");
+    showToast(name + " Added To Cart 🛒");
 
 }
 
@@ -823,5 +824,21 @@ function placeOrder() {
         alert("Order failed!");
 
     });
+
+}
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.innerText = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2500);
 
 }
