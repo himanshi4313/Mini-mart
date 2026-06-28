@@ -775,6 +775,8 @@ function placeOrder() {
             `${item.name} x ${item.qty}`
         ).join(", ");
 
+        const orderId = "ORD-" + Date.now();
+
     let totalAmt =
         cart.reduce(
             (sum, item) =>
