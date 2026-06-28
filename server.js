@@ -14,21 +14,19 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "./")));
 
 // MySQL Connection
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.MYSQLHOST,
     user: process.env.MYSQLUSER,
     password: process.env.MYSQLPASSWORD,
     database: process.env.MYSQLDATABASE,
-    port: process.env.MYSQLPORT
+    port: process.env.MYSQLPORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect((err) => {
-    if (err) {
-        console.error("❌ DB Connection Error:", err);
-    } else {
-        console.log("✅ MySQL Connected!");
-    }
-});
+
+
 
 // Home Route
 app.get("/", (req, res) => {
