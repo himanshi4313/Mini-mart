@@ -793,6 +793,7 @@ function placeOrder() {
             },
 
             body: JSON.stringify({
+                orderId,
                 name,
                 mobile,
                 address,
