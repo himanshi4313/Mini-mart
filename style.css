@@ -824,17 +824,23 @@ html{
 }
 /* ===== BOTTOM NAVIGATION ===== */
 
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 75px;
-  background: #ffffff;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  ...
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:75px;
+
+    background:#fff;
+
+    display:flex;
+
+    justify-content:space-around;
+    align-items:center;
+
+    box-shadow:0 -5px 20px rgba(0,0,0,0.1);
+
+    z-index:9999;
 }
 .nav-item{
     display:flex;
@@ -912,4 +918,105 @@ html{
     opacity:1;
     visibility:visible;
     bottom:120px;
+}
+/* ===== ADMIN LOGIN MODAL ===== */
+
+.modal-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100vh;
+
+    background:rgba(0,0,0,0.6);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:999999;
+}
+
+.modal-box{
+
+    background:white;
+
+    width:90%;
+    max-width:350px;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+
+}
+
+.modal-box h3{
+
+    margin-bottom:10px;
+
+}
+
+.modal-box p{
+
+    color:#666;
+    margin-bottom:20px;
+
+}
+
+.modal-box input{
+
+    width:100%;
+    padding:12px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    margin-bottom:20px;
+
+    font-size:15px;
+
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.cancel-btn,
+.login-btn{
+
+    flex:1;
+
+    border:none;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+}
+
+.cancel-btn{
+
+    background:#eee;
+    color:#333;
+
+}
+
+.login-btn{
+
+    background:#df4b0b;
+    color:white;
+
 }

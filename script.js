@@ -398,16 +398,36 @@ function handleAdminTabClick(element) {
     }
 }
 
-function verifyAdminPassword() {
-    let enteredPassword = document.getElementById("adminPasswordInput").value;
+
+
+    function verifyAdminPassword() {
+
+    let enteredPassword =
+        document.getElementById(
+            "adminPasswordInput"
+        ).value;
 
     if (enteredPassword === "psstore@4313") {
+
         isAdminAuthenticated = true;
-        document.getElementById("adminAuthModal").style.display = "none";
-        switchPage('admin', document.getElementById("adminNavItem"));
+
+        closeAuthModal();
+
+        switchPage(
+            'admin',
+            document.getElementById("adminNavItem")
+        );
+
     } else {
-        alert("Invalid Password!");
+
+        alert("Incorrect Password! and only admins can acces this page");
+
+        document.getElementById(
+            "adminPasswordInput"
+        ).value = "";
+
     }
+
 }
 
 function closeAuthModal() {
