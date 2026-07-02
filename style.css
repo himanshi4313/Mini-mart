@@ -351,11 +351,55 @@ body{
 /* =========================
    CATEGORY SECTION
 ========================= */
+.categories-container{
+    display:flex;
+    height:calc(100vh - 150px);
+}
 
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
-  gap: 15px;
+.category-sidebar{
+    width:110px;
+    background:#f8f8f8;
+    overflow-y:auto;
+    border-right:1px solid #ddd;
+}
+
+.category-item{
+    padding:12px 5px;
+    text-align:center;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+    background:white;
+    transition:0.3s;
+}
+
+.category-item img{
+    width:55px;
+    height:55px;
+    object-fit:contain;
+    border-radius:50%;
+    background:white;
+}
+
+.category-item span{
+    display:block;
+    margin-top:5px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.category-item.active{
+    background:#fff3eb;
+}
+
+.category-item.active span{
+    color:#df4b0b;
+    font-weight:bold;
+}
+
+.category-content{
+    flex:1;
+    padding:10px;
+    overflow-y:auto;
 }
 
 .store-card {

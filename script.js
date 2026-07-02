@@ -194,41 +194,57 @@ function generateCategories(products) {
     let categories = [
         ...new Set(
             products
-                .map(p => p.category)
-                .filter(Boolean)
+            .map(p => p.category)
+            .filter(Boolean)
         )
     ];
 
     let html = "";
 
-    categories.forEach((cat, index) => {
+    categories.forEach((cat,index)=>{
 
-        let icon = "fa-solid fa-box";
+        let firstProduct =
+            products.find(
+                p => p.category === cat
+            );
 
-        if (cat.toLowerCase().includes("grocer")) {
-            icon = "fa-solid fa-basket-shopping";
-        }
-
-        if (cat.toLowerCase().includes("milk")) {
-            icon = "fa-solid fa-bottle-droplet";
-        }
+        let image =
+            firstProduct
+            ? `images/${firstProduct.image}`
+            : "images/default.png";
 
         html += `
         <div
-            class="store-card ${index === 0 ? "active-cat" : ""}"
-            onclick="filterCategory('${cat}', this)"
+            class="category-item
+            ${index===0 ? "active" : ""}"
+
+            onclick="
+            filterCategory(
+                '${cat}',
+                this
+            )"
         >
-            <i class="${icon}"></i>
-            <p>${cat}</p>
+
+            <img src="${image}">
+
+            <span>${cat}</span>
+
         </div>
         `;
 
     });
 
-    document.getElementById("categoryTabs").innerHTML = html;
+    document.getElementById(
+        "categoryTabs"
+    ).innerHTML = html;
 
-    if (categories.length > 0) {
-        filterCategory(categories[0]);
+    if(categories.length>0){
+
+        filterCategory(
+            categories[0],
+            document.querySelector(".category-item")
+        );
+
     }
 
 }
@@ -855,4 +871,44 @@ function showToast(msg) {
     setTimeout(() => {
         toast.classList.remove("show");
     }, 2000);
+}
+function searchProducts() {
+
+    let keyword = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    let filteredProducts = allProducts.filter(product =>
+        product.name
+            .toLowerCase()
+            .includes(keyword)
+    );
+
+    // Home page par search
+    if (
+        document.getElementById("home-view")
+        .style.display !== "none"
+    ) {
+
+        renderProducts(
+            filteredProducts,
+            "productList"
+        );
+
+    }
+
+    // Category page par search
+    if (
+        document.getElementById("category-view")
+        .style.display !== "none"
+    ) {
+
+        renderProducts(
+            filteredProducts,
+            "categoryProductList"
+        );
+
+    }
+
 }
