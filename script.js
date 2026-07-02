@@ -194,57 +194,42 @@ function generateCategories(products) {
     let categories = [
         ...new Set(
             products
-            .map(p => p.category)
-            .filter(Boolean)
+                .map(p => p.category)
+                .filter(Boolean)
         )
     ];
 
     let html = "";
 
-    categories.forEach((cat,index)=>{
+    categories.forEach((cat, index) => {
 
-        let firstProduct =
-            products.find(
-                p => p.category === cat
-            );
-
-        let image =
-            firstProduct
-            ? `images/${firstProduct.image}`
-            : "images/default.png";
+        let imageName =
+            cat.toLowerCase()
+               .replace(/\s+/g, "-");
 
         html += `
         <div
-            class="category-item
-            ${index===0 ? "active" : ""}"
-
-            onclick="
-            filterCategory(
-                '${cat}',
-                this
-            )"
+            class="store-card ${index === 0 ? "active-cat" : ""}"
+            onclick="filterCategory('${cat}', this)"
         >
 
-            <img src="${image}">
+            <img
+                src="images/categories/${imageName}.png"
+                onerror="this.src='images/categories/default.png'"
+                class="category-img"
+            >
 
-            <span>${cat}</span>
+            <p>${cat}</p>
 
         </div>
         `;
 
     });
 
-    document.getElementById(
-        "categoryTabs"
-    ).innerHTML = html;
+    document.getElementById("categoryTabs").innerHTML = html;
 
-    if(categories.length>0){
-
-        filterCategory(
-            categories[0],
-            document.querySelector(".category-item")
-        );
-
+    if (categories.length > 0) {
+        filterCategory(categories[0]);
     }
 
 }
