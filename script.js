@@ -233,7 +233,6 @@ function generateCategories(products) {
     }
 
 }
-
 // ====================
 // FILTER CATEGORY
 // ====================
