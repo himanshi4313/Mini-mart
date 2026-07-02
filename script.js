@@ -262,10 +262,10 @@ function generateCategories(products) {
         >
 
             <img
-                src="images/${imageName}"
-                class="category-img"
-                onerror="this.src='images/default.png'"
-            >
+    src="images/categories/${cat.toLowerCase().replace(/\s+/g, "-")}.png"
+    onerror="this.src='images/categories/default.png'"
+    class="category-img"
+>
 
             <p>${cat}</p>
 
