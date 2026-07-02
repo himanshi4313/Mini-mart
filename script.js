@@ -191,21 +191,69 @@ function renderProducts(
 
 function generateCategories(products) {
 
-    let categories = [
-        ...new Set(
-            products
-                .map(p => p.category)
-                .filter(Boolean)
-        )
+    const categoryOrder = [
+        "Grocery",
+        "Cosmetics",
+        "Dry Fruits",
+        "Dairy Products",
+        "Cold Drinks",
+        "Stationery",
+        "Plastic Items",
+        "Undergarments",
+        "Cleaning"
     ];
+
+    let categories = categoryOrder.filter(cat =>
+        products.some(p => p.category === cat)
+    );
 
     let html = "";
 
     categories.forEach((cat, index) => {
 
-        let imageName =
-            cat.toLowerCase()
-               .replace(/\s+/g, "-");
+        let imageName = "";
+
+        switch (cat) {
+
+            case "Grocery":
+                imageName = "grocery.png";
+                break;
+
+            case "Cosmetics":
+                imageName = "cosmetics.png";
+                break;
+
+            case "Dry Fruits":
+                imageName = "dry-fruits.png";
+                break;
+
+            case "Dairy Products":
+                imageName = "dairy-products.png";
+                break;
+
+            case "Cold Drinks":
+                imageName = "cold-drinks.png";
+                break;
+
+            case "Stationery":
+                imageName = "stationery.png";
+                break;
+
+            case "Plastic Items":
+                imageName = "plastic-items.png";
+                break;
+
+            case "Undergarments":
+                imageName = "undergarments.png";
+                break;
+
+            case "Cleaning":
+                imageName = "cleaning.png";
+                break;
+
+            default:
+                imageName = "default.png";
+        }
 
         html += `
         <div
@@ -214,9 +262,9 @@ function generateCategories(products) {
         >
 
             <img
-                src="images/categories/${imageName}.png"
-                onerror="this.src='images/categories/default.png'"
+                src="images/${imageName}"
                 class="category-img"
+                onerror="this.src='images/default.png'"
             >
 
             <p>${cat}</p>
@@ -231,7 +279,6 @@ function generateCategories(products) {
     if (categories.length > 0) {
         filterCategory(categories[0]);
     }
-
 }
 // ====================
 // FILTER CATEGORY
