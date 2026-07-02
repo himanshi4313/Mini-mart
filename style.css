@@ -1092,3 +1092,32 @@ html{
     color:white;
 
 }
+.branch-card {
+    background: #f9f9f9;
+    padding: 16px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn {
+    flex: 1; /* Dono buttons barabar width lenge */
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.call { background: #007bff; color: #fff; }
+.whatsapp { background: #25d366; color: #fff; }
+.branch-card:active {
+  transform: scale(0.98); /* Touch karte hi halka dabega */
+  transition: 0.1s;
+}
