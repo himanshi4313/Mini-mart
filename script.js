@@ -894,7 +894,7 @@ function placeOrder() {
     alert("Order failed: " + err.message);
 
 });
-
+}
 
 function showToast(msg) {
     const toast = document.getElementById("toast");
@@ -1507,4 +1507,49 @@ function updateUserUI() {
     ).src = user.picture;
 
 }
+
+function updateUserUI() {
+
+    const user = JSON.parse(localStorage.getItem("psUser"));
+
+    if (!user) return;
+
+    document.getElementById("profileGuest").style.display = "none";
+    document.getElementById("profileUser").style.display = "block";
+
+    document.getElementById("pmName").innerText = user.name;
+    document.getElementById("pmEmail").innerText = user.email;
+
+    document.getElementById("pmAvatar").src = user.picture;
+    document.getElementById("profileAvatar").src = user.picture;
+}
+
+function handleGoogleCredential(response) {
+
+    const data = JSON.parse(
+        atob(response.credential.split(".")[1])
+    );
+
+    const user = {
+        name: data.name,
+        email: data.email,
+        picture: data.picture
+    };
+
+    localStorage.setItem(
+        "psUser",
+        JSON.stringify(user)
+    );
+
+    updateUserUI();
+    closeGoogleLogin();
+
+    showToast("Login Successful ✅");
+}
+
+function signOutUser() {
+
+    localStorage.removeItem("psUser");
+    location.reload();
+
 }
