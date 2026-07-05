@@ -1484,4 +1484,4 @@ function updateUserUI() {
     ).src = user.picture;
 
 }
-
+}
