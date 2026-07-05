@@ -941,5 +941,216 @@ function searchProducts() {
         );
 
     }
+// ====================
+// PROFILE MENU
+// ====================
+
+function toggleProfileMenu() {
+
+    document
+        .getElementById("profileMenu")
+        .classList
+        .toggle("open");
 
 }
+
+document.addEventListener("click", function (e) {
+
+    const menu =
+        document.getElementById("profileMenu");
+
+    const btn =
+        document.getElementById("profileBtn");
+
+    if (
+        menu &&
+        btn &&
+        !menu.contains(e.target) &&
+        !btn.contains(e.target)
+    ) {
+
+        menu.classList.remove("open");
+
+    }
+
+});
+
+
+// ====================
+// GOOGLE LOGIN MODAL
+// ====================
+
+function openGoogleLogin() {
+
+    document.getElementById(
+        "googleLoginModal"
+    ).style.display = "flex";
+
+}
+
+function closeGoogleLogin() {
+
+    document.getElementById(
+        "googleLoginModal"
+    ).style.display = "none";
+
+}
+
+
+// ====================
+// LOCATION MODAL
+// ====================
+
+function openLocationModal() {
+
+    document.getElementById(
+        "locationModal"
+    ).style.display = "flex";
+
+}
+
+function closeLocationModal() {
+
+    document.getElementById(
+        "locationModal"
+    ).style.display = "none";
+
+}
+
+function saveLocation() {
+
+    let location =
+        document.getElementById("locInput")
+        .value
+        .trim();
+
+    if (!location) {
+
+        alert("Enter location");
+        return;
+
+    }
+
+    localStorage.setItem(
+        "psLoc",
+        location
+    );
+
+    document.getElementById(
+        "userLocation"
+    ).innerText = location;
+
+    closeLocationModal();
+
+}
+
+function detectLocation() {
+
+    if (!navigator.geolocation) {
+
+        alert("Geolocation not supported");
+
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function (position) {
+
+            let locationText =
+                `Lat ${position.coords.latitude.toFixed(3)}, Lng ${position.coords.longitude.toFixed(3)}`;
+
+            localStorage.setItem(
+                "psLoc",
+                locationText
+            );
+
+            document.getElementById(
+                "userLocation"
+            ).innerText = locationText;
+
+            closeLocationModal();
+
+        }
+    );
+
+}
+
+
+// ====================
+// USER LOGIN DATA
+// ====================
+
+function applyUser(user) {
+
+    document.getElementById(
+        "profileAvatar"
+    ).src =
+        user.picture ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=df4b0b&color=fff`;
+
+    document.getElementById(
+        "pmAvatar"
+    ).src = user.picture;
+
+    document.getElementById(
+        "pmName"
+    ).innerText = user.name;
+
+    document.getElementById(
+        "pmEmail"
+    ).innerText = user.email;
+
+    document.getElementById(
+        "profileGuest"
+    ).style.display = "none";
+
+    document.getElementById(
+        "profileUser"
+    ).style.display = "block";
+
+}
+
+function signOutUser() {
+
+    localStorage.removeItem("psUser");
+
+    document.getElementById(
+        "profileAvatar"
+    ).src =
+        "https://ui-avatars.com/api/?name=Guest&background=df4b0b&color=fff";
+
+    document.getElementById(
+        "profileGuest"
+    ).style.display = "block";
+
+    document.getElementById(
+        "profileUser"
+    ).style.display = "none";
+
+    showToast("Signed Out");
+
+}
+
+
+// ====================
+// LOAD SAVED LOCATION
+// ====================
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    let savedLocation =
+        localStorage.getItem("psLoc");
+
+    if (savedLocation) {
+
+        document.getElementById(
+            "userLocation"
+        ).innerText =
+            savedLocation;
+
+    }
+
+});
+}
+

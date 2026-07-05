@@ -291,60 +291,6 @@
   <div id="toast"></div>
 
   <script src="script.js"></script>
-  <script>
-    /* Profile / Location / Google helpers */
-    function toggleProfileMenu(){ document.getElementById('profileMenu').classList.toggle('open'); }
-    document.addEventListener('click',e=>{
-      const m=document.getElementById('profileMenu'), b=document.getElementById('profileBtn');
-      if(m && !m.contains(e.target) && !b.contains(e.target)) m.classList.remove('open');
-    });
-    function openGoogleLogin(){ document.getElementById('googleLoginModal').style.display='flex'; }
-    function closeGoogleLogin(){ document.getElementById('googleLoginModal').style.display='none'; }
-    function handleGoogleCredential(res){
-      try{
-        const p = JSON.parse(atob(res.credential.split('.')[1]));
-        const user = { name:p.name, email:p.email, picture:p.picture };
-        localStorage.setItem('psUser', JSON.stringify(user));
-        applyUser(user); closeGoogleLogin();
-        if(typeof showToast==='function') showToast('Welcome '+user.name+' 👋');
-      }catch(e){ console.error(e); }
-    }
-    function applyUser(u){
-      document.getElementById('profileAvatar').src = u.picture || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.name)+'&background=df4b0b&color=fff&bold=true');
-      document.getElementById('pmAvatar').src = u.picture;
-      document.getElementById('pmName').textContent = u.name;
-      document.getElementById('pmEmail').textContent = u.email;
-      document.getElementById('profileGuest').style.display='none';
-      document.getElementById('profileUser').style.display='block';
-    }
-    function signOutUser(){
-      localStorage.removeItem('psUser');
-      document.getElementById('profileAvatar').src='https://ui-avatars.com/api/?name=Guest&background=df4b0b&color=fff&bold=true';
-      document.getElementById('profileGuest').style.display='block';
-      document.getElementById('profileUser').style.display='none';
-      if(typeof showToast==='function') showToast('Signed out');
-    }
-    (function(){ const s=localStorage.getItem('psUser'); if(s) applyUser(JSON.parse(s)); })();
-
-    function openLocationModal(){ document.getElementById('locationModal').style.display='flex'; }
-    function closeLocationModal(){ document.getElementById('locationModal').style.display='none'; }
-    function saveLocation(){
-      const v=document.getElementById('locInput').value.trim();
-      if(!v) return;
-      localStorage.setItem('psLoc',v);
-      document.getElementById('userLocation').textContent=v;
-      closeLocationModal();
-    }
-    function detectLocation(){
-      if(!navigator.geolocation) return alert('Not supported');
-      navigator.geolocation.getCurrentPosition(p=>{
-        const t='Lat '+p.coords.latitude.toFixed(3)+', Lng '+p.coords.longitude.toFixed(3);
-        localStorage.setItem('psLoc',t);
-        document.getElementById('userLocation').textContent=t;
-        closeLocationModal();
-      });
-    }
-    (function(){ const l=localStorage.getItem('psLoc'); if(l) document.getElementById('userLocation').textContent=l; })();
-  </script>
+  
 </body>
 </html>
