@@ -852,46 +852,50 @@ function placeOrder() {
         );
 
     fetch(
-        "https://mini-mart-production.up.railway.app/orders",
-        {
-            method: "POST",
+    "https://mini-mart-production.up.railway.app/orders",
+    {
+        method: "POST",
 
-            headers: {
-                "Content-Type":
-                "application/json"
-            },
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-            body: JSON.stringify({
-                orderId,
-                name,
-                mobile,
-                address,
-                itemsSummary,
-                totalAmt
-            })
-        }
-    )
-    .then(res => res.json())
-    .then(data => {
+        body: JSON.stringify({
+            orderId,
+            name,
+            mobile,
+            address,
+            itemsSummary,
+            totalAmt
+        })
+    }
+)
+.then(async res => {
 
-        alert("Order placed successfully!");
+    const data = await res.json();
 
-        cart = [];
+    console.log("Response:", data);
 
-        updateCartUI();
+    if (!res.ok) {
+        throw new Error(data.error || "Server Error");
+    }
 
-        switchPage("home");
+    alert("Order placed successfully!");
 
-    })
-    .catch(err => {
+    cart = [];
+    updateCartUI();
+    switchPage("home");
 
-        console.error(err);
+})
+.catch(err => {
 
-        alert("Order failed!");
+    console.error("Order Error:", err);
 
-    });
+    alert("Order failed: " + err.message);
 
-}
+});
+
+
 function showToast(msg) {
     const toast = document.getElementById("toast");
 
