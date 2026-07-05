@@ -9,7 +9,7 @@ let editProductId = null;
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    updateUserUI();
+    
 
     if (
         Notification.permission !== "granted" &&
