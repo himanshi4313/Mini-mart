@@ -1227,3 +1227,64 @@ function signOutUser() {
     document.getElementById("profileMenu").style.display = "none";
 
 }
+
+// ====================
+// PROFILE MENU
+// ====================
+
+function toggleProfileMenu() {
+    const menu = document.getElementById("profileMenu");
+
+    if (menu) {
+        menu.classList.toggle("open");
+    }
+}
+
+document.addEventListener("click", function(e) {
+
+    const menu = document.getElementById("profileMenu");
+    const btn = document.getElementById("profileBtn");
+
+    if (
+        menu &&
+        btn &&
+        !menu.contains(e.target) &&
+        !btn.contains(e.target)
+    ) {
+        menu.classList.remove("open");
+    }
+});
+
+
+// ====================
+// GOOGLE LOGIN MODAL
+// ====================
+
+function openGoogleLogin() {
+    document.getElementById(
+        "googleLoginModal"
+    ).style.display = "flex";
+}
+
+function closeGoogleLogin() {
+    document.getElementById(
+        "googleLoginModal"
+    ).style.display = "none";
+}
+
+
+// ====================
+// LOCATION MODAL
+// ====================
+
+function openLocationModal() {
+    document.getElementById(
+        "locationModal"
+    ).style.display = "flex";
+}
+
+function closeLocationModal() {
+    document.getElementById(
+        "locationModal"
+    ).style.display = "none";
+}
