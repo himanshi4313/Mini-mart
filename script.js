@@ -8,7 +8,9 @@ let editProductId = null;
 // ====================
 
 window.addEventListener("DOMContentLoaded", () => {
-updateUserUI();
+
+    updateUserUI();
+
     if (
         Notification.permission !== "granted" &&
         Notification.permission !== "denied"
@@ -21,18 +23,16 @@ updateUserUI();
         const splash =
             document.getElementById("splash-screen");
 
-        const mainContent =
-            document.getElementById("main-content");
+        if (splash) {
 
-        if (splash && mainContent) {
+            splash.style.display = "none";
 
-            splash.style.opacity = "0";
-            splash.style.visibility = "hidden";
+            const bottomNav =
+                document.querySelector(".bottom-nav");
 
-            mainContent.style.opacity = "1";
-            mainContent.style.transform =
-                "translateY(0)";
-                document.querySelector(".bottom-nav").style.display = "flex";
+            if (bottomNav) {
+                bottomNav.style.display = "flex";
+            }
 
         }
 
