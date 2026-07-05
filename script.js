@@ -435,7 +435,6 @@ function removeFromCart(index) {
 
     
 
-
 function handleAdminTabClick(element) {
     if (isAdminAuthenticated) {
         switchPage('admin', element);
@@ -1128,7 +1127,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
 });
-}
+
 
 
 // ====================
