@@ -1,43 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-  
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>psstore Jodhpur</title>
+  <title>PS STORE Jodhpur — Ghar Baithe Grocery Delivery</title>
+  <meta name="description" content="Order groceries online from PS STORE Jodhpur. Fast delivery, best prices, guaranteed quality.">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
+  <!-- SPLASH -->
   <div id="splash-screen">
+    <img src="images/logo.png" class="splash-logo" alt="PS STORE Logo">
+    <div class="splash-subtitle">Ghar Ki Zaroorat Puri Kare Ghar Baithe</div>
+    <div class="splash-loader"><span></span><span></span><span></span></div>
+  </div>
 
-    <img
-        src="images/logo.png"
-        class="splash-logo"
-        alt="PS STORE Logo"
-    >
+  <!-- TOP HEADER -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="location-block" onclick="openLocationModal()">
+        <div class="loc-title">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Delivery in <b>15 min</b></span>
+          <i class="fa-solid fa-chevron-down chev"></i>
+        </div>
+        <div class="loc-address" id="userLocation">Devi Road, Chandana Bhaker, Jodhpur</div>
+      </div>
 
-    <div class="splash-subtitle">
-        Ghar Ki Zaroorat Puri Kare Ghar Baithe
+      <div class="header-right">
+        <div class="profile-btn" id="profileBtn" onclick="toggleProfileMenu()">
+          <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Guest&background=df4b0b&color=fff&bold=true" alt="Profile">
+        </div>
+      </div>
     </div>
 
-</div>
-
-  <div class="header-search">
-    <div class="logo-section">
-      <i class="fa-solid fa-basket-shopping logo-icon"></i>
-      <span class="logo-text">PS<span>STORE</span></span>
+    <div class="header-search">
+      <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon-inside"></i>
+        <input type="text" id="searchInput" placeholder='Search "atta", "milk", "oil"...' onkeyup="searchProducts()">
+        <i class="fa-solid fa-microphone mic-icon"></i>
+      </div>
     </div>
-    <div class="search-container">
-      <i class="fa-solid fa-magnifying-glass search-icon-inside"></i>
-      <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
+  </header>
+
+  <!-- PROFILE DROPDOWN -->
+  <div id="profileMenu" class="profile-menu">
+    <div id="profileGuest">
+      <div class="pm-header">
+        <i class="fa-solid fa-circle-user"></i>
+        <div>
+          <h4>Welcome to PS STORE</h4>
+          <p>Sign in to track orders & save address</p>
+        </div>
+      </div>
+      <button class="google-btn" onclick="openGoogleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G"> Continue with Google
+      </button>
+    </div>
+
+    <div id="profileUser" style="display:none;">
+      <div class="pm-header user-header">
+        <img id="pmAvatar" src="" alt="">
+        <div>
+          <h4 id="pmName">User</h4>
+          <p id="pmEmail">user@email.com</p>
+        </div>
+      </div>
+      <ul class="pm-list">
+        <li onclick="switchPage('cart', document.querySelectorAll('.nav-item')[2])"><i class="fa-solid fa-bag-shopping"></i> My Orders</li>
+        <li onclick="openLocationModal()"><i class="fa-solid fa-location-dot"></i> Saved Addresses</li>
+        <li><i class="fa-solid fa-heart"></i> Wishlist</li>
+        <li><i class="fa-solid fa-headset"></i> Help & Support</li>
+        <li class="logout" onclick="signOutUser()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</li>
+      </ul>
     </div>
   </div>
 
-  <div id="adminAuthModal" class="modal-overlay" style="display: none;">
+  <!-- GOOGLE LOGIN MODAL -->
+  <div id="googleLoginModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
-      <h3><i class="fa-solid fa-lock" style="color: #00704A;"></i> Admin Authentication</h3>
+      <img src="images/logo.png" style="width:70px;margin:0 auto 10px;display:block;">
+      <h3>Sign in to PS STORE</h3>
+      <p>Get personalized offers, track orders and save addresses.</p>
+      <div id="g_id_onload"
+        data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+        data-callback="handleGoogleCredential"
+        data-auto_prompt="false"></div>
+      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-text="continue_with" data-size="large" data-logo_alignment="left"></div>
+      <button class="cancel-btn" style="margin-top:15px;width:100%;" onclick="closeGoogleLogin()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- LOCATION MODAL -->
+  <div id="locationModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <h3><i class="fa-solid fa-location-crosshairs" style="color:#df4b0b;"></i> Choose Location</h3>
+      <p>Enter your delivery area for faster service.</p>
+      <input type="text" id="locInput" placeholder="Enter area / pincode">
+      <button class="login-btn" style="width:100%;margin-bottom:8px;" onclick="detectLocation()"><i class="fa-solid fa-location-arrow"></i> Use current location</button>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeLocationModal()">Cancel</button>
+        <button class="login-btn" onclick="saveLocation()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN AUTH MODAL -->
+  <div id="adminAuthModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <h3><i class="fa-solid fa-lock" style="color:#df4b0b;"></i> Admin Authentication</h3>
       <p>Only authorized shopkeepers can access this area.</p>
       <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password">
       <div class="modal-buttons">
@@ -47,59 +122,65 @@
     </div>
   </div>
 
+  <!-- MAIN -->
   <div id="main-content">
-    
+
     <div id="home-view">
       <div class="banner">
         <img id="bannerImg" src="images/banner1.jpg" alt="Banner">
         <div class="bannerText">
+          <span class="badge-tag">⚡ Express Delivery</span>
           <h1>PS STORE Jodhpur</h1>
-          <p>DEVI ROAD CHANDANA BHAKER, Jodhpur, Rajasthan 342003</p>
-          <h3>Guaranteed Quality Products</h3>
+          <p>Devi Road, Chandana Bhaker, Jodhpur, Rajasthan 342003</p>
+          <h3>✓ Guaranteed Quality • ✓ Best Prices</h3>
         </div>
       </div>
 
+      <div class="quick-cats">
+        <div class="qc-item"><div class="qc-icon" style="background:#fff3e0;">🥛</div><span>Dairy</span></div>
+        <div class="qc-item"><div class="qc-icon" style="background:#e8f5e9;">🥬</div><span>Veggies</span></div>
+        <div class="qc-item"><div class="qc-icon" style="background:#fce4ec;">🍫</div><span>Snacks</span></div>
+        <div class="qc-item"><div class="qc-icon" style="background:#e3f2fd;">🧴</div><span>Personal</span></div>
+        <div class="qc-item"><div class="qc-icon" style="background:#fff9c4;">🍚</div><span>Grocery</span></div>
+        <div class="qc-item"><div class="qc-icon" style="background:#f3e5f5;">🧹</div><span>Household</span></div>
+      </div>
+
       <div class="content-area">
-        <h3>Special Offers For You 🔥</h3>
-        <p>Explore top deals with high discounts tailored for you</p>
+        <div class="section-header">
+          <div>
+            <h3>Special Offers 🔥</h3>
+            <p>Top deals handpicked for you</p>
+          </div>
+          <span class="see-all">See all →</span>
+        </div>
         <div id="productList"></div>
       </div>
     </div>
 
     <div id="category-view" style="display:none;">
-
-    <div class="categories-container">
-
-        <!-- Left Sidebar -->
-        <div id="categoryTabs" class="category-sidebar">
-        </div>
-
-        <!-- Right Products -->
+      <div class="categories-container">
+        <div id="categoryTabs" class="category-sidebar"></div>
         <div class="category-content">
-            <h2 id="categoryTitle">All Products</h2>
-
-            <div id="categoryProductList">
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-    <div id="cart-view" style="display: none;">
-      <div class="content-area">
-        <h3>Your Shopping Cart 🛒</h3>
-        <p>Review items before placing your order</p>
-        <div id="cartList"></div>
-        <div id="cartSummary" class="cart-summary" style="display: none;">
-          <div class="summary-row"><span>Total Items:</span><span id="totalItems">0</span></div>
-          <div class="summary-row"><span>Total Amount:</span><span id="totalAmount">₹0</span></div>
-          <button class="checkout-btn" onclick="showCheckoutPage()">Proceed to Checkout</button>
+          <h2 id="categoryTitle">All Products</h2>
+          <div id="categoryProductList"></div>
         </div>
       </div>
     </div>
 
-    <div id="checkout-view" style="display: none;">
+    <div id="cart-view" style="display:none;">
+      <div class="content-area">
+        <h3>Your Cart 🛒</h3>
+        <p>Review items before placing your order</p>
+        <div id="cartList"></div>
+        <div id="cartSummary" class="cart-summary" style="display:none;">
+          <div class="summary-row"><span>Total Items:</span><span id="totalItems">0</span></div>
+          <div class="summary-row grand"><span>Total Amount:</span><span id="totalAmount">₹0</span></div>
+          <button class="checkout-btn" onclick="showCheckoutPage()">Proceed to Checkout →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="checkout-view" style="display:none;">
       <div class="content-area">
         <h3>Delivery Details 📦</h3>
         <p>Please enter your details for fast delivery</p>
@@ -115,183 +196,155 @@
       </div>
     </div>
 
-    <div id="admin-view" style="display: none;">
+    <div id="admin-view" style="display:none;">
       <div class="content-area">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
           <h3 style="margin:0;">Shopkeeper Dashboard 🛠️</h3>
-          <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Lock Dashboard</button>
+          <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Lock</button>
         </div>
 
-        <h3 style="color:#00704A;"><i class="fa-solid fa-receipt"></i> Active Customer Orders</h3>
-        <div class="admin-table-wrapper" style="margin-bottom: 35px;">
+        <h3 style="color:#df4b0b;"><i class="fa-solid fa-receipt"></i> Active Orders</h3>
+        <div class="admin-table-wrapper" style="margin-bottom:35px;">
           <table class="admin-table">
             <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Contact</th>
-                <th>Address</th>
-                <th>Items Summary</th>
-                <th>Total Bill</th>
-              </tr>
+              <tr><th>Order ID</th><th>Customer</th><th>Contact</th><th>Address</th><th>Items</th><th>Total</th></tr>
             </thead>
             <tbody id="adminOrderTableBody"></tbody>
           </table>
         </div>
-        
-        <div class="checkout-form" style="margin-bottom: 35px;">
-          <h4 id="formTitle" style="margin-top:0; color:var(--primary-color); font-size:16px;"><i class="fa-solid fa-plus-circle"></i> Add New Product</h4>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div>
-              <label>Product Name</label>
-              <input type="text" id="pName" placeholder="e.g., Fortune Oil">
-            </div>
-            <div>
-              <label>Category</label>
-              <input type="text" id="pCategory" placeholder="e.g., Grocery, Dairy">
-            </div>
-            <div>
-              <label>Price (₹)</label>
-              <input type="number" id="pPrice" placeholder="Original price">
-            </div>
-            <div>
-              <label>Discount (%)</label>
-              <input type="number" id="pDiscount" placeholder="0 if none" value="0">
-            </div>
-            <div>
-              <label>Stock Qty</label>
-              <input type="number" id="pStock" placeholder="Available units">
-            </div>
-            <div>
-              <label>Image Filename</label>
-              <input type="text" id="pIdentity" placeholder="e.g., oil.jpg">
-            </div>
+
+        <div class="checkout-form" style="margin-bottom:35px;">
+          <h4 id="formTitle" style="margin-top:0;color:var(--primary-color);font-size:16px;"><i class="fa-solid fa-plus-circle"></i> Add New Product</h4>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div><label>Product Name</label><input type="text" id="pName" placeholder="e.g., Fortune Oil"></div>
+            <div><label>Category</label><input type="text" id="pCategory" placeholder="e.g., Grocery"></div>
+            <div><label>Price (₹)</label><input type="number" id="pPrice" placeholder="Original price"></div>
+            <div><label>Discount (%)</label><input type="number" id="pDiscount" value="0"></div>
+            <div><label>Stock Qty</label><input type="number" id="pStock" placeholder="Available"></div>
+            <div><label>Image Filename</label><input type="text" id="pIdentity" placeholder="oil.jpg"></div>
           </div>
           <button id="saveProductBtn" class="place-order-btn" onclick="saveProductAction()" style="margin-top:10px;">Save to Database</button>
         </div>
 
-        <h3>Live Inventory (Click <i class="fa-solid fa-pen-to-square" style="color:#00704A"></i> to Edit / <i class="fa-solid fa-trash-can" style="color:red"></i> to Remove)</h3>
+        <h3>Live Inventory</h3>
         <div id="adminInventoryGrid" class="admin-inventory-grid"></div>
-
       </div>
     </div>
 
   </div>
 
-  <footer class="site-footer" style="background-color: #f9f9f9; padding: 30px 15px; margin-top: 40px; margin-bottom: 70px; border-top: 1px solid #eee; text-align: center; font-family: sans-serif;">
-    <div style="max-width: 600px; margin: 0 auto;">
-      <h3 style="color: #00704A; margin-bottom: 10px;">About PS STORE</h3>
-      <p style="color: #555; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
-        PS STORE se seedhe aapke ghar tak! Hum dete hain sabse sasta aur sabsay accha saaman. Kisi bhi prashn ya sahayata ke liye niche diye buttons se humse turant sampark karein.
-      </p>
-      
-      <div class="footer-buttons" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 20px;">
-        <a href="mailto:psmegamartmart@gmail.com" style="display: inline-flex; align-items: center; background-color: #ea4335; color: white; padding: 10px 16px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: bold; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-          <i class="fa-solid fa-envelope"></i> Email Us
-        </a>
-        
-        <a href="https://wa.me/918003219434" target="_blank" style="display: inline-flex; align-items: center; background-color: #25d366; color: white; padding: 10px 16px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: bold; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-          <i class="fa-brands fa-whatsapp"></i> WhatsApp
-        </a>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-wrap">
+      <h3>About PS STORE</h3>
+      <p>PS STORE se seedhe aapke ghar tak — sabse sasta aur sabse accha saaman. Kisi bhi sahayata ke liye niche sampark karein.</p>
 
-        <a href="https://www.instagram.com/ps_store_live?igsh=MXMwN3hmYmJ5aWNrYQ==" target="_blank" style="display: inline-flex; align-items: center; background-color: #e1306c; color: white; padding: 10px 16px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: bold; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-          <i class="fa-brands fa-instagram"></i> Instagram
-        </a>
+      <div class="footer-buttons">
+        <a href="mailto:psmegamartmart@gmail.com" class="fb email"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="https://wa.me/918003219434" target="_blank" class="fb wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        <a href="https://www.instagram.com/ps_store_live" target="_blank" class="fb ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
       </div>
-      <br>
-      <!-- Stylish Heading -->
-  <div style="text-align: center; margin-bottom: 20px;">
-    <h3 style="color: #00704A; margin: 0; display: inline-flex; align-items: center; gap: 10px;">
-      <i class="fa-solid fa-location-dot"></i> Our Branches
-    </h3>
-    <div style="height: 3px; width: 50px; background: #00704A; margin: 8px auto; border-radius: 2px;"></div>
-  </div>
-  <br>
-  
 
-      <!-- Footer ke andar "About Us" text ke niche ye add karein -->
-<div class="branch-section" style="margin-top: 30px; text-align: left;">
-  <h4 style="color: #00704A; text-align: center;">Branch No. 1</h4>
-  
-  <!-- Branch 1 Example -->
-  <div class="branch-card" style="background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee;">
-    <h5 style="margin: 0 0 5px 0;">PS MEGA MART</h5>
-    <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">Plot No. 16, Inda Market, Near Pal Pashu Mela, Sangriya Road, Jodhpur</p>
-    <div style="display: flex; gap: 10px;">
-      <a href="tel:+919116884100" class="btn" style="flex: 1; padding: 8px; background: #00704A; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">Call</a>
-      <a href="https://wa.me/919116884100" target="_blank" class="btn" style="flex: 1; padding: 8px; background: #25d366; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">WhatsApp</a>
-    </div>
-  </div>
-  <!-- Footer ke andar "About Us" text ke niche ye add karein -->
-<div class="branch-section" style="margin-top: 30px; text-align: left;">
-  <h4 style="color: #00704A; text-align: center;">Branch No. 2</h4>
-  
-  <!-- Branch 1 Example -->
-  <div class="branch-card" style="background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee;">
-    <h5 style="margin: 0 0 5px 0;">PRAKASH SHOPPE </h5>
-    <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">Devi Road, Chandana Bhaker, Jodhpur</p>
-    <div style="display: flex; gap: 10px;">
-      <a href="tel:+919119182900" class="btn" style="flex: 1; padding: 8px; background: #00704A; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">Call</a>
-      <a href="https://wa.me/919119182900" target="_blank" class="btn" style="flex: 1; padding: 8px; background: #25d366; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">WhatsApp</a>
-    </div>
-  </div>
-  <!-- Footer ke andar "About Us" text ke niche ye add karein -->
-<div class="branch-section" style="margin-top: 30px; text-align: left;">
-  <h4 style="color: #00704A; text-align: center;">Branch No. 3</h4>
-  
-  <!-- Branch 1 Example -->
-  <div class="branch-card" style="background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee;">
-    <h5 style="margin: 0 0 5px 0;">PG MART</h5>
-    <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">14/128 CHOUPASNI HOUSING BOARD JODHPUR</p>
-    <div style="display: flex; gap: 10px;">
-      <a href="tel:+919119152900" class="btn" style="flex: 1; padding: 8px; background: #00704A; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">Call</a>
-      <a href="https://wa.me/919119152900" target="_blank" class="btn" style="flex: 1; padding: 8px; background: #25d366; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">WhatsApp</a>
-    </div>
-  </div>
-  <!-- Footer ke andar "About Us" text ke niche ye add karein -->
-<div class="branch-section" style="margin-top: 30px; text-align: left;">
-  <h4 style="color: #00704A; text-align: center;"> Branch No. 4</h4>
-  
-  <!-- Branch 1 Example -->
-  <div class="branch-card" style="background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee;">
-    <h5 style="margin: 0 0 5px 0;">PS MART SOORSAGER</h5>
-    <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">Main Bypass Road, Soorsager, Jodhpur</p>
-    <div style="display: flex; gap: 10px;">
-      <a href="tel:+919680222337" class="btn" style="flex: 1; padding: 8px; background: #00704A; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">Call</a>
-      <a href="https://wa.me/919680222337" target="_blank" class="btn" style="flex: 1; padding: 8px; background: #25d366; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 12px;">WhatsApp</a>
-    </div>
-  </div>
+      <div class="branch-title"><h3><i class="fa-solid fa-location-dot"></i> Our Branches</h3><div class="line"></div></div>
 
-  <!-- Isi tarah baaki 3 branches ke liye copy-paste karein -->
-</div>
-      
-      <p style="color: #999; font-size: 12px; margin: 0;">&copy; 2026 PS STORE Jodhpur. All Rights Reserved.</p>
+      <div class="branch-card">
+        <h5>PS MEGA MART <span>Branch 1</span></h5>
+        <p>Plot No. 16, Inda Market, Near Pal Pashu Mela, Sangriya Road, Jodhpur</p>
+        <div class="btn-row"><a href="tel:+919116884100" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919116884100" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+      </div>
+      <div class="branch-card">
+        <h5>PRAKASH SHOPPE <span>Branch 2</span></h5>
+        <p>Devi Road, Chandana Bhaker, Jodhpur</p>
+        <div class="btn-row"><a href="tel:+919119182900" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919119182900" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+      </div>
+      <div class="branch-card">
+        <h5>PG MART <span>Branch 3</span></h5>
+        <p>14/128 Choupasni Housing Board, Jodhpur</p>
+        <div class="btn-row"><a href="tel:+919119152900" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919119152900" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+      </div>
+      <div class="branch-card">
+        <h5>PS MART SOORSAGER <span>Branch 4</span></h5>
+        <p>Main Bypass Road, Soorsager, Jodhpur</p>
+        <div class="btn-row"><a href="tel:+919680222337" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919680222337" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+      </div>
+
+      <p class="copyright">&copy; 2026 PS STORE Jodhpur. All Rights Reserved.</p>
     </div>
   </footer>
 
+  <!-- BOTTOM NAV -->
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchPage('home', this)">
-      <div class="icon-wrapper"><i class="fa-solid fa-house"></i></div>
-      <span>Home</span>
+      <div class="icon-wrapper"><i class="fa-solid fa-house"></i></div><span>Home</span>
     </div>
     <div class="nav-item" onclick="switchPage('category', this)">
-      <div class="icon-wrapper"><i class="fa-solid fa-layer-group"></i></div>
-      <span>Category</span>
+      <div class="icon-wrapper"><i class="fa-solid fa-layer-group"></i></div><span>Category</span>
     </div>
     <div class="nav-item" onclick="switchPage('cart', this)">
-      <div class="icon-wrapper">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span id="cartBadge" class="badge">0</span>
-      </div>
-      <span>Cart</span>
+      <div class="icon-wrapper"><i class="fa-solid fa-cart-shopping"></i><span id="cartBadge" class="badge">0</span></div><span>Cart</span>
     </div>
     <div class="nav-item" id="adminNavItem" onclick="handleAdminTabClick(this)">
-      <div class="icon-wrapper"><i class="fa-solid fa-user-gear"></i></div>
-      <span>Admin</span>
+      <div class="icon-wrapper"><i class="fa-solid fa-user-gear"></i></div><span>Admin</span>
     </div>
   </div>
 
-  <script src="script.js"></script>
   <div id="toast"></div>
+
+  <script src="script.js"></script>
+  <script>
+    /* Profile / Location / Google helpers */
+    function toggleProfileMenu(){ document.getElementById('profileMenu').classList.toggle('open'); }
+    document.addEventListener('click',e=>{
+      const m=document.getElementById('profileMenu'), b=document.getElementById('profileBtn');
+      if(m && !m.contains(e.target) && !b.contains(e.target)) m.classList.remove('open');
+    });
+    function openGoogleLogin(){ document.getElementById('googleLoginModal').style.display='flex'; }
+    function closeGoogleLogin(){ document.getElementById('googleLoginModal').style.display='none'; }
+    function handleGoogleCredential(res){
+      try{
+        const p = JSON.parse(atob(res.credential.split('.')[1]));
+        const user = { name:p.name, email:p.email, picture:p.picture };
+        localStorage.setItem('psUser', JSON.stringify(user));
+        applyUser(user); closeGoogleLogin();
+        if(typeof showToast==='function') showToast('Welcome '+user.name+' 👋');
+      }catch(e){ console.error(e); }
+    }
+    function applyUser(u){
+      document.getElementById('profileAvatar').src = u.picture || ('https://ui-avatars.com/api/?name='+encodeURIComponent(u.name)+'&background=df4b0b&color=fff&bold=true');
+      document.getElementById('pmAvatar').src = u.picture;
+      document.getElementById('pmName').textContent = u.name;
+      document.getElementById('pmEmail').textContent = u.email;
+      document.getElementById('profileGuest').style.display='none';
+      document.getElementById('profileUser').style.display='block';
+    }
+    function signOutUser(){
+      localStorage.removeItem('psUser');
+      document.getElementById('profileAvatar').src='https://ui-avatars.com/api/?name=Guest&background=df4b0b&color=fff&bold=true';
+      document.getElementById('profileGuest').style.display='block';
+      document.getElementById('profileUser').style.display='none';
+      if(typeof showToast==='function') showToast('Signed out');
+    }
+    (function(){ const s=localStorage.getItem('psUser'); if(s) applyUser(JSON.parse(s)); })();
+
+    function openLocationModal(){ document.getElementById('locationModal').style.display='flex'; }
+    function closeLocationModal(){ document.getElementById('locationModal').style.display='none'; }
+    function saveLocation(){
+      const v=document.getElementById('locInput').value.trim();
+      if(!v) return;
+      localStorage.setItem('psLoc',v);
+      document.getElementById('userLocation').textContent=v;
+      closeLocationModal();
+    }
+    function detectLocation(){
+      if(!navigator.geolocation) return alert('Not supported');
+      navigator.geolocation.getCurrentPosition(p=>{
+        const t='Lat '+p.coords.latitude.toFixed(3)+', Lng '+p.coords.longitude.toFixed(3);
+        localStorage.setItem('psLoc',t);
+        document.getElementById('userLocation').textContent=t;
+        closeLocationModal();
+      });
+    }
+    (function(){ const l=localStorage.getItem('psLoc'); if(l) document.getElementById('userLocation').textContent=l; })();
+  </script>
 </body>
 </html>
