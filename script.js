@@ -1154,3 +1154,75 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 }
 
+
+// ====================
+// PROFILE MENU
+// ====================
+
+function toggleProfileMenu() {
+    const menu = document.getElementById("profileMenu");
+
+    if (menu.style.display === "block") {
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "block";
+    }
+}
+
+// ====================
+// GOOGLE LOGIN
+// ====================
+
+function openGoogleLogin() {
+    document.getElementById("googleLoginModal").style.display = "flex";
+}
+
+function closeGoogleLogin() {
+    document.getElementById("googleLoginModal").style.display = "none";
+}
+
+function handleGoogleCredential(response) {
+    console.log(response);
+
+    alert("Google Login Connected");
+}
+
+// ====================
+// LOCATION
+// ====================
+
+function openLocationModal() {
+    document.getElementById("locationModal").style.display = "flex";
+}
+
+function closeLocationModal() {
+    document.getElementById("locationModal").style.display = "none";
+}
+
+function saveLocation() {
+    let loc = document.getElementById("locInput").value;
+
+    if (loc.trim() !== "") {
+        document.getElementById("userLocation").innerText = loc;
+    }
+
+    closeLocationModal();
+}
+
+function detectLocation() {
+    alert("Current location feature coming soon");
+}
+
+// ====================
+// SIGN OUT
+// ====================
+
+function signOutUser() {
+
+    document.getElementById("profileGuest").style.display = "block";
+
+    document.getElementById("profileUser").style.display = "none";
+
+    document.getElementById("profileMenu").style.display = "none";
+
+}
