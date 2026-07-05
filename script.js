@@ -1288,3 +1288,153 @@ function closeLocationModal() {
         "locationModal"
     ).style.display = "none";
 }
+// ================= GOOGLE LOGIN =================
+
+function openGoogleLogin() {
+    document.getElementById("googleLoginModal").style.display = "flex";
+}
+
+function closeGoogleLogin() {
+    document.getElementById("googleLoginModal").style.display = "none";
+}
+
+function handleGoogleCredential(response) {
+
+    const data = JSON.parse(atob(response.credential.split(".")[1]));
+
+    const user = {
+        name: data.name,
+        email: data.email,
+        picture: data.picture
+    };
+
+    localStorage.setItem("psUser", JSON.stringify(user));
+
+    updateUserUI();
+
+    closeGoogleLogin();
+
+    showToast("Login Successful ✅");
+}
+
+
+// ================= PROFILE =================
+
+function updateUserUI() {
+
+    const user = JSON.parse(localStorage.getItem("psUser"));
+
+    if (!user) return;
+
+    document.getElementById("profileGuest").style.display = "none";
+    document.getElementById("profileUser").style.display = "block";
+
+    document.getElementById("pmName").innerText = user.name;
+    document.getElementById("pmEmail").innerText = user.email;
+
+    document.getElementById("pmAvatar").src = user.picture;
+    document.getElementById("profileAvatar").src = user.picture;
+}
+
+
+function signOutUser() {
+
+    localStorage.removeItem("psUser");
+
+    location.reload();
+}
+
+
+function toggleProfileMenu() {
+
+    document.getElementById("profileMenu").classList.toggle("open");
+
+}
+
+
+// ================= ORDER HISTORY =================
+
+function saveOrderHistory(orderData) {
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    orders.push(orderData);
+
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+}
+
+
+// ================= PLACE ORDER =================
+
+function placeOrder() {
+
+    const user = JSON.parse(localStorage.getItem("psUser"));
+
+    if (!user) {
+
+        alert("Please login with Google first!");
+
+        openGoogleLogin();
+
+        return;
+    }
+
+    const name = document.getElementById("custName").value;
+    const mobile = document.getElementById("custMobile").value;
+    const address = document.getElementById("custAddress").value;
+
+    if (!name || !mobile || !address) {
+
+        alert("Please fill all details");
+
+        return;
+    }
+
+    let order = {
+
+        userName: user.name,
+        userEmail: user.email,
+        customerName: name,
+        mobile: mobile,
+        address: address,
+        items: cart,
+        total: cart.reduce((sum, item) => sum + item.price * item.qty, 0),
+        date: new Date().toLocaleString()
+
+    };
+
+    saveOrderHistory(order);
+
+    alert("Order Placed Successfully ✅");
+
+    cart = [];
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    updateCartBadge();
+
+    switchPage(
+        "home",
+        document.querySelector(".nav-item")
+    );
+}
+
+
+// ================= PAGE LOAD =================
+
+window.addEventListener("load", () => {
+
+    updateUserUI();
+
+});
+
+function showOrders() {
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    console.log(orders);
+
+    alert("Total Orders: " + orders.length);
+
+}
