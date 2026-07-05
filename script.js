@@ -947,12 +947,14 @@ function searchProducts() {
 
 function toggleProfileMenu() {
 
-    document
-        .getElementById("profileMenu")
-        .classList
-        .toggle("open");
+    const menu =
+        document.getElementById("profileMenu");
+
+    menu.classList.toggle("open");
 
 }
+
+// Menu ke bahar click karne par band ho jayega
 
 document.addEventListener("click", function (e) {
 
@@ -974,7 +976,6 @@ document.addEventListener("click", function (e) {
     }
 
 });
-
 
 // ====================
 // GOOGLE LOGIN MODAL
