@@ -9,7 +9,7 @@ let editProductId = null;
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    
+    updateUserUI();
 
     if (
         Notification.permission !== "granted" &&
@@ -1291,20 +1291,43 @@ function handleGoogleCredential(response) {
 
 function updateUserUI() {
 
-    const user = JSON.parse(localStorage.getItem("psUser"));
+    const user = JSON.parse(
+        localStorage.getItem("psUser")
+    );
 
-    if (!user) return;
+    const profileGuest =
+        document.getElementById("profileGuest");
 
-    document.getElementById("profileGuest").style.display = "none";
-    document.getElementById("profileUser").style.display = "block";
+    const profileUser =
+        document.getElementById("profileUser");
 
-    document.getElementById("pmName").innerText = user.name;
-    document.getElementById("pmEmail").innerText = user.email;
+    if (!profileGuest || !profileUser) return;
 
-    document.getElementById("pmAvatar").src = user.picture;
-    document.getElementById("profileAvatar").src = user.picture;
+    if (user) {
+
+        profileGuest.style.display = "none";
+        profileUser.style.display = "block";
+
+        document.getElementById("pmName").innerText =
+            user.name || "User";
+
+        document.getElementById("pmEmail").innerText =
+            user.email || "";
+
+        document.getElementById("pmAvatar").src =
+            user.picture;
+
+        document.getElementById("profileAvatar").src =
+            user.picture;
+
+    } else {
+
+        profileGuest.style.display = "block";
+        profileUser.style.display = "none";
+
+    }
+
 }
-
 
 function signOutUser() {
 
