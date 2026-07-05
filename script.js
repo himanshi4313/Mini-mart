@@ -8,7 +8,7 @@ let editProductId = null;
 // ====================
 
 window.addEventListener("DOMContentLoaded", () => {
-
+updateUserUI();
     if (
         Notification.permission !== "granted" &&
         Notification.permission !== "denied"
@@ -1112,26 +1112,7 @@ function applyUser(user) {
 
 }
 
-function signOutUser() {
 
-    localStorage.removeItem("psUser");
-
-    document.getElementById(
-        "profileAvatar"
-    ).src =
-        "https://ui-avatars.com/api/?name=Guest&background=df4b0b&color=fff";
-
-    document.getElementById(
-        "profileGuest"
-    ).style.display = "block";
-
-    document.getElementById(
-        "profileUser"
-    ).style.display = "none";
-
-    showToast("Signed Out");
-
-}
 
 
 // ====================
@@ -1218,15 +1199,6 @@ function detectLocation() {
 // SIGN OUT
 // ====================
 
-function signOutUser() {
-
-    document.getElementById("profileGuest").style.display = "block";
-
-    document.getElementById("profileUser").style.display = "none";
-
-    document.getElementById("profileMenu").style.display = "none";
-
-}
 
 // ====================
 // PROFILE MENU
@@ -1373,7 +1345,7 @@ function placeOrder() {
 
     if (!user) {
 
-        alert("Please login with Google first!");
+        alert("Please login with Google first !");
 
         openGoogleLogin();
 
@@ -1429,12 +1401,83 @@ window.addEventListener("load", () => {
 
 });
 
-function showOrders() {
+function openGoogleLogin() {
+    document.getElementById("googleLoginModal").style.display = "flex";
+}
 
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+function closeGoogleLogin() {
+    document.getElementById("googleLoginModal").style.display = "none";
+}
 
-    console.log(orders);
+function toggleProfileMenu() {
 
-    alert("Total Orders: " + orders.length);
+    const menu =
+        document.getElementById("profileMenu");
+
+    menu.classList.toggle("open");
 
 }
+
+function handleGoogleCredential(response) {
+
+    const data =
+        JSON.parse(
+            atob(response.credential.split(".")[1])
+        );
+
+    const user = {
+        name: data.name,
+        email: data.email,
+        picture: data.picture
+    };
+
+    localStorage.setItem(
+        "psUser",
+        JSON.stringify(user)
+    );
+
+    updateUserUI();
+
+    closeGoogleLogin();
+
+    alert(
+        "Welcome " + user.name + " ✅"
+    );
+
+}
+
+function updateUserUI() {
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("psUser")
+        );
+
+    if (!user) return;
+
+    document.getElementById(
+        "profileGuest"
+    ).style.display = "none";
+
+    document.getElementById(
+        "profileUser"
+    ).style.display = "block";
+
+    document.getElementById(
+        "pmName"
+    ).innerText = user.name;
+
+    document.getElementById(
+        "pmEmail"
+    ).innerText = user.email;
+
+    document.getElementById(
+        "pmAvatar"
+    ).src = user.picture;
+
+    document.getElementById(
+        "profileAvatar"
+    ).src = user.picture;
+
+}
+
