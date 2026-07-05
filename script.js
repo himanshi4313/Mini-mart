@@ -429,13 +429,13 @@ function removeFromCart(index) {
     updateCartUI();
 
 }
-{
+
 
 
 
     
 
-}
+
 function handleAdminTabClick(element) {
     if (isAdminAuthenticated) {
         switchPage('admin', element);
@@ -1420,6 +1420,13 @@ function handleGoogleCredential(response) {
         );
 
     const user = {
+
+
+
+
+
+
+
         name: data.name,
         email: data.email,
         picture: data.picture
