@@ -869,7 +869,7 @@ function placeOrder() {
             totalAmt
         })
     }
-)
+    )
 .then(async res => {
 
     const data = await res.json();
