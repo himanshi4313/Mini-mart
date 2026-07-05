@@ -490,11 +490,11 @@ function logoutAdmin() {
     switchPage('home', document.querySelector('.nav-item'));
 }
 
-function renderAdminInventory() {
+function renderAdminInventory(products = allProducts) {
 
     let html = "";
 
-    allProducts.forEach(product => {
+    products.forEach(product => {
 
         html += `
         <div class="cart-item">
@@ -911,36 +911,30 @@ function searchProducts() {
         .toLowerCase();
 
     let filteredProducts = allProducts.filter(product =>
-        product.name
-            .toLowerCase()
-            .includes(keyword)
+        product.name.toLowerCase().includes(keyword)
     );
 
-    // Home page par search
+    // Home page
     if (
-        document.getElementById("home-view")
-        .style.display !== "none"
+        document.getElementById("home-view").style.display !== "none"
     ) {
-
-        renderProducts(
-            filteredProducts,
-            "productList"
-        );
-
+        renderProducts(filteredProducts, "productList");
     }
 
-    // Category page par search
+    // Category page
     if (
-        document.getElementById("category-view")
-        .style.display !== "none"
+        document.getElementById("category-view").style.display !== "none"
     ) {
-
-        renderProducts(
-            filteredProducts,
-            "categoryProductList"
-        );
-
+        renderProducts(filteredProducts, "categoryProductList");
     }
+
+    // Admin page
+    if (
+        document.getElementById("admin-view").style.display !== "none"
+    ) {
+        renderAdminInventory(filteredProducts);
+    }
+}
 // ====================
 // PROFILE MENU
 // ====================
