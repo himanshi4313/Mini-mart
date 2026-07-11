@@ -864,6 +864,7 @@ function placeOrder() {
             orderId,
             name,
             mobile,
+            email: JSON.parse(localStorage.getItem("psUser")).email,
             address,
             itemsSummary,
             totalAmt
@@ -1187,6 +1188,11 @@ function saveLocation() {
 
     closeLocationModal();
 }
+
+localStorage.setItem("psUser", JSON.stringify({
+    name: googleUser.name,
+    email: googleUser.email
+}));
 
 function detectLocation() {
     alert("Current location feature coming soon");
@@ -1551,5 +1557,45 @@ function signOutUser() {
 
     localStorage.removeItem("psUser");
     location.reload();
+
+}
+
+function openMyOrders() {
+
+    const user = JSON.parse(localStorage.getItem("psUser"));
+
+    if (!user) {
+        alert("Please login first");
+        return;
+    }
+
+    fetch(`https://mini-mart-production.up.railway.app/orders/${user.email}`)
+    .then(r => r.json())
+    .then(data => {
+
+        let html = "";
+
+        data.forEach(order => {
+
+            html += `
+            <div class="order-card">
+                <h3>${order.orderId}</h3>
+
+                <p>${order.itemsSummary}</p>
+
+                <p>Total : ₹${order.totalAmt}</p>
+
+                <p>${order.address}</p>
+            </div>
+            `;
+
+        });
+
+        document.getElementById("ordersList").innerHTML =
+            html || "No Orders";
+
+        switchPage("orders");
+
+    });
 
 }

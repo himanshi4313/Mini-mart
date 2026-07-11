@@ -71,7 +71,9 @@
         </div>
       </div>
       <ul class="pm-list">
-        <li onclick="switchPage('cart', document.querySelectorAll('.nav-item')[2])"><i class="fa-solid fa-bag-shopping"></i> My Orders</li>
+        <li onclick="showMyOrders()">
+    <i class="fa-solid fa-bag-shopping"></i> My Orders
+</li>
         <li onclick="openLocationModal()"><i class="fa-solid fa-location-dot"></i> Saved Addresses</li>
         <li><i class="fa-solid fa-heart"></i> Wishlist</li>
         <li><i class="fa-solid fa-headset"></i> Help & Support</li>
@@ -184,6 +186,12 @@ See all →
     </div>
 
     <div id="checkout-view" style="display:none;">
+      <div id="orders-view" style="display:none;">
+    <div class="content-area">
+        <h3>My Orders </h3>
+        <div id="myOrdersList"></div>
+    </div>
+</div>
       <div class="content-area">
         <h3>Delivery Details 📦</h3>
         <p>Please enter your details for fast delivery</p>
