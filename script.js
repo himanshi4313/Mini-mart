@@ -1599,3 +1599,6 @@ function openMyOrders() {
     });
 
 }
+function showMyOrders() {
+    openMyOrders();
+}
