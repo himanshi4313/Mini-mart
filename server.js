@@ -192,6 +192,7 @@ app.post("/orders", async (req, res) => {
         orderId,
         name,
         mobile,
+        email,
         address,
         itemsSummary,
         totalAmt
@@ -199,7 +200,7 @@ app.post("/orders", async (req, res) => {
 
     const sql = `
         INSERT INTO orders
-        (orderId, name, mobile, address, itemsSummary, totalAmt)
+        (orderId, name, mobile, email, address, itemsSummary, totalAmt)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
 
@@ -210,6 +211,7 @@ db.query(
         orderId,
         name,
         mobile,
+        email,
         address,
         itemsSummary,
         totalAmt
@@ -278,6 +280,26 @@ app.get("/orders", (req, res) => {
 
             if (err) {
                 console.error(err);
+                return res.status(500).json(err);
+            }
+
+            res.json(results);
+
+        }
+    );
+
+});
+
+app.get("/orders/:email", (req, res) => {
+
+    const email = req.params.email;
+
+    db.query(
+        "SELECT * FROM orders WHERE email=? ORDER BY id DESC",
+        [email],
+        (err, results) => {
+
+            if (err) {
                 return res.status(500).json(err);
             }
 
