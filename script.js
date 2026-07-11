@@ -1044,35 +1044,32 @@ function saveLocation() {
 }
 
 function detectLocation() {
-
     if (!navigator.geolocation) {
-
-        alert("Geolocation not supported");
-
+        alert("Geolocation is not supported.");
         return;
-
     }
 
     navigator.geolocation.getCurrentPosition(
-        function (position) {
+        async (position) => {
 
-            let locationText =
-                `Lat ${position.coords.latitude.toFixed(3)}, Lng ${position.coords.longitude.toFixed(3)}`;
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
 
-            localStorage.setItem(
-                "psLoc",
-                locationText
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
             );
 
-            document.getElementById(
-                "userLocation"
-            ).innerText = locationText;
+            const data = await response.json();
 
-            closeLocationModal();
+            const address = data.display_name;
 
+            document.getElementById("locInput").value = address;
+
+        },
+        () => {
+            alert("Location permission denied.");
         }
     );
-
 }
 
 
@@ -1180,23 +1177,29 @@ function closeLocationModal() {
 }
 
 function saveLocation() {
-    let loc = document.getElementById("locInput").value;
+    const location = document.getElementById("locInput").value;
 
-    if (loc.trim() !== "") {
-        document.getElementById("userLocation").innerText = loc;
-    }
+    localStorage.setItem("userLocation", location);
+
+    document.getElementById("userLocation").innerText = location;
 
     closeLocationModal();
 }
+
+
+window.addEventListener("load", () => {
+    const saved = localStorage.getItem("userLocation");
+
+    if (saved) {
+        document.getElementById("userLocation").innerText = saved;
+    }
+});
 
 localStorage.setItem("psUser", JSON.stringify({
     name: googleUser.name,
     email: googleUser.email
 }));
 
-function detectLocation() {
-    alert("Current location feature coming soon");
-}
 
 // ====================
 // SIGN OUT
