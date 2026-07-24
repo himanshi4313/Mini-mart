@@ -172,16 +172,71 @@ See all →
       </div>
     </div>
 
-    <div id="cart-view" style="display:none;">
-      <div class="content-area">
-        <h3>Your Cart 🛒</h3>
-        <p>Review items before placing your order</p>
-        <div id="cartList"></div>
-        <div id="cartSummary" class="cart-summary" style="display:none;">
-          <div class="summary-row"><span>Total Items:</span><span id="totalItems">0</span></div>
-          <div class="summary-row grand"><span>Total Amount:</span><span id="totalAmount">₹0</span></div>
-          <button class="checkout-btn" onclick="showCheckoutPage()">Proceed to Checkout →</button>
+    <div id="cartSummary" class="cart-summary" style="display:none;">
+
+    <h2>🧾 Order Summary</h2>
+
+    <div class="summary-row">
+        <span>Items Total</span>
+        <span id="itemsTotal">₹0</span>
+    </div>
+
+    <div class="summary-row">
+        <span>Product Discount</span>
+        <span id="productDiscount">-₹0</span>
+    </div>
+
+    <div class="summary-row">
+        <span>Delivery Charges</span>
+        <span id="deliveryCharge">FREE</span>
+    </div>
+
+    <div class="summary-row">
+        <span>Coupon</span>
+        <span id="couponName">None</span>
+    </div>
+
+    <div class="summary-row">
+        <span>Coupon Discount</span>
+        <span id="couponDiscount">-₹0</span>
+    </div>
+
+    <hr>
+
+    <div class="summary-total">
+        <span>Grand Total</span>
+        <span id="grandTotal">₹0</span>
+    </div>
+
+    <div class="progress-box">
+        <p id="progressText">₹500 more for FREE Delivery 🚚</p>
+
+        <div class="progress-bar">
+            <div id="progressFill"></div>
         </div>
+    </div>
+
+    <details class="offers-box">
+        <summary>Offers Applied</summary>
+
+        <ul id="offerList">
+            <li>₹1500 Shopping → Free Delivery</li>
+            <li>₹2000 Shopping → SAVE2.5 (2.5% OFF)</li>
+            <li>₹2500 Shopping → SAVE4 (4% OFF)</li>
+        </ul>
+    </details>
+
+    <div class="delivery-time">
+        🚚 Estimated Delivery
+        <br>
+        <b>20–30 Minutes</b>
+    </div>
+
+    <button class="checkout-btn" onclick="showCheckoutPage()">
+        Proceed to Checkout →
+    </button>
+
+</div>
       </div>
     </div>
 
