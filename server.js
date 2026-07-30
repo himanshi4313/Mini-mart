@@ -33,9 +33,11 @@ const client = new MongoClient(process.env.MONGO_URI, {
 let db;
 
 async function connectDB() {
+    if (db) return db;  // reuse existing connection
     await client.connect();
     db = client.db("mini-mrt");
     console.log("✅ MongoDB Connected");
+    return db;
 }
 
 connectDB().catch(err => console.error("❌ MongoDB Error:", err));
@@ -47,12 +49,23 @@ const col = (name) => db.collection(name);
 //  STATIC ROUTES (always available)
 // ─────────────────────────────────────────
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/test", (req, res) => res.json({ success: true, message: "Server Running ✅", dbReady: !!db }));
+app.get("/test", async (req, res) => {
+    try {
+        await connectDB();
+        res.json({ success: true, message: "Server Running ✅", dbReady: true });
+    } catch(e) {
+        res.json({ success: true, message: "Server Running ✅", dbReady: false, error: e.message });
+    }
+});
 
 // Middleware: ensure DB is ready before any API route
-app.use((req, res, next) => {
-    if (!db) return res.status(503).json({ message: "Database not ready yet, please retry." });
-    next();
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (e) {
+        res.status(503).json({ message: "Database connection failed: " + e.message });
+    }
 });
 
 // ─────────────────────────────────────────
