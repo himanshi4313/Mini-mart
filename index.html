@@ -25,19 +25,17 @@
       <div class="location-block" onclick="openLocationModal()">
         <div class="loc-title">
           <i class="fa-solid fa-location-dot"></i>
-          <span>Delivery in <b>15 min</b></span>
+          <span>Delivery in <b>20–30 min</b></span>
           <i class="fa-solid fa-chevron-down chev"></i>
         </div>
-        <div class="loc-address" id="userLocation">Devi Road, Chandana Bhaker, Jodhpur</div>
+        <div class="loc-address" id="userLocation">Tap to set delivery location</div>
       </div>
-
       <div class="header-right">
         <div class="profile-btn" id="profileBtn" onclick="toggleProfileMenu()">
           <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Guest&background=df4b0b&color=fff&bold=true" alt="Profile">
         </div>
       </div>
     </div>
-
     <div class="header-search">
       <div class="search-container">
         <i class="fa-solid fa-magnifying-glass search-icon-inside"></i>
@@ -61,7 +59,6 @@
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G"> Continue with Google
       </button>
     </div>
-
     <div id="profileUser" style="display:none;">
       <div class="pm-header user-header">
         <img id="pmAvatar" src="" alt="">
@@ -71,11 +68,9 @@
         </div>
       </div>
       <ul class="pm-list">
-        <li onclick="showMyOrders()">
-    <i class="fa-solid fa-bag-shopping"></i> My Orders
-</li>
+        <li onclick="showMyOrders()"><i class="fa-solid fa-bag-shopping"></i> My Orders</li>
         <li onclick="openLocationModal()"><i class="fa-solid fa-location-dot"></i> Saved Addresses</li>
-        <li><i class="fa-solid fa-heart"></i> Wishlist</li>
+        <li onclick="openWishlist()"><i class="fa-solid fa-heart"></i> Wishlist</li>
         <li><i class="fa-solid fa-headset"></i> Help & Support</li>
         <li class="logout" onclick="signOutUser()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</li>
       </ul>
@@ -85,28 +80,59 @@
   <!-- GOOGLE LOGIN MODAL -->
   <div id="googleLoginModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
-      <img src="images/logo.png" style="width:70px;margin:0 auto 10px;display:block;">
+      <img src="images/logo.png" style="width:70px;margin:0 auto 10px;display:block;" alt="Logo">
       <h3>Sign in to PS STORE</h3>
       <p>Get personalized offers, track orders and save addresses.</p>
       <div id="g_id_onload"
         data-client_id="615170885884-lph8mkbuuihgb3aa4mpv3sjk9c8ftko5.apps.googleusercontent.com"
         data-callback="handleGoogleCredential"
         data-auto_prompt="false"></div>
-      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-text="continue_with" data-size="large" data-logo_alignment="left"></div>
+      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue"
+        data-text="continue_with" data-size="large" data-logo_alignment="left"></div>
       <button class="cancel-btn" style="margin-top:15px;width:100%;" onclick="closeGoogleLogin()">Cancel</button>
     </div>
   </div>
 
   <!-- LOCATION MODAL -->
   <div id="locationModal" class="modal-overlay" style="display:none;">
-    <div class="modal-box">
-      <h3><i class="fa-solid fa-location-crosshairs" style="color:#df4b0b;"></i> Choose Location</h3>
-      <p>Enter your delivery area for faster service.</p>
-      <input type="text" id="locInput" placeholder="Enter area / pincode">
-      <button class="login-btn" style="width:100%;margin-bottom:8px;" onclick="detectLocation()"><i class="fa-solid fa-location-arrow"></i> Use current location</button>
-      <div class="modal-buttons">
+    <div class="modal-box location-modal-box">
+      <h3><i class="fa-solid fa-location-crosshairs" style="color:#df4b0b;"></i> Choose Delivery Location</h3>
+      <p>Set your location for accurate delivery.</p>
+
+      <!-- Search -->
+      <div class="loc-search-row">
+        <input type="text" id="locInput" placeholder="Search area, street, pincode..." oninput="onLocSearchInput()">
+        <button class="loc-search-btn" onclick="searchLocationByText()"><i class="fa-solid fa-search"></i></button>
+      </div>
+      <div id="locSuggestions" class="loc-suggestions"></div>
+
+      <!-- Detect Button -->
+      <button class="login-btn loc-detect-btn" onclick="detectLocation()">
+        <i class="fa-solid fa-location-arrow"></i> Use My Current Location
+      </button>
+      <div id="locStatus" class="loc-status"></div>
+
+      <!-- Map Preview -->
+      <div id="mapPreview" class="map-preview" style="display:none;">
+        <iframe id="mapIframe" width="100%" height="200" style="border:0;border-radius:10px;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <p class="map-coords" id="mapCoords"></p>
+      </div>
+
+      <!-- Selected Address -->
+      <div id="selectedAddressBox" class="selected-addr-box" style="display:none;">
+        <i class="fa-solid fa-map-pin" style="color:#df4b0b;"></i>
+        <span id="selectedAddressText"></span>
+      </div>
+
+      <!-- Saved Addresses -->
+      <div id="savedAddressesBox" style="display:none;">
+        <p class="saved-addr-title">Saved Addresses</p>
+        <div id="savedAddressesList"></div>
+      </div>
+
+      <div class="modal-buttons" style="margin-top:14px;">
         <button class="cancel-btn" onclick="closeLocationModal()">Cancel</button>
-        <button class="login-btn" onclick="saveLocation()">Save</button>
+        <button class="login-btn" onclick="saveLocation()">Save Location</button>
       </div>
     </div>
   </div>
@@ -124,23 +150,23 @@
     </div>
   </div>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <div id="main-content">
 
+    <!-- HOME VIEW -->
     <div id="home-view">
       <div class="banner">
         <img id="bannerImg" src="images/banner1.jpg" alt="Banner">
         <div class="bannerText">
           <span class="badge-tag">⚡ Express Delivery</span>
           <h1>PS STORE Jodhpur</h1>
-          <p>Devi Road, Chandana Bhaker, Jodhpur, Rajasthan 342003</p>
+          <p>Devi Road, Chandana Bhaker, Jodhpur, Rajasthan</p>
           <h3>✓ Guaranteed Quality • ✓ Best Prices</h3>
         </div>
       </div>
 
       <div class="quick-cats">
         <div class="qc-item"><div class="qc-icon" style="background:#fff3e0;">🥛</div><span>Dairy</span></div>
-        
         <div class="qc-item"><div class="qc-icon" style="background:#fce4ec;">🍫</div><span>Snacks</span></div>
         <div class="qc-item"><div class="qc-icon" style="background:#e3f2fd;">🧴</div><span>Personal</span></div>
         <div class="qc-item"><div class="qc-icon" style="background:#fff9c4;">🍚</div><span>Grocery</span></div>
@@ -153,166 +179,254 @@
             <h3>Special Offers 🔥</h3>
             <p>Top deals handpicked for you</p>
           </div>
-          <span class="see-all"
-onclick="switchPage('category', document.querySelectorAll('.nav-item')[1])">
-See all →
-</span>
+          <span class="see-all" onclick="switchPage('category', document.querySelectorAll('.nav-item')[1])">See all →</span>
         </div>
-        <div id="productList"></div>
+        <div id="productList" class="product-grid">
+          <div class="loading-products">
+            <div class="spinner"></div>
+            <p>Loading products...</p>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- CATEGORY VIEW -->
     <div id="category-view" style="display:none;">
       <div class="categories-container">
         <div id="categoryTabs" class="category-sidebar"></div>
         <div class="category-content">
           <h2 id="categoryTitle">All Products</h2>
-          <div id="categoryProductList"></div>
+          <div id="categoryProductList" class="product-grid"></div>
         </div>
       </div>
     </div>
 
-    <div id="cartSummary" class="cart-summary" style="display:none;">
-
-    <h2>🧾 Order Summary</h2>
-
-    <div class="summary-row">
-        <span>Items Total</span>
-        <span id="itemsTotal">₹0</span>
-    </div>
-
-    <div class="summary-row">
-        <span>Product Discount</span>
-        <span id="productDiscount">-₹0</span>
-    </div>
-
-    <div class="summary-row">
-        <span>Delivery Charges</span>
-        <span id="deliveryCharge">FREE</span>
-    </div>
-
-    <div class="summary-row">
-        <span>Coupon</span>
-        <span id="couponName">None</span>
-    </div>
-
-    <div class="summary-row">
-        <span>Coupon Discount</span>
-        <span id="couponDiscount">-₹0</span>
-    </div>
-
-    <hr>
-
-    <div class="summary-total">
-        <span>Grand Total</span>
-        <span id="grandTotal">₹0</span>
-    </div>
-
-    <div class="progress-box">
-        <p id="progressText">₹500 more for FREE Delivery 🚚</p>
-
-        <div class="progress-bar">
-            <div id="progressFill"></div>
-        </div>
-    </div>
-
-    <details class="offers-box">
-        <summary>Offers Applied</summary>
-
-        <ul id="offerList">
-            <li>₹1500 Shopping → Free Delivery</li>
-            <li>₹2000 Shopping → SAVE2.5 (2.5% OFF)</li>
-            <li>₹2500 Shopping → SAVE4 (4% OFF)</li>
-        </ul>
-    </details>
-
-    <div class="delivery-time">
-        🚚 Estimated Delivery
-        <br>
-        <b>20–30 Minutes</b>
-    </div>
-
-    <button class="checkout-btn" onclick="showCheckoutPage()">
-        Proceed to Checkout →
-    </button>
-
-</div>
-      </div>
-    </div>
-
-    <div id="checkout-view" style="display:none;">
-      <div id="orders-view" style="display:none;">
-    <div class="content-area">
-        <h3>My Orders </h3>
-        <div id="ordersList"></div>
-    </div>
-</div>
+    <!-- CART VIEW -->
+    <div id="cart-view" style="display:none;">
       <div class="content-area">
-        <h3>Delivery Details 📦</h3>
-        <p>Please enter your details for fast delivery</p>
+        <h3 style="margin-bottom:16px;">Your Cart 🛒</h3>
+        <div id="cartList"></div>
+
+        <!-- ORDER SUMMARY -->
+        <div id="cartSummary" class="cart-summary" style="display:none;">
+          <h3 style="margin-bottom:16px;">🧾 Order Summary</h3>
+
+          <div class="summary-row">
+            <span>Items Total</span>
+            <span id="itemsTotal">₹0</span>
+          </div>
+          <div class="summary-row discount-row">
+            <span>Product Discount</span>
+            <span id="productDiscount" style="color:#0c831f;">-₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Delivery Charges</span>
+            <span id="deliveryCharge">₹40</span>
+          </div>
+
+          <!-- COUPON -->
+          <div class="coupon-row">
+            <div class="coupon-input-wrap">
+              <input type="text" id="couponInput" placeholder="Enter coupon code" style="text-transform:uppercase;">
+              <button onclick="applyCoupon()" id="couponApplyBtn">Apply</button>
+            </div>
+            <div id="couponMsg" class="coupon-msg"></div>
+          </div>
+
+          <div class="summary-row" id="couponDiscountRow" style="display:none;">
+            <span>Coupon (<span id="couponCodeApplied"></span>)</span>
+            <span id="couponDiscount" style="color:#0c831f;">-₹0</span>
+          </div>
+
+          <hr style="margin:12px 0;border:none;border-top:1.5px dashed #eee;">
+
+          <div class="summary-row grand-total-row">
+            <span>Grand Total</span>
+            <span id="grandTotal">₹0</span>
+          </div>
+
+          <!-- PROGRESS BAR -->
+          <div class="progress-box">
+            <p id="progressText">Add ₹1500 worth items for FREE Delivery 🚚</p>
+            <div class="progress-bar-track">
+              <div id="progressFill" class="progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <!-- OFFERS INFO -->
+          <details class="offers-box">
+            <summary>🎁 Available Offers</summary>
+            <ul id="offerList">
+              <li>🚚 Order ₹1500+ → <b>FREE Delivery</b></li>
+              <li>🏷️ Order ₹2000+ → <b>SAVE2.5</b> (2.5% OFF)</li>
+              <li>🏷️ Order ₹2500+ → <b>SAVE4</b> (4% OFF)</li>
+            </ul>
+          </details>
+
+          <div class="delivery-time">
+            🚚 Estimated Delivery: <b>20–30 Minutes</b>
+          </div>
+
+          <button class="checkout-btn" onclick="showCheckoutPage()">Proceed to Checkout →</button>
+        </div>
+
+        <div id="emptyCart" style="text-align:center;padding:40px 20px;display:none;">
+          <div style="font-size:60px;margin-bottom:12px;">🛒</div>
+          <h3 style="color:#999;">Your cart is empty</h3>
+          <p style="color:#bbb;margin-top:6px;">Add items to get started</p>
+          <button class="checkout-btn" style="margin-top:20px;max-width:200px;" onclick="switchPage('home', document.querySelector('.nav-item'))">Shop Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKOUT VIEW -->
+    <div id="checkout-view" style="display:none;">
+      <div class="content-area">
+        <div class="checkout-header">
+          <button class="back-btn" onclick="switchPage('cart', document.querySelectorAll('.nav-item')[2])">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <h3>Checkout 📦</h3>
+        </div>
+
+        <!-- DELIVERY DETAILS -->
         <div class="checkout-form">
+          <h4 style="color:var(--primary-color);margin-bottom:14px;"><i class="fa-solid fa-user"></i> Delivery Details</h4>
           <label>Full Name</label>
           <input type="text" id="custName" placeholder="Enter your name">
           <label>Mobile Number</label>
-          <input type="tel" id="custMobile" placeholder="Enter mobile number">
+          <input type="tel" id="custMobile" placeholder="Enter 10-digit mobile">
           <label>Delivery Address</label>
-          <textarea id="custAddress" rows="3" placeholder="Enter complete address"></textarea>
-          <button class="place-order-btn" onclick="placeOrder()">Place Order (COD)</button>
+          <textarea id="custAddress" rows="2" placeholder="House no, Street, Area..."></textarea>
+          <div class="loc-detect-inline" onclick="openLocationModal()">
+            <i class="fa-solid fa-location-dot" style="color:#df4b0b;"></i>
+            <span id="checkoutLocationText">Tap to set precise location on map</span>
+            <i class="fa-solid fa-chevron-right" style="color:#999;margin-left:auto;"></i>
+          </div>
+          <div id="checkoutMapCoords" class="checkout-coords" style="display:none;"></div>
+        </div>
+
+        <!-- CHECKOUT SUMMARY -->
+        <div class="checkout-summary-box">
+          <h4 style="color:#111;margin-bottom:14px;"><i class="fa-solid fa-receipt"></i> Bill Details</h4>
+          <div class="summary-row"><span>Items Total</span><span id="coItemsTotal">₹0</span></div>
+          <div class="summary-row"><span>Product Discount</span><span id="coProductDiscount" style="color:#0c831f;">-₹0</span></div>
+          <div class="summary-row"><span>Delivery Charge</span><span id="coDelivery">₹0</span></div>
+          <div class="summary-row" id="coCouponRow" style="display:none;">
+            <span>Coupon (<span id="coCouponCode"></span>)</span>
+            <span id="coCouponDiscount" style="color:#0c831f;">-₹0</span>
+          </div>
+          <hr style="margin:10px 0;border:none;border-top:1.5px dashed #eee;">
+          <div class="summary-row grand-total-row"><span>Grand Total</span><span id="coGrandTotal">₹0</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px;">🚚 Estimated Delivery: <b>20–30 Minutes</b></div>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="checkout-form" style="margin-top:14px;">
+          <h4 style="color:var(--primary-color);margin-bottom:14px;"><i class="fa-solid fa-wallet"></i> Payment Method</h4>
+          <label class="radio-option">
+            <input type="radio" name="payment" value="COD" checked>
+            <span><i class="fa-solid fa-money-bill"></i> Cash on Delivery</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="payment" value="UPI">
+            <span><i class="fa-solid fa-qrcode"></i> UPI / Online Payment</span>
+          </label>
+        </div>
+
+        <button class="place-order-btn" onclick="placeOrder()" id="placeOrderBtn">
+          <i class="fa-solid fa-check-circle"></i> Place Order
+        </button>
+      </div>
+    </div>
+
+    <!-- MY ORDERS VIEW -->
+    <div id="orders-view" style="display:none;">
+      <div class="content-area">
+        <div class="checkout-header">
+          <button class="back-btn" onclick="switchPage('home', document.querySelector('.nav-item'))">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <h3>My Orders 📦</h3>
+        </div>
+        <div id="ordersList">
+          <div style="text-align:center;padding:40px;">
+            <div class="spinner"></div>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- ADMIN VIEW -->
     <div id="admin-view" style="display:none;">
       <div class="content-area">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
           <h3 style="margin:0;">Shopkeeper Dashboard 🛠️</h3>
-          <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Lock</button>
+          <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-lock"></i> Lock</button>
         </div>
 
-        <h3 style="color:#df4b0b;"><i class="fa-solid fa-receipt"></i> Active Orders</h3>
-        <div class="admin-table-wrapper" style="margin-bottom:35px;">
-          <table class="admin-table">
-            <thead>
-              <tr><th>Order ID</th><th>Customer</th><th>Contact</th><th>Address</th><th>Items</th><th>Total</th></tr>
-            </thead>
-            <tbody id="adminOrderTableBody"></tbody>
-          </table>
-        </div>
+        <!-- ADMIN ORDERS -->
+        <h3 style="color:#df4b0b;margin-bottom:12px;"><i class="fa-solid fa-receipt"></i> Active Orders</h3>
+        <div id="adminOrdersList"></div>
 
-        <div class="checkout-form" style="margin-bottom:35px;">
-          <h4 id="formTitle" style="margin-top:0;color:var(--primary-color);font-size:16px;"><i class="fa-solid fa-plus-circle"></i> Add New Product</h4>
+        <!-- ADD / EDIT PRODUCT -->
+        <div class="checkout-form" style="margin:28px 0 20px;">
+          <h4 id="formTitle" style="margin-top:0;color:var(--primary-color);font-size:16px;">
+            <i class="fa-solid fa-plus-circle"></i> Add New Product
+          </h4>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div><label>Product Name</label><input type="text" id="pName" placeholder="e.g., Fortune Oil"></div>
-            <div><label>Category</label><input type="text" id="pCategory" placeholder="e.g., Grocery"></div>
+            <div>
+              <label>Category</label>
+              <select id="pCategory" style="width:100%;padding:12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;background:#fafbfc;">
+                <option value="">Select Category</option>
+                <option>Grocery</option>
+                <option>Cosmetics</option>
+                <option>Dry Fruits</option>
+                <option>Dairy Products</option>
+                <option>Cold Drinks</option>
+                <option>Stationery</option>
+                <option>Plastic Items</option>
+                <option>Undergarments</option>
+                <option>Cleaning</option>
+              </select>
+            </div>
             <div><label>Price (₹)</label><input type="number" id="pPrice" placeholder="Original price"></div>
             <div><label>Discount (%)</label><input type="number" id="pDiscount" value="0"></div>
-            <div><label>Stock Qty</label><input type="number" id="pStock" placeholder="Available"></div>
+            <div><label>Stock Qty</label><input type="number" id="pStock" placeholder="Available qty"></div>
             <div><label>Image Filename</label><input type="text" id="pIdentity" placeholder="oil.jpg"></div>
           </div>
-          <button id="saveProductBtn" class="place-order-btn" onclick="saveProductAction()" style="margin-top:10px;">Save to Database</button>
+          <button id="saveProductBtn" class="place-order-btn" onclick="saveProductAction()" style="margin-top:10px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save to Database
+          </button>
+          <button id="cancelEditBtn" style="display:none;width:100%;margin-top:8px;padding:12px;border-radius:10px;border:1.5px solid #ddd;background:#f5f5f5;cursor:pointer;font-weight:600;" onclick="resetProductForm()">
+            Cancel Edit
+          </button>
         </div>
 
-        <h3>Live Inventory</h3>
-        <div id="adminInventoryGrid" class="admin-inventory-grid"></div>
+        <!-- INVENTORY -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h3 style="margin:0;">Live Inventory</h3>
+          <input type="text" placeholder="Search products..." onkeyup="searchAdminProducts(this.value)"
+            style="padding:8px 12px;border:1.5px solid #eee;border-radius:8px;font-size:13px;width:160px;">
+        </div>
+        <div id="adminInventoryGrid"></div>
       </div>
     </div>
 
-  </div>
+  </div><!-- end main-content -->
 
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-wrap">
       <h3>About PS STORE</h3>
-      <p>PS STORE se seedhe aapke ghar tak — sabse sasta aur sabse accha saaman. Kisi bhi sahayata ke liye niche sampark karein.</p>
-
+      <p>PS STORE se seedhe aapke ghar tak — sabse sasta aur sabse accha saaman.</p>
       <div class="footer-buttons">
         <a href="mailto:psmegamartmart@gmail.com" class="fb email"><i class="fa-solid fa-envelope"></i> Email</a>
         <a href="https://wa.me/918003219434" target="_blank" class="fb wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
         <a href="https://www.instagram.com/ps_store_live" target="_blank" class="fb ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
       </div>
-
       <div class="branch-title"><h3><i class="fa-solid fa-location-dot"></i> Our Branches</h3><div class="line"></div></div>
-
       <div class="branch-card">
         <h5>PS MEGA MART <span>Branch 1</span></h5>
         <p>Plot No. 16, Inda Market, Near Pal Pashu Mela, Sangriya Road, Jodhpur</p>
@@ -333,7 +447,6 @@ See all →
         <p>Main Bypass Road, Soorsager, Jodhpur</p>
         <div class="btn-row"><a href="tel:+919680222337" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919680222337" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
       </div>
-
       <p class="copyright">&copy; 2026 PS STORE Jodhpur. All Rights Reserved.</p>
     </div>
   </footer>
@@ -347,7 +460,7 @@ See all →
       <div class="icon-wrapper"><i class="fa-solid fa-layer-group"></i></div><span>Category</span>
     </div>
     <div class="nav-item" onclick="switchPage('cart', this)">
-      <div class="icon-wrapper"><i class="fa-solid fa-cart-shopping"></i><span id="cartBadge" class="badge">0</span></div><span>Cart</span>
+      <div class="icon-wrapper"><i class="fa-solid fa-cart-shopping"></i><span id="cartBadge" class="badge" style="display:none;">0</span></div><span>Cart</span>
     </div>
     <div class="nav-item" id="adminNavItem" onclick="handleAdminTabClick(this)">
       <div class="icon-wrapper"><i class="fa-solid fa-user-gear"></i></div><span>Admin</span>
@@ -357,6 +470,5 @@ See all →
   <div id="toast"></div>
 
   <script src="script.js"></script>
-  
 </body>
 </html>
