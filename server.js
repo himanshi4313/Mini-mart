@@ -3,10 +3,14 @@ require("dotenv").config();
 // Fix TLS for Node.js v24
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-// Force IPv4 DNS with Google DNS servers
-const dns = require("dns");
-dns.setDefaultResultOrder("ipv4first");
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+// Force IPv4 DNS — only works in local/VPS, skip on Vercel serverless
+try {
+    const dns = require("dns");
+    dns.setDefaultResultOrder("ipv4first");
+    dns.setServers(["8.8.8.8", "8.8.4.4"]);
+} catch (e) {
+    // ignore in serverless environments
+}
 
 const express        = require("express");
 const cors           = require("cors");
