@@ -426,11 +426,40 @@ function detectLocation() {
 
 async function reverseGeocode(lat, lng) {
     try {
+        // Try Google Maps Geocoding first (most accurate)
+        const googleRes = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&language=en&region=IN`
+        );
+        const googleData = await googleRes.json();
+
+        if (googleData.status === "OK" && googleData.results.length > 0) {
+            const addr = googleData.results[0].formatted_address;
+            currentLocText = addr;
+            showSelectedAddress(addr);
+            showMapPreview(lat, lng);
+            setLocStatus("✅ Location found!", false);
+            return;
+        }
+    } catch (e) { /* fallback to nominatim */ }
+
+    // Fallback: Nominatim
+    try {
         const res  = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+            { headers: { "Accept-Language": "en" } }
         );
         const data = await res.json();
-        const addr = data.display_name || `${lat}, ${lng}`;
+        // Build a clean address from parts
+        const a    = data.address || {};
+        const parts = [
+            a.house_number,
+            a.road || a.pedestrian || a.footway,
+            a.suburb || a.neighbourhood || a.quarter,
+            a.city || a.town || a.village || a.county,
+            a.state,
+            a.postcode
+        ].filter(Boolean);
+        const addr = parts.length > 2 ? parts.join(", ") : data.display_name;
         currentLocText = addr;
         showSelectedAddress(addr);
         showMapPreview(lat, lng);
@@ -478,7 +507,7 @@ function searchLocationByText(q) {
     if (!q) q = document.getElementById("locInput").value.trim();
     if (!q) return;
 
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=in`)
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=in&accept-language=en`)
         .then(r => r.json())
         .then(results => {
             const box = document.getElementById("locSuggestions");
