@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────
+﻿// ─────────────────────────────────────────
 //  PS STORE — script.js
 // ─────────────────────────────────────────
 
@@ -20,8 +20,11 @@ const AUTO_COUPONS = [
 ];
 
 // ─────────────────────────────────────────
-//  APP START
+//  API BASE URL — works on any domain
 // ─────────────────────────────────────────
+const API = "https://mini-mart-liard.vercel.app";
+
+
 window.addEventListener("DOMContentLoaded", () => {
     updateUserUI();
     requestNotificationPermission();
@@ -50,7 +53,7 @@ function loadAllData() {
     document.getElementById("productList").innerHTML =
         `<div class="loading-products"><div class="spinner"></div><p>Loading products...</p></div>`;
 
-    fetch("/products")
+    fetch(API + "/products")
         .then(r => r.json())
         .then(products => {
             allProducts = products;
@@ -353,7 +356,7 @@ function applyCoupon() {
 
     const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
-    fetch("/coupons/validate", {
+    fetch(API + "/coupons/validate", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ code, orderTotal: subtotal })
@@ -555,7 +558,7 @@ function saveLocation() {
     // Save to DB if logged in
     const user = getUser();
     if (user) {
-        fetch(`/users/${user.email}/location`, {
+        fetch(API + `/users/${user.email}/location`, {
             method:  "PUT",
             headers: { "Content-Type": "application/json" },
             body:    JSON.stringify({ location: addr, latitude: currentLat, longitude: currentLng })
@@ -570,7 +573,7 @@ function loadSavedAddresses() {
     const user = getUser();
     if (!user) return;
 
-    fetch(`/users/${user.email}`)
+    fetch(API + `/users/${user.email}`)
         .then(r => r.json())
         .then(data => {
             const addrs = data.savedAddresses || [];
@@ -659,7 +662,7 @@ function placeOrder() {
     const btn = document.getElementById("placeOrderBtn");
     if (btn) { btn.disabled = true; btn.innerHTML = `<div class="btn-spinner"></div> Placing Order...`; }
 
-    fetch("/orders", {
+    fetch(API + "/orders", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -716,7 +719,7 @@ function showMyOrders() {
     document.getElementById("ordersList").innerHTML =
         `<div style="text-align:center;padding:40px;"><div class="spinner"></div></div>`;
 
-    fetch(`/orders/user/${encodeURIComponent(user.email)}`)
+    fetch(API + `/orders/user/${encodeURIComponent(user.email)}`)
         .then(r => r.json())
         .then(orders => {
             if (!orders.length) {
@@ -830,7 +833,7 @@ function loadAdminOrders() {
     if (!container) return;
     container.innerHTML = `<div style="text-align:center;padding:20px;"><div class="spinner"></div></div>`;
 
-    fetch("/orders")
+    fetch(API + "/orders")
         .then(r => r.json())
         .then(orders => {
             if (!orders.length) {
@@ -876,7 +879,7 @@ function loadAdminOrders() {
 }
 
 function updateOrderStatus(id, status) {
-    fetch(`/orders/${id}/status`, {
+    fetch(API + `/orders/${id}/status`, {
         method:  "PUT",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ status })
@@ -980,7 +983,7 @@ function resetProductForm() {
 
 function deleteProduct(id) {
     if (!confirm("Delete this product?")) return;
-    fetch(`/products/${id}`, { method: "DELETE" })
+    fetch(API + `/products/${id}`, { method: "DELETE" })
         .then(r => r.json())
         .then(() => { showToast("Product deleted"); loadAllData(); })
         .catch(() => showToast("Failed to delete"));
@@ -1037,7 +1040,7 @@ async function fetchGoogleProfile(accessToken) {
         showToast(`Welcome, ${user.name}! ✅`);
 
         // Sync to DB
-        fetch("/users/sync", {
+        fetch(API + "/users/sync", {
             method:  "POST",
             headers: { "Content-Type": "application/json" },
             body:    JSON.stringify(user)
@@ -1056,7 +1059,7 @@ function handleGoogleCredential(response) {
         updateUserUI();
         closeGoogleLogin();
         showToast(`Welcome, ${user.name}! ✅`);
-        fetch("/users/sync", {
+        fetch(API + "/users/sync", {
             method:  "POST",
             headers: { "Content-Type": "application/json" },
             body:    JSON.stringify(user)
