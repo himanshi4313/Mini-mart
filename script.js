@@ -1160,7 +1160,13 @@ function goToSlide(index) {
     });
 }
 
-function filterAndGo(category) {
+function filterAndGo(category, el) {
+    // Update active chip on home page if clicked from chips
+    if (el) {
+        document.querySelectorAll(".cat-chip")
+            .forEach(c => c.classList.remove("active-chip"));
+        el.classList.add("active-chip");
+    }
     switchPage("category", document.querySelectorAll(".nav-item")[1]);
     setTimeout(() => filterCategory(category), 100);
 }
