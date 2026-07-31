@@ -6,10 +6,6 @@
       "use": "@vercel/node"
     },
     {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
       "src": "style.css",
       "use": "@vercel/static"
     },
@@ -24,12 +20,12 @@
   ],
   "routes": [
     {
-      "src": "/index.html",
-      "dest": "/index.html"
-    },
-    {
       "src": "/style.css",
       "dest": "/style.css"
+    },
+    {
+      "src": "/script.js?v=2",
+      "dest": "/script.js"
     },
     {
       "src": "/script.js",
@@ -38,18 +34,6 @@
     {
       "src": "/images/(.*)",
       "dest": "/images/$1"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/(products|orders|users|categories|coupons|test)(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/",
-      "dest": "/index.html"
     },
     {
       "src": "/(.*)",
