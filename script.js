@@ -960,7 +960,7 @@ function deleteProduct(id) {
 // ─────────────────────────────────────────
 //  GOOGLE AUTH
 // ─────────────────────────────────────────
-const GOOGLE_CLIENT_ID = "615170885884-lph8mkbuuihgb3aa4mpv3sjk9c8ftko5.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "217168067871-t4bhfqeqmin2klhgrt6p2h0c9ajfq7qh.apps.googleusercontent.com";
 
 function openGoogleLogin()  { document.getElementById("googleLoginModal").style.display = "flex"; }
 function closeGoogleLogin() { document.getElementById("googleLoginModal").style.display = "none"; }
