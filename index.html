@@ -152,29 +152,114 @@
 
     <!-- HOME VIEW -->
     <div id="home-view">
-      <div class="banner">
-        <img id="bannerImg" src="images/banner1.jpg" alt="Banner">
-        <div class="bannerText">
-          <span class="badge-tag">⚡ Express Delivery</span>
-          <h1>PS STORE Jodhpur</h1>
-          <p>Devi Road, Chandana Bhaker, Jodhpur, Rajasthan</p>
-          <h3>✓ Guaranteed Quality • ✓ Best Prices</h3>
+
+      <!-- BANNER SLIDER -->
+      <div class="banner-slider">
+        <div class="banner-track" id="bannerTrack">
+          <div class="banner-slide" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);">
+            <div class="banner-content">
+              <span class="banner-pill">⚡ 20–30 Min Delivery</span>
+              <h1>Fresh Grocery<br><span style="color:#ffc60b;">At Your Door</span></h1>
+              <p>Best prices in Jodhpur. Guaranteed quality every time.</p>
+              <button class="banner-cta" onclick="switchPage('category',document.querySelectorAll('.nav-item')[1])">Shop Now →</button>
+            </div>
+            <div class="banner-img-wrap">
+              <img src="images/banner1.jpg" alt="Grocery">
+            </div>
+          </div>
+          <div class="banner-slide" style="background:linear-gradient(135deg,#134e5e 0%,#71b280 100%);">
+            <div class="banner-content">
+              <span class="banner-pill">🏷️ Special Offers</span>
+              <h1>Save More<br><span style="color:#ffc60b;">Every Day</span></h1>
+              <p>Exclusive deals on dairy, snacks & household items.</p>
+              <button class="banner-cta" onclick="switchPage('category',document.querySelectorAll('.nav-item')[1])">View Deals →</button>
+            </div>
+            <div class="banner-img-wrap">
+              <img src="images/banner2.jpg" alt="Offers">
+            </div>
+          </div>
+          <div class="banner-slide" style="background:linear-gradient(135deg,#c94b4b 0%,#4b134f 100%);">
+            <div class="banner-content">
+              <span class="banner-pill">🚚 Free Delivery ₹1500+</span>
+              <h1>PS STORE<br><span style="color:#ffc60b;">Jodhpur</span></h1>
+              <p>4 branches across Jodhpur. Order online, get it fast.</p>
+              <button class="banner-cta" onclick="openLocationModal()">Set Location →</button>
+            </div>
+            <div class="banner-img-wrap">
+              <img src="images/banner3.jpg" alt="PS Store">
+            </div>
+          </div>
+        </div>
+        <!-- Dots -->
+        <div class="banner-dots" id="bannerDots">
+          <span class="dot active" onclick="goToSlide(0)"></span>
+          <span class="dot" onclick="goToSlide(1)"></span>
+          <span class="dot" onclick="goToSlide(2)"></span>
         </div>
       </div>
 
-      <div class="quick-cats">
-        <div class="qc-item"><div class="qc-icon" style="background:#fff3e0;">🥛</div><span>Dairy</span></div>
-        <div class="qc-item"><div class="qc-icon" style="background:#fce4ec;">🍫</div><span>Snacks</span></div>
-        <div class="qc-item"><div class="qc-icon" style="background:#e3f2fd;">🧴</div><span>Personal</span></div>
-        <div class="qc-item"><div class="qc-icon" style="background:#fff9c4;">🍚</div><span>Grocery</span></div>
-        <div class="qc-item"><div class="qc-icon" style="background:#f3e5f5;">🧹</div><span>Household</span></div>
+      <!-- PROMO STRIP -->
+      <div class="promo-strip">
+        <div class="promo-item"><i class="fa-solid fa-bolt" style="color:#ffc60b;"></i> 20–30 Min Delivery</div>
+        <div class="promo-divider"></div>
+        <div class="promo-item"><i class="fa-solid fa-shield-halved" style="color:#0c831f;"></i> 100% Fresh</div>
+        <div class="promo-divider"></div>
+        <div class="promo-item"><i class="fa-solid fa-truck" style="color:#df4b0b;"></i> Free on ₹1500+</div>
       </div>
 
-      <div class="content-area">
-        <div class="section-header">
+      <!-- QUICK CATEGORIES -->
+      <div class="content-area" style="padding-top:14px;">
+        <div class="quick-cats-wrap">
+          <div class="qc-item" onclick="filterAndGo('Dairy Products')">
+            <div class="qc-icon" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">🥛</div><span>Dairy</span>
+          </div>
+          <div class="qc-item" onclick="filterAndGo('Grocery')">
+            <div class="qc-icon" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);">�</div><span>Grocery</span>
+          </div>
+          <div class="qc-item" onclick="filterAndGo('Cold Drinks')">
+            <div class="qc-icon" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);">�</div><span>Drinks</span>
+          </div>
+          <div class="qc-item" onclick="filterAndGo('Cosmetics')">
+            <div class="qc-icon" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);">💄</div><span>Beauty</span>
+          </div>
+          <div class="qc-item" onclick="filterAndGo('Cleaning')">
+            <div class="qc-icon" style="background:linear-gradient(135deg,#f3e5f5,#e1bee7);">🧹</div><span>Cleaning</span>
+          </div>
+          <div class="qc-item" onclick="filterAndGo('Dry Fruits')">
+            <div class="qc-icon" style="background:linear-gradient(135deg,#fff8e1,#ffecb3);">🥜</div><span>Dry Fruits</span>
+          </div>
+        </div>
+
+        <!-- OFFER CARDS -->
+        <div class="offer-cards-row">
+          <div class="offer-card" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);" onclick="switchPage('cart',document.querySelectorAll('.nav-item')[2])">
+            <div>
+              <p class="oc-label">Free Delivery</p>
+              <p class="oc-value">On ₹1500+</p>
+            </div>
+            <span style="font-size:28px;">🚚</span>
+          </div>
+          <div class="offer-card" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);" onclick="switchPage('cart',document.querySelectorAll('.nav-item')[2])">
+            <div>
+              <p class="oc-label">Coupon</p>
+              <p class="oc-value">SAVE4</p>
+            </div>
+            <span style="font-size:28px;">🏷️</span>
+          </div>
+          <div class="offer-card" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);">
+            <div>
+              <p class="oc-label">Fresh Daily</p>
+              <p class="oc-value">Dairy Items</p>
+            </div>
+            <span style="font-size:28px;">🥛</span>
+          </div>
+        </div>
+
+        <!-- SPECIAL OFFERS -->
+        <div class="section-header" style="margin-top:8px;">
           <div>
-            <h3>Special Offers 🔥</h3>
-            <p>Top deals handpicked for you</p>
+            <h3 class="sec-title">Special Offers 🔥</h3>
+            <p class="sec-sub">Top deals handpicked for you</p>
           </div>
           <span class="see-all" onclick="switchPage('category', document.querySelectorAll('.nav-item')[1])">See all →</span>
         </div>

@@ -1139,22 +1139,30 @@ function switchPage(pageId, element) {
 }
 
 // ─────────────────────────────────────────
-//  BANNER ROTATION
+//  BANNER SLIDER
 // ─────────────────────────────────────────
-const BANNERS = ["images/banner1.jpg","images/banner2.jpg","images/banner3.jpg"];
-let bannerIdx = 0;
+let currentSlide = 0;
+const TOTAL_SLIDES = 3;
 
 function startBannerRotation() {
     setInterval(() => {
-        const img = document.getElementById("bannerImg");
-        if (!img) return;
-        img.style.opacity = "0.7";
-        setTimeout(() => {
-            bannerIdx = (bannerIdx + 1) % BANNERS.length;
-            img.src   = BANNERS[bannerIdx];
-            img.style.opacity = "1";
-        }, 300);
+        currentSlide = (currentSlide + 1) % TOTAL_SLIDES;
+        goToSlide(currentSlide);
     }, 4000);
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    const track = document.getElementById("bannerTrack");
+    if (track) track.style.transform = `translateX(-${index * 100}%)`;
+    document.querySelectorAll(".dot").forEach((d, i) => {
+        d.classList.toggle("active", i === index);
+    });
+}
+
+function filterAndGo(category) {
+    switchPage("category", document.querySelectorAll(".nav-item")[1]);
+    setTimeout(() => filterCategory(category), 100);
 }
 
 // ─────────────────────────────────────────
