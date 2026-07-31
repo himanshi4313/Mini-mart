@@ -20,11 +20,9 @@ const AUTO_COUPONS = [
 ];
 
 // ─────────────────────────────────────────
-//  API BASE URL — works on any domain
+//  API BASE URL
 // ─────────────────────────────────────────
-const API = window.location.hostname === "psstorelive.in" || window.location.hostname === "www.psstorelive.in"
-    ? "https://mini-mart-liard.vercel.app"
-    : "";
+const API = "";
 
 
 window.addEventListener("DOMContentLoaded", () => {
