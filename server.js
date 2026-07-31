@@ -56,7 +56,20 @@ const col = (name) => db.collection(name);
 // ─────────────────────────────────────────
 //  STATIC ROUTES (always available)
 // ─────────────────────────────────────────
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+const fs = require("fs");
+
+app.get("/", (req, res) => {
+    const htmlPath = path.join(__dirname, "index.html");
+    fs.readFile(htmlPath, "utf8", (err, data) => {
+        if (err) {
+            console.error("index.html read error:", err);
+            return res.status(500).send("Cannot load page");
+        }
+        res.setHeader("Content-Type", "text/html");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.send(data);
+    });
+});
 app.get("/test", async (req, res) => {
     try {
         await connectDB();
