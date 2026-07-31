@@ -19,7 +19,11 @@ const { MongoClient, ObjectId } = require("mongodb");
 const path           = require("path");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ["https://psstorelive.in", "https://www.psstorelive.in", "https://mini-mart-liard.vercel.app", "https://mini-mart-kcoders.vercel.app", "http://localhost:3000"],
+    methods: ["GET","POST","PUT","DELETE"],
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "./")));
 
