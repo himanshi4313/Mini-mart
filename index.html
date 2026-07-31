@@ -83,13 +83,10 @@
       <img src="images/logo.png" style="width:70px;margin:0 auto 10px;display:block;" alt="Logo">
       <h3>Sign in to PS STORE</h3>
       <p>Get personalized offers, track orders and save addresses.</p>
-      <div id="g_id_onload"
-        data-client_id="615170885884-lph8mkbuuihgb3aa4mpv3sjk9c8ftko5.apps.googleusercontent.com"
-        data-callback="handleGoogleCredential"
-        data-auto_prompt="false"></div>
-      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue"
-        data-text="continue_with" data-size="large" data-logo_alignment="left"></div>
-      <button class="cancel-btn" style="margin-top:15px;width:100%;" onclick="closeGoogleLogin()">Cancel</button>
+      <button class="google-btn" onclick="startGoogleOAuth()" style="width:100%;margin:10px 0;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G"> Continue with Google
+      </button>
+      <button class="cancel-btn" style="margin-top:8px;width:100%;" onclick="closeGoogleLogin()">Cancel</button>
     </div>
   </div>
 

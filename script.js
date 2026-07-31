@@ -960,23 +960,79 @@ function deleteProduct(id) {
 // ─────────────────────────────────────────
 //  GOOGLE AUTH
 // ─────────────────────────────────────────
+const GOOGLE_CLIENT_ID = "615170885884-lph8mkbuuihgb3aa4mpv3sjk9c8ftko5.apps.googleusercontent.com";
+
 function openGoogleLogin()  { document.getElementById("googleLoginModal").style.display = "flex"; }
 function closeGoogleLogin() { document.getElementById("googleLoginModal").style.display = "none"; }
 
-function handleGoogleCredential(response) {
-    const data = JSON.parse(atob(response.credential.split(".")[1]));
-    const user = { uid: data.sub, name: data.name, email: data.email, picture: data.picture };
-    localStorage.setItem("psUser", JSON.stringify(user));
-    updateUserUI();
-    closeGoogleLogin();
-    showToast(`Welcome, ${user.name}! ✅`);
+function startGoogleOAuth() {
+    const redirectUri = window.location.origin;
+    const scope       = "openid email profile";
+    const url = `https://accounts.google.com/o/oauth2/v2/auth` +
+        `?client_id=${GOOGLE_CLIENT_ID}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&response_type=token` +
+        `&scope=${encodeURIComponent(scope)}` +
+        `&prompt=select_account`;
 
-    // Sync user to DB
-    fetch("/users/sync", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(user)
-    }).catch(() => {});
+    const popup = window.open(url, "googleLogin", "width=500,height=600,left=200,top=100");
+
+    const timer = setInterval(() => {
+        try {
+            if (!popup || popup.closed) { clearInterval(timer); return; }
+            const popupUrl = popup.location.href;
+            if (popupUrl.includes(window.location.origin)) {
+                const hash   = new URL(popupUrl).hash.substring(1);
+                const params = new URLSearchParams(hash);
+                const token  = params.get("access_token");
+                if (token) {
+                    clearInterval(timer);
+                    popup.close();
+                    fetchGoogleProfile(token);
+                }
+            }
+        } catch (e) { /* cross-origin, ignore */ }
+    }, 500);
+}
+
+async function fetchGoogleProfile(accessToken) {
+    try {
+        const res  = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const data = await res.json();
+        const user = { uid: data.sub, name: data.name, email: data.email, picture: data.picture };
+        localStorage.setItem("psUser", JSON.stringify(user));
+        updateUserUI();
+        closeGoogleLogin();
+        showToast(`Welcome, ${user.name}! ✅`);
+
+        // Sync to DB
+        fetch("/users/sync", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify(user)
+        }).catch(() => {});
+    } catch (e) {
+        showToast("Login failed. Try again.");
+    }
+}
+
+// Legacy GIS callback (kept for backward compat)
+function handleGoogleCredential(response) {
+    try {
+        const data = JSON.parse(atob(response.credential.split(".")[1]));
+        const user = { uid: data.sub, name: data.name, email: data.email, picture: data.picture };
+        localStorage.setItem("psUser", JSON.stringify(user));
+        updateUserUI();
+        closeGoogleLogin();
+        showToast(`Welcome, ${user.name}! ✅`);
+        fetch("/users/sync", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify(user)
+        }).catch(() => {});
+    } catch(e) { showToast("Login failed."); }
 }
 
 function updateUserUI() {
