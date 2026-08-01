@@ -500,34 +500,39 @@ body{
 .scroll-top-btn:hover{transform:translateY(-2px);}
 
 /* ── ORDER SUCCESS POPUP ────────────── */
-.order-success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);
+.order-success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);
   display:flex;align-items:center;justify-content:center;z-index:99999;
   animation:fadeIn .3s ease;}
-.order-success-box{background:#fff;border-radius:24px;padding:40px 30px;
-  text-align:center;max-width:300px;width:90%;animation:popUp .4s cubic-bezier(.34,1.56,.64,1);}
-@keyframes popUp{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.order-success-box{background:#fff;border-radius:24px;padding:36px 28px;
+  text-align:center;max-width:290px;width:88%;
+  animation:popUp .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popUp{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-.success-circle{width:90px;height:90px;margin:0 auto 20px;position:relative;}
+.success-circle{width:90px;height:90px;margin:0 auto 18px;}
 .tick-svg{width:90px;height:90px;}
-.tick-circle{stroke:#0c831f;stroke-width:2;stroke-dasharray:157;stroke-dashoffset:157;
-  animation:drawCircle .6s ease forwards;}
+.tick-circle{stroke:#0c831f;stroke-width:2.5;stroke-dasharray:160;stroke-dashoffset:160;
+  animation:drawCircle .7s ease forwards;}
 .tick-check{stroke:#0c831f;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;
-  stroke-dasharray:50;stroke-dashoffset:50;
-  animation:drawTick .4s ease .5s forwards;}
+  stroke-dasharray:55;stroke-dashoffset:55;
+  animation:drawTick .5s ease .6s forwards;}
 @keyframes drawCircle{to{stroke-dashoffset:0}}
 @keyframes drawTick{to{stroke-dashoffset:0}}
-
-.success-title{font-size:24px;font-weight:800;color:#0c831f;margin-bottom:6px;}
-.success-sub{font-size:14px;color:#555;margin-bottom:8px;}
-.success-id{font-size:12px;color:#999;margin-bottom:8px;}
+.success-title{font-size:22px;font-weight:800;color:#0c831f;margin-bottom:6px;}
+.success-sub{font-size:13px;color:#555;margin-bottom:8px;}
+.success-id{font-size:11px;color:#999;margin-bottom:10px;}
 .success-time{font-size:13px;color:#333;background:#f0fdf4;padding:8px 16px;
-  border-radius:20px;display:inline-block;}
+  border-radius:20px;display:inline-block;font-weight:600;}
 
-/* ── ADMIN STICKY FORM ──────────────── */
-.admin-form-sticky{position:sticky;top:10px;z-index:100;
-  box-shadow:0 4px 20px rgba(0,0,0,.1);}
+/* ── ADMIN INLINE BUTTONS ───────────── */
+.scroll-top-btn-inline{background:#f5f5f5;border:1.5px solid #e0e0e0;color:#333;
+  padding:8px 14px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:6px;transition:.2s;}
+.scroll-top-btn-inline:hover{background:var(--primary-color);color:#fff;border-color:var(--primary-color);}
+.go-to-form-btn{width:100%;margin:16px 0;padding:13px;background:var(--primary-color);
+  color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;}
+.go-to-form-btn:hover{background:var(--primary-dark);}
 
 /* ── MIC ACTIVE ─────────────────────── */
-.mic-icon.listening{color:#e53935 !important;animation:pulse .8s infinite;}
-@keyframes pulse{0%,100%{transform:translateY(-50%) scale(1)}50%{transform:translateY(-50%) scale(1.2)}}
+.mic-icon{transition:.2s;}
+.mic-icon.listening{color:#e53935 !important;}

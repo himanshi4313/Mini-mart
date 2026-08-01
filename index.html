@@ -362,7 +362,12 @@
       <div class="content-area">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
           <h3 style="margin:0;">Shopkeeper Dashboard</h3>
-          <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-lock"></i> Lock</button>
+          <div style="display:flex;gap:8px;">
+            <button class="scroll-top-btn-inline" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+              <i class="fa-solid fa-chevron-up"></i> Top
+            </button>
+            <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-lock"></i> Lock</button>
+          </div>
         </div>
         <h3 style="color:#df4b0b;margin-bottom:12px;"><i class="fa-solid fa-receipt"></i> Active Orders</h3>
         <div class="admin-stats-row" id="adminStatsRow">
@@ -384,7 +389,11 @@
           </div>
         </div>
         <div id="adminOrdersList"></div>
-        <div class="checkout-form admin-form-sticky" style="margin:28px 0 20px;">
+        <!-- Floating button to jump to Add Product form -->
+        <button class="go-to-form-btn" onclick="document.getElementById('adminProductForm').scrollIntoView({behavior:'smooth'})">
+          <i class="fa-solid fa-plus"></i> Add Product
+        </button>
+        <div class="checkout-form" id="adminProductForm" style="margin:28px 0 20px;">
           <h4 id="formTitle" style="margin-top:0;color:var(--primary-color);font-size:16px;"><i class="fa-solid fa-plus-circle"></i> Add New Product</h4>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div><label>Product Name</label><input type="text" id="pName" placeholder="e.g., Fortune Oil"></div>
@@ -469,20 +478,18 @@
   <div id="toast"></div>
 
   <!-- ORDER SUCCESS POPUP -->
-  <div id="orderSuccessPopup" style="display:none;">
-    <div class="order-success-overlay">
-      <div class="order-success-box">
-        <div class="success-circle">
-          <svg class="tick-svg" viewBox="0 0 52 52">
-            <circle class="tick-circle" cx="26" cy="26" r="25" fill="none"/>
-            <path class="tick-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-          </svg>
-        </div>
-        <h2 class="success-title">Order Placed!</h2>
-        <p class="success-sub">Your order is confirmed</p>
-        <p class="success-id" id="successOrderId"></p>
-        <p class="success-time">Delivery in <b>20-30 minutes</b></p>
+  <div id="orderSuccessPopup" class="order-success-overlay" style="display:none;">
+    <div class="order-success-box">
+      <div class="success-circle">
+        <svg class="tick-svg" viewBox="0 0 52 52">
+          <circle class="tick-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="tick-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
       </div>
+      <h2 class="success-title">Order Placed!</h2>
+      <p class="success-sub">Aapka order confirm ho gaya</p>
+      <p class="success-id" id="successOrderId"></p>
+      <p class="success-time">Delivery in <b>20-30 minutes</b> 🚚</p>
     </div>
   </div>
 
