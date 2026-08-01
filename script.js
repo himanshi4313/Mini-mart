@@ -749,11 +749,15 @@ function placeOrder() {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            cart         = [];
+            const savedOrderId = orderId;
+            const savedTotal   = grandTotal;
+            cart          = [];
             appliedCoupon = null;
             updateCartUI();
-            showOrderSuccess(orderId, grandTotal);
-            switchPage("home", document.querySelector(".nav-item"));
+            // Show popup FIRST, then switch page after popup closes
+            showOrderSuccess(savedOrderId, savedTotal, () => {
+                switchPage("home", document.querySelector(".nav-item"));
+            });
         } else {
             throw new Error(data.message || "Order failed");
         }
@@ -766,44 +770,49 @@ function placeOrder() {
     });
 }
 
-function showOrderSuccess(orderId, total) {
+function showOrderSuccess(orderId, total, onClose) {
+    // Switch to home first so popup shows over home
+    switchPage("home", document.querySelector(".nav-item"));
+
     const popup = document.getElementById("orderSuccessPopup");
     const idEl  = document.getElementById("successOrderId");
-    if (idEl)  idEl.textContent = "Order ID: " + orderId;
+    if (idEl) idEl.textContent = "Order ID: " + orderId;
+
     if (popup) {
+        // Reset animations
+        const box    = popup.querySelector(".order-success-box");
+        const circle = popup.querySelector(".tick-circle");
+        const check  = popup.querySelector(".tick-check");
+
+        if (box)    { box.style.animation    = "none"; box.offsetHeight;    box.style.animation    = "popUp .5s cubic-bezier(.34,1.56,.64,1)"; }
+        if (circle) { circle.style.animation = "none"; circle.offsetHeight; circle.style.animation = "drawCircle .7s ease forwards"; }
+        if (check)  { check.style.animation  = "none"; check.offsetHeight;  check.style.animation  = "drawTick .5s ease .6s forwards"; }
+
         popup.style.display = "flex";
-        // Re-trigger animation by forcing reflow
-        popup.querySelector(".order-success-box").style.animation = "none";
-        popup.querySelector(".order-success-box").offsetHeight;
-        popup.querySelector(".order-success-box").style.animation = "";
-        popup.querySelector(".tick-circle").style.animation = "none";
-        popup.querySelector(".tick-circle").offsetHeight;
-        popup.querySelector(".tick-circle").style.animation = "drawCircle .7s ease forwards";
-        popup.querySelector(".tick-check").style.animation  = "none";
-        popup.querySelector(".tick-check").offsetHeight;
-        popup.querySelector(".tick-check").style.animation  = "drawTick .5s ease .6s forwards";
+
+        // Auto close after 3.5s
+        setTimeout(() => {
+            popup.style.display = "none";
+            if (onClose) onClose();
+        }, 3500);
     }
 
     // Play success sound
     try {
         const ctx  = new (window.AudioContext || window.webkitAudioContext)();
-        const osc  = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(523, ctx.currentTime);
-        osc.frequency.setValueAtTime(659, ctx.currentTime + 0.15);
-        osc.frequency.setValueAtTime(784, ctx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.4, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.9);
+        [523, 659, 784].forEach((freq, i) => {
+            const osc  = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.3);
+            osc.start(ctx.currentTime + i * 0.15);
+            osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+        });
     } catch(e) {}
-
-    setTimeout(() => {
-        if (popup) popup.style.display = "none";
-    }, 3500);
 }
 
 // ─────────────────────────────────────────
