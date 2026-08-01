@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /orders
+Disallow: /users
+
+Sitemap: https://psstorelive.in/sitemap.xml

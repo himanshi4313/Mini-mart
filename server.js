@@ -1,7 +1,6 @@
 require("dotenv").config();
 
-// Fix TLS for Node.js v24
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// Fix TLS for Node.js v24 — use tlsInsecure in connection options instead of env var
 
 // Force IPv4 DNS — only works in local/VPS, skip on Vercel serverless
 try {
