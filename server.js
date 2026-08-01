@@ -134,6 +134,17 @@ app.put("/users/:email/location", async (req, res) => {
     } catch (e) { res.status(500).json({ message: e.message }); }
 });
 
+app.put("/users/:email/wishlist", async (req, res) => {
+    try {
+        const { wishlist } = req.body;
+        await col("users").updateOne(
+            { email: req.params.email },
+            { $set: { wishlist } }
+        );
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ message: e.message }); }
+});
+
 // ─────────────────────────────────────────
 //  PRODUCTS
 // ─────────────────────────────────────────

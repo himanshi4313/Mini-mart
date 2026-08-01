@@ -5,9 +5,11 @@
 // ── State ──────────────────────────────────
 let cart            = [];
 let allProducts     = [];
+let wishlist        = [];
 let isAdminAuth     = false;
 let editProductId   = null;
 let appliedCoupon   = null;
+let deferredPWAPrompt = null;
 let currentLat      = null;
 let currentLng      = null;
 let currentLocText  = "";
@@ -50,13 +52,13 @@ function requestNotificationPermission() {
 //  LOAD PRODUCTS
 // ─────────────────────────────────────────
 function loadAllData() {
-    document.getElementById("productList").innerHTML =
-        `<div class="loading-products"><div class="spinner"></div><p>Loading products...</p></div>`;
+    renderSkeleton("productList", 6);
 
     fetch(API + "/products")
         .then(r => r.json())
         .then(products => {
             allProducts = products;
+            loadWishlist();
             const deals = allProducts.filter(p => p.discount > 0);
             renderProducts(deals, "productList");
             generateCategories(allProducts);
@@ -86,17 +88,34 @@ function renderProducts(list, targetId) {
         const finalPrice = p.discount
             ? Math.round(p.price - (p.price * p.discount / 100))
             : p.price;
+        const isWishlisted = wishlist.includes(p._id);
+        const heartColor   = isWishlisted ? "#e53935" : "#ccc";
+        const heartIcon    = isWishlisted ? "fa-solid fa-heart" : "fa-regular fa-heart";
+
         html += `
         <div class="card">
-            <img src="images/${p.image}" alt="${p.name}" onerror="this.src='images/default.png'">
-            ${p.discount ? `<span class="offer">${p.discount}% OFF</span>` : ""}
+            <div class="card-img-wrap">
+                <img src="images/${p.image}" alt="${p.name}" onerror="this.src='images/default.png'">
+                ${p.discount ? `<span class="offer">${p.discount}% OFF</span>` : ""}
+                <button class="wish-btn" style="color:${heartColor};" onclick="toggleWishlist('${p._id}',this)">
+                    <i class="${heartIcon}"></i>
+                </button>
+            </div>
             <h2>${p.name}</h2>
-            <p>₹${finalPrice} ${p.discount ? `<del>₹${p.price}</del>` : ""}</p>
-            <p style="font-size:11px;color:#666;">Stock: ${p.stock}</p>
+            <div class="card-price-row">
+                <span class="card-price">Rs.${finalPrice}</span>
+                ${p.discount ? `<span class="card-mrp">Rs.${p.price}</span>` : ""}
+            </div>
+            <p class="card-stock ${p.stock <= 5 ? "low-stock" : ""}">${p.stock <= 5 ? `Only ${p.stock} left!` : `Stock: ${p.stock}`}</p>
             <input type="number" value="1" min="1" max="${p.stock}" class="qty">
-            <button onclick="addToCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0},this)">
-                Add to Cart
-            </button>
+            <div class="card-btn-row">
+                <button class="card-add-btn" onclick="addToCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0},this)">
+                    Add to Cart
+                </button>
+                <button class="card-buy-btn" onclick="buyNow('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0})">
+                    Buy Now
+                </button>
+            </div>
         </div>`;
     });
     document.getElementById(targetId).innerHTML = html;
@@ -768,9 +787,12 @@ function showMyOrders() {
                     </div>
                     <p class="order-items">${items}</p>
                     <div class="order-card-footer">
-                        <span class="order-total">₹${o.grandTotal}</span>
+                        <span class="order-total">Rs.${o.grandTotal}</span>
                         <span class="order-payment">${o.paymentMethod || "COD"}</span>
                     </div>
+                    <button class="reorder-btn" onclick="reorder('${o.orderId}')">
+                        <i class="fa-solid fa-rotate-right"></i> Reorder
+                    </button>
                     <div class="order-progress">
                         ${["Pending","Accepted","Packed","Out for Delivery","Delivered"].map(s =>
                             `<div class="op-step ${isStatusReached(o.status, s) ? "done" : ""}">
@@ -836,6 +858,7 @@ function loadAdminOrders() {
     fetch(API + "/orders")
         .then(r => r.json())
         .then(orders => {
+            loadAdminStats(orders);
             if (!orders.length) {
                 container.innerHTML = `<p style="color:#999;text-align:center;padding:20px;">No orders yet.</p>`;
                 return;
@@ -1118,7 +1141,7 @@ document.addEventListener("click", e => {
 // ─────────────────────────────────────────
 //  PAGE NAVIGATION
 // ─────────────────────────────────────────
-const PAGES = ["home","category","cart","checkout","orders","admin"];
+const PAGES = ["home","category","cart","checkout","orders","wishlist","admin"];
 
 function switchPage(pageId, element) {
     PAGES.forEach(id => {
@@ -1183,4 +1206,193 @@ function showToast(msg) {
     toast.textContent = msg;
     toast.classList.add("show");
     setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+// ─────────────────────────────────────────
+//  PWA
+// ─────────────────────────────────────────
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+    });
+}
+
+window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferredPWAPrompt = e;
+    const btn = document.getElementById("pwaInstallBtn");
+    if (btn) btn.style.display = "flex";
+});
+
+window.addEventListener("appinstalled", () => {
+    deferredPWAPrompt = null;
+    const btn = document.getElementById("pwaInstallBtn");
+    if (btn) btn.style.display = "none";
+    showToast("PS STORE app installed! 🎉");
+});
+
+function installPWA() {
+    if (!deferredPWAPrompt) {
+        showToast("Open in browser to install app");
+        return;
+    }
+    deferredPWAPrompt.prompt();
+    deferredPWAPrompt.userChoice.then(choice => {
+        if (choice.outcome === "accepted") showToast("Installing PS STORE app... 🚀");
+        deferredPWAPrompt = null;
+    });
+}
+
+// ─────────────────────────────────────────
+//  SKELETON LOADING
+// ─────────────────────────────────────────
+function renderSkeleton(targetId, count = 6) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    let html = "";
+    for (let i = 0; i < count; i++) {
+        html += `
+        <div class="card skeleton-card">
+            <div class="skel skel-img"></div>
+            <div class="skel skel-title"></div>
+            <div class="skel skel-price"></div>
+            <div class="skel skel-btn"></div>
+        </div>`;
+    }
+    el.innerHTML = html;
+}
+
+// ─────────────────────────────────────────
+//  SORT PRODUCTS
+// ─────────────────────────────────────────
+function sortProducts(type, el) {
+    document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active-sort"));
+    if (el) el.classList.add("active-sort");
+
+    let sorted = [...allProducts];
+    if (type === "discount") sorted = sorted.sort((a, b) => (b.discount || 0) - (a.discount || 0));
+    else if (type === "low")  sorted = sorted.sort((a, b) => {
+        const pa = a.discount ? Math.round(a.price - a.price * a.discount / 100) : a.price;
+        const pb = b.discount ? Math.round(b.price - b.price * b.discount / 100) : b.price;
+        return pa - pb;
+    });
+    else if (type === "high") sorted = sorted.sort((a, b) => {
+        const pa = a.discount ? Math.round(a.price - a.price * a.discount / 100) : a.price;
+        const pb = b.discount ? Math.round(b.price - b.price * b.discount / 100) : b.price;
+        return pb - pa;
+    });
+    else sorted = sorted.filter(p => p.discount > 0);
+
+    renderProducts(sorted, "productList");
+}
+
+// ─────────────────────────────────────────
+//  WISHLIST
+// ─────────────────────────────────────────
+function loadWishlist() {
+    const user = getUser();
+    if (user) {
+        fetch(API + `/users/${user.email}`)
+            .then(r => r.json())
+            .then(data => { wishlist = data.wishlist || []; })
+            .catch(() => {});
+    } else {
+        wishlist = JSON.parse(localStorage.getItem("psWishlist") || "[]");
+    }
+}
+
+function toggleWishlist(productId, btn) {
+    const idx = wishlist.indexOf(productId);
+    if (idx === -1) {
+        wishlist.push(productId);
+        if (btn) { btn.style.color = "#e53935"; btn.innerHTML = `<i class="fa-solid fa-heart"></i>`; }
+        showToast("Added to Wishlist ❤️");
+    } else {
+        wishlist.splice(idx, 1);
+        if (btn) { btn.style.color = "#ccc"; btn.innerHTML = `<i class="fa-regular fa-heart"></i>`; }
+        showToast("Removed from Wishlist");
+    }
+
+    const user = getUser();
+    if (user) {
+        fetch(API + `/users/${user.email}/wishlist`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ wishlist })
+        }).catch(() => {});
+    } else {
+        localStorage.setItem("psWishlist", JSON.stringify(wishlist));
+    }
+}
+
+function openWishlist() {
+    document.getElementById("profileMenu").classList.remove("open");
+    switchPage("wishlist");
+    const wishlistProducts = allProducts.filter(p => wishlist.includes(p._id));
+    const grid = document.getElementById("wishlistGrid");
+    if (!wishlistProducts.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999;">
+            <div style="font-size:50px;margin-bottom:12px;">❤️</div>
+            <p>Your wishlist is empty</p>
+            <button class="checkout-btn" style="max-width:200px;margin-top:16px;" onclick="switchPage('home',document.querySelector('.nav-item'))">Shop Now</button>
+        </div>`;
+        return;
+    }
+    renderProducts(wishlistProducts, "wishlistGrid");
+}
+
+// ─────────────────────────────────────────
+//  BUY NOW
+// ─────────────────────────────────────────
+function buyNow(id, name, price, originalPrice, image, discount) {
+    const user = getUser();
+    if (!user) { openGoogleLogin(); return; }
+
+    cart = [{ id, name, price, originalPrice, image, discount, qty: 1 }];
+    updateCartUI();
+    showCheckoutPage();
+}
+
+// ─────────────────────────────────────────
+//  ADMIN DASHBOARD STATS
+// ─────────────────────────────────────────
+function loadAdminStats(orders) {
+    const today = new Date().toDateString();
+    const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today);
+    const revenue     = todayOrders.reduce((s, o) => s + (o.grandTotal || 0), 0);
+    const lowStock    = allProducts.filter(p => p.stock <= 5).length;
+
+    setEl("statTodayOrders", todayOrders.length);
+    setEl("statRevenue",     `Rs.${revenue}`);
+    setEl("statTotalOrders", orders.length);
+    setEl("statLowStock",    lowStock > 0 ? `<span style="color:#e53935;">${lowStock}</span>` : "0");
+}
+
+// ─────────────────────────────────────────
+//  REORDER
+// ─────────────────────────────────────────
+function reorder(orderId) {
+    const user = getUser();
+    if (!user) { openGoogleLogin(); return; }
+
+    fetch(API + `/orders/user/${encodeURIComponent(user.email)}`)
+        .then(r => r.json())
+        .then(orders => {
+            const order = orders.find(o => o.orderId === orderId);
+            if (!order || !order.items.length) { showToast("Order not found"); return; }
+
+            cart = order.items.map(i => ({
+                id:            i.id || i._id || "",
+                name:          i.name,
+                price:         i.price,
+                originalPrice: i.originalPrice || i.price,
+                image:         i.image || "default.png",
+                discount:      i.discount || 0,
+                qty:           i.qty
+            }));
+            updateCartUI();
+            switchPage("cart", document.querySelectorAll(".nav-item")[2]);
+            showToast("Items added to cart! 🛒");
+        })
+        .catch(() => showToast("Failed to reorder"));
 }

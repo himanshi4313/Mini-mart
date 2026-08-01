@@ -6,6 +6,10 @@
   <title>PS STORE Jodhpur — Ghar Baithe Grocery Delivery</title>
   <meta name="description" content="Order groceries online from PS STORE Jodhpur. Fast delivery, best prices, guaranteed quality.">
   <meta name="build" content="v3-fresh">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffc60b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -65,6 +69,7 @@
         <li onclick="showMyOrders()"><i class="fa-solid fa-bag-shopping"></i> My Orders</li>
         <li onclick="openLocationModal()"><i class="fa-solid fa-location-dot"></i> Saved Addresses</li>
         <li onclick="openWishlist()"><i class="fa-solid fa-heart"></i> Wishlist</li>
+        <li id="pwaInstallBtn" style="display:none;" onclick="installPWA()"><i class="fa-solid fa-download"></i> Install App</li>
         <li><i class="fa-solid fa-headset"></i> Help & Support</li>
         <li class="logout" onclick="signOutUser()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</li>
       </ul>
@@ -203,6 +208,13 @@
           <div><h3 class="sec-title">Best Deals</h3><p class="sec-sub">Handpicked offers for you</p></div>
           <span class="see-all" onclick="switchPage('category',document.querySelectorAll('.nav-item')[1])">See all</span>
         </div>
+        <!-- SORT BAR -->
+        <div class="sort-bar">
+          <button class="sort-btn active-sort" onclick="sortProducts('default',this)">Default</button>
+          <button class="sort-btn" onclick="sortProducts('discount',this)">Top Offers</button>
+          <button class="sort-btn" onclick="sortProducts('low',this)">Price: Low</button>
+          <button class="sort-btn" onclick="sortProducts('high',this)">Price: High</button>
+        </div>
         <div id="productList" class="product-grid">
           <div class="loading-products"><div class="spinner"></div><p>Loading products...</p></div>
         </div>
@@ -320,6 +332,17 @@
       </div>
     </div>
 
+    <!-- WISHLIST VIEW -->
+    <div id="wishlist-view" style="display:none;">
+      <div class="content-area">
+        <div class="checkout-header">
+          <button class="back-btn" onclick="switchPage('home',document.querySelector('.nav-item'))"><i class="fa-solid fa-arrow-left"></i></button>
+          <h3>My Wishlist</h3>
+        </div>
+        <div id="wishlistGrid" class="product-grid"></div>
+      </div>
+    </div>
+
     <!-- ADMIN VIEW -->
     <div id="admin-view" style="display:none;">
       <div class="content-area">
@@ -328,6 +351,24 @@
           <button class="logout-btn" onclick="logoutAdmin()"><i class="fa-solid fa-lock"></i> Lock</button>
         </div>
         <h3 style="color:#df4b0b;margin-bottom:12px;"><i class="fa-solid fa-receipt"></i> Active Orders</h3>
+        <div class="admin-stats-row" id="adminStatsRow">
+          <div class="stat-card" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);">
+            <p class="stat-label">Today's Orders</p>
+            <p class="stat-value" id="statTodayOrders">—</p>
+          </div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);">
+            <p class="stat-label">Today's Revenue</p>
+            <p class="stat-value" id="statRevenue">—</p>
+          </div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">
+            <p class="stat-label">Total Orders</p>
+            <p class="stat-value" id="statTotalOrders">—</p>
+          </div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);">
+            <p class="stat-label">Low Stock</p>
+            <p class="stat-value" id="statLowStock">—</p>
+          </div>
+        </div>
         <div id="adminOrdersList"></div>
         <div class="checkout-form" style="margin:28px 0 20px;">
           <h4 id="formTitle" style="margin-top:0;color:var(--primary-color);font-size:16px;"><i class="fa-solid fa-plus-circle"></i> Add New Product</h4>
