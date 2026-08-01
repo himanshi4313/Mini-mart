@@ -22,7 +22,7 @@ const AUTO_COUPONS = [
 // ─────────────────────────────────────────
 //  API BASE URL
 // ─────────────────────────────────────────
-const API = "";
+const API = "https://mini-mart-liard.vercel.app";
 
 
 window.addEventListener("DOMContentLoaded", () => {
