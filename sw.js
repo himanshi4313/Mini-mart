@@ -1,4 +1,4 @@
-const CACHE_NAME = "psstore-v1";
+const CACHE_NAME = "psstore-v3";
 const STATIC_ASSETS = [
     "/",
     "/style.css",
