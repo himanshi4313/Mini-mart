@@ -498,3 +498,36 @@ body{
   transition:.3s;}
 .scroll-top-btn.visible{display:flex;}
 .scroll-top-btn:hover{transform:translateY(-2px);}
+
+/* ── ORDER SUCCESS POPUP ────────────── */
+.order-success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;z-index:99999;
+  animation:fadeIn .3s ease;}
+.order-success-box{background:#fff;border-radius:24px;padding:40px 30px;
+  text-align:center;max-width:300px;width:90%;animation:popUp .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popUp{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.success-circle{width:90px;height:90px;margin:0 auto 20px;position:relative;}
+.tick-svg{width:90px;height:90px;}
+.tick-circle{stroke:#0c831f;stroke-width:2;stroke-dasharray:157;stroke-dashoffset:157;
+  animation:drawCircle .6s ease forwards;}
+.tick-check{stroke:#0c831f;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:50;stroke-dashoffset:50;
+  animation:drawTick .4s ease .5s forwards;}
+@keyframes drawCircle{to{stroke-dashoffset:0}}
+@keyframes drawTick{to{stroke-dashoffset:0}}
+
+.success-title{font-size:24px;font-weight:800;color:#0c831f;margin-bottom:6px;}
+.success-sub{font-size:14px;color:#555;margin-bottom:8px;}
+.success-id{font-size:12px;color:#999;margin-bottom:8px;}
+.success-time{font-size:13px;color:#333;background:#f0fdf4;padding:8px 16px;
+  border-radius:20px;display:inline-block;}
+
+/* ── ADMIN STICKY FORM ──────────────── */
+.admin-form-sticky{position:sticky;top:10px;z-index:100;
+  box-shadow:0 4px 20px rgba(0,0,0,.1);}
+
+/* ── MIC ACTIVE ─────────────────────── */
+.mic-icon.listening{color:#e53935 !important;animation:pulse .8s infinite;}
+@keyframes pulse{0%,100%{transform:translateY(-50%) scale(1)}50%{transform:translateY(-50%) scale(1.2)}}

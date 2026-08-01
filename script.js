@@ -173,15 +173,38 @@ function filterCategory(name, el) {
 // ─────────────────────────────────────────
 function searchProducts() {
     const kw = document.getElementById("searchInput").value.toLowerCase().trim();
-    const filtered = kw
-        ? allProducts.filter(p => p.name.toLowerCase().includes(kw))
-        : allProducts;
 
-    const homeVisible    = document.getElementById("home-view").style.display !== "none";
-    const catVisible     = document.getElementById("category-view").style.display !== "none";
-    const adminVisible   = document.getElementById("admin-view").style.display !== "none";
+    // Show all products on home page when searching
+    const homeVisible  = document.getElementById("home-view").style.display !== "none";
+    const catVisible   = document.getElementById("category-view").style.display !== "none";
+    const adminVisible = document.getElementById("admin-view").style.display !== "none";
 
-    if (homeVisible)  renderProducts(filtered.filter(p => p.discount > 0), "productList");
+    if (kw === "") {
+        // Empty search — reset to default
+        if (homeVisible) {
+            const deals = allProducts.filter(p => p.discount > 0);
+            renderProducts(deals.length ? deals : allProducts, "productList");
+        }
+        if (catVisible) renderProducts(allProducts, "categoryProductList");
+        if (adminVisible) renderAdminInventory(allProducts);
+        return;
+    }
+
+    const filtered = allProducts.filter(p =>
+        p.name.toLowerCase().includes(kw) ||
+        (p.category && p.category.toLowerCase().includes(kw))
+    );
+
+    if (homeVisible) {
+        // Show all matching products on home when searching
+        const sectionHeader = document.querySelector("#home-view .section-header");
+        if (sectionHeader) {
+            sectionHeader.querySelector(".sec-title").textContent = filtered.length
+                ? `Results for "${document.getElementById("searchInput").value}"`
+                : "No results found";
+        }
+        renderProducts(filtered, "productList");
+    }
     if (catVisible)   renderProducts(filtered, "categoryProductList");
     if (adminVisible) renderAdminInventory(filtered);
 }
@@ -197,8 +220,9 @@ function searchAdminProducts(kw) {
 //  CART
 // ─────────────────────────────────────────
 function addToCart(id, name, price, originalPrice, image, discount, btn) {
-    const qtyInput = btn.parentElement.querySelector(".qty");
-    const qty = parseInt(qtyInput.value) || 1;
+    const card     = btn.closest(".card");
+    const qtyInput = card ? card.querySelector(".qty") : null;
+    const qty      = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
 
     const existing = cart.find(i => i.id === id);
     if (existing) {
@@ -206,8 +230,19 @@ function addToCart(id, name, price, originalPrice, image, discount, btn) {
     } else {
         cart.push({ id, name, price, originalPrice, image, discount, qty });
     }
+
+    // Animate button
+    btn.textContent = "Added ✓";
+    btn.style.background = "#0c831f";
+    btn.style.color = "#fff";
+    setTimeout(() => {
+        btn.textContent = "Add to Cart";
+        btn.style.background = "";
+        btn.style.color = "";
+    }, 1000);
+
     updateCartUI();
-    showToast(`${name} added to cart 🛒`);
+    showToast(`${name} added to cart`);
 }
 
 function removeFromCart(index) {
@@ -732,7 +767,33 @@ function placeOrder() {
 }
 
 function showOrderSuccess(orderId, total) {
-    showToast(`✅ Order placed! ID: ${orderId}`);
+    // Show green popup
+    const popup = document.getElementById("orderSuccessPopup");
+    const idEl  = document.getElementById("successOrderId");
+    if (idEl) idEl.textContent = `Order ID: ${orderId}`;
+    if (popup) popup.style.display = "flex";
+
+    // Play success sound
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(523, ctx.currentTime);
+        osc.frequency.setValueAtTime(659, ctx.currentTime + 0.15);
+        osc.frequency.setValueAtTime(784, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.8);
+    } catch(e) {}
+
+    // Hide after 3.5 seconds
+    setTimeout(() => {
+        if (popup) popup.style.display = "none";
+    }, 3500);
 }
 
 // ─────────────────────────────────────────
@@ -1406,4 +1467,41 @@ function reorder(orderId) {
             showToast("Items added to cart! 🛒");
         })
         .catch(() => showToast("Failed to reorder"));
+}
+
+// ─────────────────────────────────────────
+//  VOICE SEARCH (MIC)
+// ─────────────────────────────────────────
+function startVoiceSearch() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) { showToast("Voice search not supported on this browser"); return; }
+
+    const mic = document.querySelector(".mic-icon");
+    if (mic) { mic.style.color = "#df4b0b"; mic.className = "fa-solid fa-microphone mic-icon"; }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "hi-IN";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+
+    recognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        const input = document.getElementById("searchInput");
+        if (input) {
+            input.value = transcript;
+            searchProducts();
+        }
+        if (mic) mic.style.color = "";
+    };
+
+    recognition.onerror = () => {
+        if (mic) mic.style.color = "";
+        showToast("Voice search failed. Try again.");
+    };
+
+    recognition.onend = () => {
+        if (mic) mic.style.color = "";
+    };
 }
