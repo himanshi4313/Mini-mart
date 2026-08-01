@@ -40,6 +40,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
     loadAllData();
     startBannerRotation();
+
+    // Scroll to top button visibility
+    window.addEventListener("scroll", () => {
+        const btn = document.getElementById("scrollTopBtn");
+        if (!btn) return;
+        if (window.scrollY > 300) btn.classList.add("visible");
+        else btn.classList.remove("visible");
+    });
 });
 
 function requestNotificationPermission() {
@@ -1151,6 +1159,9 @@ function switchPage(pageId, element) {
 
     const target = document.getElementById(pageId + "-view");
     if (target) target.style.display = "block";
+
+    // Scroll to top on every page switch
+    window.scrollTo({ top: 0, behavior: "instant" });
 
     if (element) {
         document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));

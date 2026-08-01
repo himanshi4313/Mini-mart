@@ -442,11 +442,12 @@ body{
 .card-img-wrap{position:relative;overflow:hidden;border-radius:10px;margin-bottom:8px;background:#f8f8f8;}
 .card-img-wrap img{width:100%;height:120px;object-fit:contain;display:block;padding:6px;transition:.3s;}
 .card:hover .card-img-wrap img{transform:scale(1.06);}
-.wish-btn{position:absolute;top:6px;right:6px;background:rgba(255,255,255,.9);
-  border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:14px;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);transition:.2s;z-index:2;}
-.wish-btn:hover{transform:scale(1.15);}
+.wish-btn{position:absolute;top:6px;right:6px;background:transparent;
+  border:none;width:26px;height:26px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  transition:.2s;z-index:2;padding:0;}
+.wish-btn:hover{transform:scale(1.2);}
+.wish-btn .fa-heart{filter:drop-shadow(0 1px 2px rgba(0,0,0,.15));}
 .card-price-row{display:flex;align-items:center;gap:6px;margin:4px 0;}
 .card-price{font-size:15px;font-weight:800;color:#111;}
 .card-mrp{font-size:12px;color:#999;text-decoration:line-through;}
@@ -488,3 +489,12 @@ body{
 /* ── PWA INSTALL BTN ────────────────── */
 #pwaInstallBtn{background:linear-gradient(135deg,#e3f2fd,#bbdefb) !important;color:#1565c0 !important;}
 #pwaInstallBtn i{color:#1565c0;}
+
+/* ── SCROLL TO TOP ──────────────────── */
+.scroll-top-btn{position:fixed;bottom:90px;right:14px;width:38px;height:38px;
+  background:var(--primary-color);color:#fff;border:none;border-radius:50%;
+  display:none;align-items:center;justify-content:center;font-size:16px;
+  cursor:pointer;box-shadow:0 4px 12px rgba(223,75,11,.35);z-index:900;
+  transition:.3s;}
+.scroll-top-btn.visible{display:flex;}
+.scroll-top-btn:hover{transform:translateY(-2px);}
