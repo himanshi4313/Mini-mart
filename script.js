@@ -1720,3 +1720,10 @@ function trackEvent(action, category, label) {
         gtag("event", action, { event_category: category, event_label: label });
     }
 }
+
+// ─────────────────────────────────────────
+//  KEEP SERVER WARM — ping every 4 minutes
+// ─────────────────────────────────────────
+setInterval(() => {
+    fetch(API + "/test").catch(() => {});
+}, 4 * 60 * 1000);
