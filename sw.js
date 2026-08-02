@@ -1,43 +1,38 @@
-const CACHE_NAME = "psstore-v3";
-const STATIC_ASSETS = [
-    "/",
-    "/style.css",
-    "/script.js",
-    "/images/logo.png",
-    "/images/default.png"
-];
+const CACHE_NAME = "psstore-v5";
 
 self.addEventListener("install", e => {
-    e.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
-    );
     self.skipWaiting();
 });
 
 self.addEventListener("activate", e => {
     e.waitUntil(
         caches.keys().then(keys =>
-            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+            Promise.all(keys.map(k => caches.delete(k)))
         )
     );
     self.clients.claim();
 });
 
+// Network first for everything — no caching of HTML/JS/CSS
+// This ensures latest code always loads
 self.addEventListener("fetch", e => {
     const url = new URL(e.request.url);
 
-    // API calls — network first
-    if (url.pathname.startsWith("/products") ||
-        url.pathname.startsWith("/orders") ||
-        url.pathname.startsWith("/users")) {
+    // Only cache images
+    if (url.pathname.startsWith("/images/")) {
         e.respondWith(
-            fetch(e.request).catch(() => caches.match(e.request))
+            caches.open(CACHE_NAME).then(cache =>
+                cache.match(e.request).then(cached =>
+                    cached || fetch(e.request).then(res => {
+                        cache.put(e.request, res.clone());
+                        return res;
+                    })
+                )
+            )
         );
         return;
     }
 
-    // Static — cache first
-    e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request))
-    );
+    // Everything else — network first, no cache
+    e.respondWith(fetch(e.request));
 });
