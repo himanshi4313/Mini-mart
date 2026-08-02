@@ -25,6 +25,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <script>
+    // Unregister all service workers permanently
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(r => r.forEach(s => s.unregister()));
       caches.keys().then(keys => keys.forEach(k => caches.delete(k)));

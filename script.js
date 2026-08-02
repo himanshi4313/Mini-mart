@@ -1350,11 +1350,12 @@ function showToast(msg) {
 // ─────────────────────────────────────────
 //  PWA
 // ─────────────────────────────────────────
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js").catch(() => {});
-    });
-}
+// Service Worker disabled — causes caching issues
+// if ("serviceWorker" in navigator) {
+//     window.addEventListener("load", () => {
+//         navigator.serviceWorker.register("/sw.js").catch(() => {});
+//     });
+// }
 
 window.addEventListener("beforeinstallprompt", e => {
     e.preventDefault();
