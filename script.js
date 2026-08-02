@@ -3,17 +3,19 @@
 // ─────────────────────────────────────────
 
 // ── State ──────────────────────────────────
-let cart            = [];
-let allProducts     = [];
-let wishlist        = [];
-let isAdminAuth     = false;
-let editProductId   = null;
-let appliedCoupon   = null;
+let cart              = [];
+let allProducts       = [];
+let wishlist          = [];
+let isAdminAuth       = false;
+let editProductId     = null;
+let appliedCoupon     = null;
 let deferredPWAPrompt = null;
-let currentLat      = null;
-let currentLng      = null;
-let currentLocText  = "";
-let locDebounce     = null;
+let currentLat        = null;
+let currentLng        = null;
+let currentLocText    = "";
+let locDebounce       = null;
+let darkMode          = localStorage.getItem("psDark") === "1";
+let allOrdersVisible  = false;
 
 const DELIVERY_FREE_THRESHOLD = 1500;
 const AUTO_COUPONS = [
@@ -30,6 +32,7 @@ const API = "https://mini-mart-liard.vercel.app";
 window.addEventListener("DOMContentLoaded", () => {
     updateUserUI();
     requestNotificationPermission();
+    if (darkMode) applyDarkMode(true);
 
     setTimeout(() => {
         const splash = document.getElementById("splash-screen");
@@ -41,12 +44,19 @@ window.addEventListener("DOMContentLoaded", () => {
     loadAllData();
     startBannerRotation();
 
-    // Scroll to top button visibility
     window.addEventListener("scroll", () => {
         const btn = document.getElementById("scrollTopBtn");
         if (!btn) return;
         if (window.scrollY > 300) btn.classList.add("visible");
         else btn.classList.remove("visible");
+    });
+
+    // Close search suggestions on outside click
+    document.addEventListener("click", e => {
+        if (!e.target.closest(".header-search")) {
+            const sug = document.getElementById("searchSuggestions");
+            if (sug) sug.style.display = "none";
+        }
     });
 });
 
@@ -874,9 +884,14 @@ function showMyOrders() {
                         <span class="order-total">Rs.${o.grandTotal}</span>
                         <span class="order-payment">${o.paymentMethod || "COD"}</span>
                     </div>
-                    <button class="reorder-btn" onclick="reorder('${o.orderId}')">
-                        <i class="fa-solid fa-rotate-right"></i> Reorder
-                    </button>
+                    <div class="order-card-actions">
+                        <button class="reorder-btn" onclick="reorder('${o.orderId}')">
+                            <i class="fa-solid fa-rotate-right"></i> Reorder
+                        </button>
+                        <button class="bill-btn" onclick="downloadBillPDF(${JSON.stringify(o).replace(/"/g,"&quot;")})">
+                            <i class="fa-solid fa-file-invoice"></i> Bill
+                        </button>
+                    </div>
                     <div class="order-progress">
                         ${["Pending","Accepted","Packed","Out for Delivery","Delivered"].map(s =>
                             `<div class="op-step ${isStatusReached(o.status, s) ? "done" : ""}">
@@ -943,56 +958,89 @@ function loadAdminOrders() {
         .then(r => r.json())
         .then(orders => {
             loadAdminStats(orders);
+            const container  = document.getElementById("adminOrdersList");
+            const expanded   = document.getElementById("adminOrdersExpanded");
+            const seeAllBtn  = document.getElementById("seeAllOrdersBtn");
+            if (!container) return;
+
             if (!orders.length) {
                 container.innerHTML = `<p style="color:#999;text-align:center;padding:20px;">No orders yet.</p>`;
                 return;
             }
-            let html = "";
-            orders.forEach(o => {
-                const date  = new Date(o.createdAt).toLocaleString("en-IN");
-                const items = Array.isArray(o.items)
-                    ? o.items.map(i => `${i.name} ×${i.qty}`).join(", ")
-                    : o.items || "";
-                const mapsLink = (o.latitude && o.longitude)
-                    ? `https://www.google.com/maps?q=${o.latitude},${o.longitude}`
-                    : null;
 
-                html += `
-                <div class="admin-order-card">
-                    <div class="admin-order-header">
-                        <b>${o.orderId}</b>
-                        <span style="font-size:12px;color:#999;">${date}</span>
-                    </div>
-                    <p><i class="fa-solid fa-user"></i> ${o.userName} | ${o.mobile}</p>
-                    <p><i class="fa-solid fa-location-dot"></i> ${o.address}</p>
-                    ${mapsLink ? `<a href="${mapsLink}" target="_blank" class="maps-link"><i class="fa-solid fa-map"></i> Open on Google Maps</a>` : ""}
-                    <p class="admin-order-items"><i class="fa-solid fa-box"></i> ${items}</p>
-                    <div class="admin-order-footer">
-                        <b style="color:#df4b0b;">₹${o.grandTotal}</b>
-                        <div style="display:flex;gap:8px;align-items:center;">
-                            <select onchange="updateOrderStatus('${o._id}', this.value)" class="status-select">
-                                ${STATUS_STEPS.map(s =>
-                                    `<option value="${s}" ${o.status === s ? "selected" : ""}>${s}</option>`
-                                ).join("")}
-                            </select>
-                            ${o.mobile ? `<a href="https://wa.me/91${o.mobile}?text=${encodeURIComponent(`Hi ${o.userName}, your order ${o.orderId} status: ${o.status}`)}" target="_blank" class="wa-btn"><i class="fa-brands fa-whatsapp"></i></a>` : ""}
-                        </div>
-                    </div>
-                </div>`;
-            });
-            container.innerHTML = html;
+            // Show top 3 only
+            const top3 = orders.slice(0, 3);
+            const rest  = orders.slice(3);
+
+            container.innerHTML = top3.map(o => renderAdminOrderCard(o)).join("");
+
+            if (rest.length > 0) {
+                if (expanded) expanded.innerHTML = rest.map(o => renderAdminOrderCard(o)).join("");
+                if (seeAllBtn) {
+                    seeAllBtn.style.display = "flex";
+                    seeAllBtn.innerHTML = `<i class="fa-solid fa-chevron-down"></i> See All ${orders.length} Orders`;
+                }
+            }
         })
-        .catch(() => { container.innerHTML = `<p style="color:#e53935;">Failed to load orders.</p>`; });
+        .catch(() => {
+            const c = document.getElementById("adminOrdersList");
+            if (c) c.innerHTML = `<p style="color:#e53935;">Failed to load orders.</p>`;
+        });
 }
 
-function updateOrderStatus(id, status) {
+function renderAdminOrderCard(o) {
+    const date  = new Date(o.createdAt).toLocaleString("en-IN");
+    const items = Array.isArray(o.items) ? o.items.map(i => `${i.name} ×${i.qty}`).join(", ") : o.items || "";
+    const mapsLink = (o.latitude && o.longitude) ? `https://www.google.com/maps?q=${o.latitude},${o.longitude}` : null;
+    const waMsg = encodeURIComponent(`Hi ${o.userName}! Aapka PS STORE order ${o.orderId} ka status ab hai: *${o.status}*. Delivery 20-30 min mein. Thank you! 🛒`);
+    return `
+    <div class="admin-order-card">
+        <div class="admin-order-header">
+            <b>${o.orderId}</b>
+            <span style="font-size:11px;color:#999;">${date}</span>
+        </div>
+        <p><i class="fa-solid fa-user"></i> ${o.userName} | ${o.mobile}</p>
+        <p><i class="fa-solid fa-location-dot"></i> ${o.address}</p>
+        ${mapsLink ? `<a href="${mapsLink}" target="_blank" class="maps-link"><i class="fa-solid fa-map"></i> Open on Google Maps</a>` : ""}
+        <p class="admin-order-items"><i class="fa-solid fa-box"></i> ${items}</p>
+        <div class="admin-order-footer">
+            <b style="color:#df4b0b;">Rs.${o.grandTotal}</b>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <select onchange="updateOrderStatus('${o._id}','${o.orderId}','${o.userName}','${o.mobile}',this.value)" class="status-select">
+                    ${STATUS_STEPS.map(s => `<option value="${s}" ${o.status === s ? "selected" : ""}>${s}</option>`).join("")}
+                </select>
+                ${o.mobile ? `<a href="https://wa.me/91${o.mobile}?text=${waMsg}" target="_blank" class="wa-btn"><i class="fa-brands fa-whatsapp"></i></a>` : ""}
+            </div>
+        </div>
+    </div>`;
+}
+
+function toggleAllOrders() {
+    const expanded = document.getElementById("adminOrdersExpanded");
+    const btn      = document.getElementById("seeAllOrdersBtn");
+    allOrdersVisible = !allOrdersVisible;
+    if (expanded) expanded.style.display = allOrdersVisible ? "block" : "none";
+    if (btn) btn.innerHTML = allOrdersVisible
+        ? `<i class="fa-solid fa-chevron-up"></i> Show Less`
+        : `<i class="fa-solid fa-chevron-down"></i> See All Orders`;
+}
+
+function updateOrderStatus(id, orderId, userName, mobile, status) {
     fetch(API + `/orders/${id}/status`, {
         method:  "PUT",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ status })
     })
     .then(r => r.json())
-    .then(() => showToast(`Order status updated: ${status}`))
+    .then(() => {
+        showToast(`Status updated: ${status}`);
+        // Send WhatsApp to customer
+        if (mobile) {
+            const msg = `Hi ${userName}! Aapka *PS STORE* order *${orderId}* ka status update hua hai.\n\n*Status: ${status}*\n\n${status === "Out for Delivery" ? "Aapka order raste mein hai! 🚚" : status === "Delivered" ? "Order deliver ho gaya! Thank you 🙏" : status === "Accepted" ? "Aapka order accept ho gaya! Tayaari ho rahi hai 📦" : status === "Packed" ? "Order pack ho gaya, delivery hone wali hai! 📦" : "Aapka order received hai!"}\n\nThank you for shopping with PS STORE! 🛒`;
+            window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`, "_blank");
+        }
+        loadAdminOrders();
+    })
     .catch(() => showToast("Failed to update status"));
 }
 
@@ -1542,4 +1590,132 @@ function toggleFaq(el) {
 function scrollToAdminForm() {
     const form = document.getElementById("adminProductForm");
     if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ─────────────────────────────────────────
+//  SETTINGS
+// ─────────────────────────────────────────
+function openSettings() {
+    document.getElementById("settingsModal").style.display = "flex";
+    // Sync toggle states
+    const dm = document.getElementById("darkModeToggle");
+    if (dm) dm.classList.toggle("on", darkMode);
+    const notif = document.getElementById("notifToggle");
+    if (notif) notif.classList.toggle("on", Notification.permission === "granted");
+}
+
+function toggleDarkMode() {
+    darkMode = !darkMode;
+    localStorage.setItem("psDark", darkMode ? "1" : "0");
+    applyDarkMode(darkMode);
+    const dm = document.getElementById("darkModeToggle");
+    if (dm) dm.classList.toggle("on", darkMode);
+}
+
+function applyDarkMode(on) {
+    document.body.classList.toggle("dark-mode", on);
+}
+
+function toggleNotifications() {
+    if (Notification.permission === "granted") {
+        showToast("Notifications already enabled");
+    } else {
+        Notification.requestPermission().then(p => {
+            const notif = document.getElementById("notifToggle");
+            if (notif) notif.classList.toggle("on", p === "granted");
+            showToast(p === "granted" ? "Notifications enabled!" : "Permission denied");
+        });
+    }
+}
+
+// ─────────────────────────────────────────
+//  SMART SEARCH AUTOCOMPLETE
+// ─────────────────────────────────────────
+function showSearchSuggestions(val) {
+    const box = document.getElementById("searchSuggestions");
+    if (!box) return;
+    const q = val.trim().toLowerCase();
+    if (!q || q.length < 1) { box.style.display = "none"; return; }
+
+    const matches = allProducts
+        .filter(p => p.name.toLowerCase().includes(q))
+        .slice(0, 6);
+
+    if (!matches.length) { box.style.display = "none"; return; }
+
+    box.innerHTML = matches.map(p => {
+        const price = p.discount ? Math.round(p.price - p.price * p.discount / 100) : p.price;
+        return `<div class="sug-item" onclick="selectSuggestionProduct('${p.name.replace(/'/g,"\\'")}')">
+            <img src="images/${p.image}" onerror="this.src='images/default.png'" alt="">
+            <div>
+                <div class="sug-name">${p.name}</div>
+                <div class="sug-price">Rs.${price}</div>
+            </div>
+        </div>`;
+    }).join("");
+    box.style.display = "block";
+}
+
+function selectSuggestionProduct(name) {
+    const input = document.getElementById("searchInput");
+    if (input) { input.value = name; searchProducts(); }
+    const box = document.getElementById("searchSuggestions");
+    if (box) box.style.display = "none";
+}
+
+// ─────────────────────────────────────────
+//  BILL PDF
+// ─────────────────────────────────────────
+function downloadBillPDF(order) {
+    const items = Array.isArray(order.items)
+        ? order.items.map(i => `${i.name} x${i.qty} = Rs.${i.price * i.qty}`).join("\n")
+        : order.items || "";
+
+    const content = `
+PS STORE JODHPUR
+psstorelive.in | 9784721900
+================================
+ORDER BILL
+================================
+Order ID  : ${order.orderId}
+Date      : ${new Date(order.createdAt).toLocaleString("en-IN")}
+Customer  : ${order.userName}
+Mobile    : ${order.mobile}
+Address   : ${order.address}
+--------------------------------
+ITEMS:
+${items}
+--------------------------------
+Items Total     : Rs.${order.total}
+Product Discount: -Rs.${order.productDiscount || 0}
+Coupon          : -Rs.${order.couponDiscount || 0}
+Delivery        : Rs.${order.deliveryCharge || 0}
+================================
+GRAND TOTAL     : Rs.${order.grandTotal}
+Payment         : ${order.paymentMethod || "COD"}
+================================
+Status          : ${order.status}
+================================
+Thank you for shopping with
+PS STORE Jodhpur!
+Ghar Ki Zaroorat, Ghar Ke Dwar Tak
+    `.trim();
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `PSStore-Bill-${order.orderId}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Bill downloaded!");
+}
+
+// ─────────────────────────────────────────
+//  GOOGLE ANALYTICS TRACKER
+// ─────────────────────────────────────────
+function trackEvent(action, category, label) {
+    if (typeof gtag !== "undefined") {
+        gtag("event", action, { event_category: category, event_label: label });
+    }
 }

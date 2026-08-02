@@ -604,3 +604,79 @@ body{
 .faq-item.open .faq-a{display:block;}
 .faq-item.open{border-color:var(--primary-color);}
 .faq-item.open .faq-q{color:var(--primary-color);}
+
+/* ── DARK MODE ──────────────────────── */
+.dark-mode{background:#121212 !important;color:#e0e0e0 !important;}
+.dark-mode .card,.dark-mode .cart-item,.dark-mode .cart-summary,
+.dark-mode .checkout-form,.dark-mode .checkout-summary-box,
+.dark-mode .order-card,.dark-mode .admin-order-card,
+.dark-mode .profile-menu,.dark-mode .modal-box,
+.dark-mode .promo-strip,.dark-mode .mini-banner,
+.dark-mode .site-footer,.dark-mode .branch-card{background:#1e1e1e !important;border-color:#333 !important;color:#e0e0e0 !important;}
+.dark-mode .app-header{background:linear-gradient(135deg,#1a1200,#2a1e00) !important;}
+.dark-mode #searchInput{background:#2a2a2a !important;color:#e0e0e0 !important;}
+.dark-mode .search-container{background:#2a2a2a !important;}
+.dark-mode .card h2,.dark-mode .cart-details h4{color:#e0e0e0 !important;}
+.dark-mode .bottom-nav{background:#1e1e1e !important;border-color:#333 !important;}
+.dark-mode .cat-chip{background:#2a2a2a !important;border-color:#333 !important;color:#ccc !important;}
+.dark-mode .cat-chip.active-chip{background:var(--primary-color) !important;color:#fff !important;}
+
+/* ── SETTINGS ───────────────────────── */
+.settings-box{background:#fff;width:100%;max-width:420px;max-height:90vh;
+  overflow-y:auto;border-radius:20px 20px 0 0;position:fixed;bottom:0;left:50%;
+  transform:translateX(-50%);padding:0 0 20px;box-shadow:0 -8px 30px rgba(0,0,0,.15);}
+.settings-header{display:flex;align-items:center;gap:14px;padding:18px 20px 14px;
+  border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:10;}
+.settings-header h3{font-size:17px;font-weight:800;margin:0;}
+.settings-section{padding:16px 20px 0;}
+.settings-label{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;
+  letter-spacing:.8px;margin-bottom:8px;}
+.settings-row{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 0;border-bottom:1px solid #f5f5f5;cursor:pointer;}
+.settings-row:last-child{border:none;}
+.settings-row-left{display:flex;align-items:center;gap:14px;}
+.settings-row-left i{width:36px;height:36px;border-radius:10px;background:#f5f5f5;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sr-title{font-size:14px;font-weight:600;color:#111;}
+.sr-sub{font-size:12px;color:#999;margin-top:1px;}
+
+/* TOGGLE SWITCH */
+.toggle-switch{width:46px;height:26px;background:#e0e0e0;border-radius:13px;
+  position:relative;transition:.3s;flex-shrink:0;}
+.toggle-switch.on{background:var(--primary-color);}
+.toggle-knob{width:22px;height:22px;background:#fff;border-radius:50%;
+  position:absolute;top:2px;left:2px;transition:.3s;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+.toggle-switch.on .toggle-knob{left:22px;}
+
+/* ── SMART SEARCH ───────────────────── */
+.search-suggestions{position:absolute;top:100%;left:0;right:0;background:#fff;
+  border-radius:0 0 14px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);
+  z-index:2000;max-height:280px;overflow-y:auto;}
+.sug-item{display:flex;align-items:center;gap:12px;padding:10px 14px;
+  cursor:pointer;border-bottom:1px solid #f5f5f5;transition:.15s;}
+.sug-item:hover{background:#fff5f0;}
+.sug-item:last-child{border:none;}
+.sug-item img{width:36px;height:36px;object-fit:contain;border-radius:8px;background:#f8f8f8;}
+.sug-name{font-size:13px;font-weight:600;color:#111;}
+.sug-price{font-size:12px;color:var(--primary-color);font-weight:700;}
+.header-search{position:relative;}
+
+/* ── ANALYTICS BTN ──────────────────── */
+.analytics-btn{width:36px;height:36px;background:#e3f2fd;border:none;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;color:#1976d2;font-size:15px;
+  text-decoration:none;cursor:pointer;transition:.2s;}
+.analytics-btn:hover{background:#1976d2;color:#fff;}
+
+/* ── SEE ALL ORDERS BTN ─────────────── */
+.see-all-orders-btn{width:100%;padding:12px;background:#f8f8f8;border:1.5px dashed #ddd;
+  border-radius:12px;font-size:13px;font-weight:700;color:#555;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0;transition:.2s;}
+.see-all-orders-btn:hover{background:#fff5f0;border-color:var(--primary-color);color:var(--primary-color);}
+
+/* ── BILL BTN ───────────────────────── */
+.order-card-actions{display:flex;gap:8px;margin-top:10px;}
+.bill-btn{flex:1;padding:10px;background:#e3f2fd;color:#1565c0;border:1.5px solid #bbdefb;
+  border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:6px;}
+.bill-btn:hover{background:#1976d2;color:#fff;border-color:#1976d2;}
+.reorder-btn{flex:1;}
