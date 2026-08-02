@@ -1,4 +1,4 @@
-:root{
+﻿:root{
   --primary-color:#df4b0b;
   --primary-dark:#b73d08;
   --accent:#0c831f;
@@ -733,8 +733,21 @@ body{
 /* Toast */
 .dark-mode #toast{background:#333 !important;}
 
-/* Scroll top btn */
-.dark-mode .scroll-top-btn{opacity:.8;}
+/* Admin dark mode */
+.dark-mode .admin-order-card{background:#1e1e1e !important;border-color:#df4b0b !important;}
+.dark-mode .admin-order-card p{color:#ccc !important;}
+.dark-mode .admin-order-card b{color:#fff !important;}
+.dark-mode .status-select{background:#2a2a2a !important;color:#e0e0e0 !important;border-color:#444 !important;}
+.dark-mode .admin-stats-row .stat-card{background:#1e1e1e !important;}
+.dark-mode .stat-label{color:#aaa !important;}
+.dark-mode .stat-value{color:#fff !important;}
+.dark-mode #adminInventoryGrid .cart-item{background:#1e1e1e !important;}
+.dark-mode .logout-btn{background:#2a0a0a !important;color:#ff6b6b !important;}
+.dark-mode .scroll-top-btn-inline{background:#2a2a2a !important;color:#e0e0e0 !important;border-color:#444 !important;}
+.dark-mode .go-to-form-btn{opacity:.9;}
+.dark-mode .see-all-orders-btn{background:#2a2a2a !important;border-color:#444 !important;color:#ccc !important;}
+.dark-mode #adminInventoryGrid .cart-details h4{color:#fff !important;}
+.dark-mode #adminInventoryGrid .cart-details p{color:#aaa !important;}
 
 /* ── SETTINGS ───────────────────────── */
 .settings-box{background:#fff;width:100%;max-width:420px;max-height:90vh;
