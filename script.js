@@ -105,8 +105,8 @@ function renderProducts(list, targetId) {
             <div class="card-img-wrap">
                 <img src="images/${p.image}" alt="${p.name}" onerror="this.src='images/default.png'">
                 ${p.discount ? `<span class="offer">${p.discount}% OFF</span>` : ""}
-                <button class="wish-btn" style="color:${heartColor};" onclick="toggleWishlist('${p._id}',this)">
-                    <i class="${heartIcon}"></i>
+                <button class="wish-btn" onclick="toggleWishlist('${p._id}',this)">
+                    <i class="${heartIcon}" style="color:${heartColor};"></i>
                 </button>
             </div>
             <h2>${p.name}</h2>
@@ -114,15 +114,11 @@ function renderProducts(list, targetId) {
                 <span class="card-price">Rs.${finalPrice}</span>
                 ${p.discount ? `<span class="card-mrp">Rs.${p.price}</span>` : ""}
             </div>
-            <p class="card-stock ${p.stock <= 5 ? "low-stock" : ""}">${p.stock <= 5 ? `Only ${p.stock} left!` : `Stock: ${p.stock}`}</p>
+            <p class="card-stock ${p.stock <= 5 ? "low-stock" : ""}">Stock: ${p.stock}</p>
             <input type="number" value="1" min="1" max="${p.stock}" class="qty">
             <div class="card-btn-row">
-                <button class="card-add-btn" onclick="addToCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0},this)">
-                    Add to Cart
-                </button>
-                <button class="card-buy-btn" onclick="buyNow('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0})">
-                    Buy Now
-                </button>
+                <button class="card-add-btn" onclick="addToCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0},this)">Add to Cart</button>
+                <button class="card-buy-btn" onclick="buyNow('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0})">Buy Now</button>
             </div>
         </div>`;
     });
