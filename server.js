@@ -72,12 +72,18 @@ const fs = require("fs");
 app.get("/", (req, res) => {
     const htmlPath = path.join(__dirname, "index.html");
     fs.readFile(htmlPath, "utf8", (err, data) => {
-        if (err) {
-            console.error("index.html read error:", err);
-            return res.status(500).send("Cannot load page");
-        }
+        if (err) return res.status(500).send("Cannot load page");
         res.setHeader("Content-Type", "text/html");
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.send(data);
+    });
+});
+
+app.get("/promo-video", (req, res) => {
+    const htmlPath = path.join(__dirname, "promo-video.html");
+    fs.readFile(htmlPath, "utf8", (err, data) => {
+        if (err) return res.status(404).send("Not found");
+        res.setHeader("Content-Type", "text/html");
         res.send(data);
     });
 });
