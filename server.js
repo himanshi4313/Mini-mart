@@ -27,30 +27,42 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "./")));
 
 // ─────────────────────────────────────────
-//  MONGODB CONNECTION (native driver)
+//  MONGODB CONNECTION — Vercel serverless optimized
+//  Uses global cache to reuse connection across requests
 // ─────────────────────────────────────────
-const client = new MongoClient(process.env.MONGO_URI, {
-    tls: true,
-    tlsInsecure: true,
-    serverSelectionTimeoutMS: 15000,
-    connectTimeoutMS: 15000,
-    socketTimeoutMS: 45000
-});
+const MONGO_URI = process.env.MONGO_URI;
 
-let db;
+// Cache client+db on global object — survives between serverless invocations
+let cachedClient = global._mongoClient || null;
+let cachedDb     = global._mongoDb     || null;
 
 async function connectDB() {
-    if (db) return db;  // reuse existing connection
+    if (cachedDb) return cachedDb;
+
+    const client = new MongoClient(MONGO_URI, {
+        tls:                      true,
+        tlsInsecure:              true,
+        serverSelectionTimeoutMS: 10000,
+        connectTimeoutMS:         10000,
+        socketTimeoutMS:          30000,
+        maxPoolSize:              10,
+        minPoolSize:              1
+    });
+
     await client.connect();
-    db = client.db("mini-mrt");
+    cachedClient        = client;
+    cachedDb            = client.db("mini-mrt");
+    global._mongoClient = cachedClient;
+    global._mongoDb     = cachedDb;
     console.log("✅ MongoDB Connected");
-    return db;
+    return cachedDb;
 }
 
+// Warm up connection on startup
 connectDB().catch(err => console.error("❌ MongoDB Error:", err));
 
 // Helper: get collection
-const col = (name) => db.collection(name);
+const col = (name) => cachedDb.collection(name);
 
 // ─────────────────────────────────────────
 //  STATIC ROUTES (always available)
