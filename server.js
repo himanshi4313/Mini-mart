@@ -69,6 +69,24 @@ const col = (name) => cachedDb.collection(name);
 // ─────────────────────────────────────────
 const fs = require("fs");
 
+app.get("/style.css", (req, res) => {
+    fs.readFile(path.join(__dirname, "style.css"), "utf8", (err, data) => {
+        if (err) return res.status(404).send("Not found");
+        res.setHeader("Content-Type", "text/css");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.send(data);
+    });
+});
+
+app.get("/script.js", (req, res) => {
+    fs.readFile(path.join(__dirname, "script.js"), "utf8", (err, data) => {
+        if (err) return res.status(404).send("Not found");
+        res.setHeader("Content-Type", "application/javascript");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.send(data);
+    });
+});
+
 app.get("/", (req, res) => {
     const htmlPath = path.join(__dirname, "index.html");
     fs.readFile(htmlPath, "utf8", (err, data) => {
