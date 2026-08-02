@@ -607,19 +607,134 @@ body{
 
 /* ── DARK MODE ──────────────────────── */
 .dark-mode{background:#121212 !important;color:#e0e0e0 !important;}
-.dark-mode .card,.dark-mode .cart-item,.dark-mode .cart-summary,
-.dark-mode .checkout-form,.dark-mode .checkout-summary-box,
-.dark-mode .order-card,.dark-mode .admin-order-card,
-.dark-mode .profile-menu,.dark-mode .modal-box,
-.dark-mode .promo-strip,.dark-mode .mini-banner,
-.dark-mode .site-footer,.dark-mode .branch-card{background:#1e1e1e !important;border-color:#333 !important;color:#e0e0e0 !important;}
+
+/* Cards & containers */
+.dark-mode .card,
+.dark-mode .cart-item,
+.dark-mode .cart-summary,
+.dark-mode .checkout-form,
+.dark-mode .checkout-summary-box,
+.dark-mode .order-card,
+.dark-mode .admin-order-card,
+.dark-mode .modal-box,
+.dark-mode .promo-strip,
+.dark-mode .mini-banner,
+.dark-mode .site-footer,
+.dark-mode .branch-card,
+.dark-mode .faq-item,
+.dark-mode .step,
+.dark-mode .ostep,
+.dark-mode .about-section,
+.dark-mode .footer-section,
+.dark-mode .support-btn,
+.dark-mode .admin-stats-row .stat-card{
+  background:#1e1e1e !important;
+  border-color:#333 !important;
+}
+
+/* Text colors */
+.dark-mode h1,.dark-mode h2,.dark-mode h3,.dark-mode h4,.dark-mode h5,
+.dark-mode p,.dark-mode span,.dark-mode label,.dark-mode div{
+  color:#e0e0e0;
+}
+.dark-mode .card h2,
+.dark-mode .cart-details h4,
+.dark-mode .card-price,
+.dark-mode .otx,.dark-mode .sr-title,
+.dark-mode .feat-name,.dark-mode .step-text,
+.dark-mode .order-id,.dark-mode .order-total{
+  color:#ffffff !important;
+}
+.dark-mode .card-stock,
+.dark-mode .card-mrp,
+.dark-mode .cart-details p,
+.dark-mode .sr-sub,.dark-mode .odx,
+.dark-mode .order-date,.dark-mode .sec-sub{
+  color:#aaa !important;
+}
+
+/* Header */
 .dark-mode .app-header{background:linear-gradient(135deg,#1a1200,#2a1e00) !important;}
 .dark-mode #searchInput{background:#2a2a2a !important;color:#e0e0e0 !important;}
 .dark-mode .search-container{background:#2a2a2a !important;}
-.dark-mode .card h2,.dark-mode .cart-details h4{color:#e0e0e0 !important;}
-.dark-mode .bottom-nav{background:#1e1e1e !important;border-color:#333 !important;}
-.dark-mode .cat-chip{background:#2a2a2a !important;border-color:#333 !important;color:#ccc !important;}
-.dark-mode .cat-chip.active-chip{background:var(--primary-color) !important;color:#fff !important;}
+.dark-mode .search-icon-inside{color:#ffc60b !important;}
+
+/* Bottom nav */
+.dark-mode .bottom-nav{background:#1a1a1a !important;border-color:#333 !important;}
+.dark-mode .nav-item{color:#888 !important;}
+.dark-mode .nav-item.active{color:var(--primary-color) !important;}
+
+/* Category chips */
+.dark-mode .cat-chip{background:#2a2a2a !important;border-color:#444 !important;color:#ccc !important;}
+.dark-mode .cat-chip.active-chip{background:var(--primary-color) !important;color:#fff !important;border-color:var(--primary-color) !important;}
+
+/* Category sidebar */
+.dark-mode .category-sidebar{background:#1a1a1a !important;}
+.dark-mode .store-card{background:#1a1a1a !important;border-color:#333 !important;}
+.dark-mode .store-card p{color:#ccc !important;}
+.dark-mode .store-card.active-cat{background:#2a1500 !important;}
+.dark-mode .category-content{background:#121212 !important;}
+.dark-mode .category-content h2{color:#fff !important;}
+
+/* Profile menu */
+.dark-mode .profile-menu{background:#1e1e1e !important;border-color:#333 !important;}
+.dark-mode .pm-list li{color:#e0e0e0 !important;}
+.dark-mode .pm-list li:hover{background:#2a1500 !important;}
+.dark-mode .pm-header h4{color:#fff !important;}
+.dark-mode .pm-header p{color:#aaa !important;}
+
+/* Settings */
+.dark-mode .settings-box{background:#1e1e1e !important;}
+.dark-mode .settings-header{background:#1e1e1e !important;border-color:#333 !important;}
+.dark-mode .settings-row{border-color:#333 !important;}
+.dark-mode .settings-row-left i{background:#2a2a2a !important;}
+.dark-mode .settings-label{color:#888 !important;}
+
+/* Buttons */
+.dark-mode .card-add-btn{background:#2a2a2a !important;color:var(--primary-color) !important;border-color:var(--primary-color) !important;}
+.dark-mode .checkout-btn,.dark-mode .place-order-btn{color:#fff !important;}
+.dark-mode .back-btn{background:#2a2a2a !important;color:#e0e0e0 !important;border-color:#444 !important;}
+
+/* Summary rows */
+.dark-mode .summary-row{color:#e0e0e0 !important;}
+.dark-mode .grand-total-row{color:#fff !important;}
+.dark-mode hr{border-color:#333 !important;}
+
+/* Progress bar track */
+.dark-mode .progress-bar-track{background:#333 !important;}
+.dark-mode .offers-box{background:#1e1e1e !important;border-color:#444 !important;}
+.dark-mode .offers-box summary{color:#ffc60b !important;}
+.dark-mode .offers-box ul{color:#ccc !important;}
+
+/* Order cards */
+.dark-mode .order-card{background:#1e1e1e !important;border-color:#333 !important;}
+.dark-mode .order-items{color:#aaa !important;}
+.dark-mode .order-payment{background:#2a2a2a !important;color:#ccc !important;}
+.dark-mode .op-dot{background:#333 !important;border-color:#555 !important;}
+.dark-mode .op-step span{color:#888 !important;}
+
+/* Forms */
+.dark-mode input,.dark-mode textarea,.dark-mode select{
+  background:#2a2a2a !important;color:#e0e0e0 !important;border-color:#444 !important;}
+.dark-mode input::placeholder,.dark-mode textarea::placeholder{color:#666 !important;}
+
+/* Coupon */
+.dark-mode .coupon-input-wrap input{background:#2a2a2a !important;color:#e0e0e0 !important;}
+.dark-mode .delivery-time{color:#aaa !important;}
+
+/* Footer */
+.dark-mode .copyright{color:#666 !important;}
+.dark-mode .about-desc{color:#aaa !important;}
+.dark-mode .about-stats-row{background:#2a2a2a !important;}
+.dark-mode .as-label{color:#888 !important;}
+.dark-mode .as-value{color:#fff !important;}
+.dark-mode .af-item{background:#2a2a2a !important;color:#ccc !important;}
+
+/* Toast */
+.dark-mode #toast{background:#333 !important;}
+
+/* Scroll top btn */
+.dark-mode .scroll-top-btn{opacity:.8;}
 
 /* ── SETTINGS ───────────────────────── */
 .settings-box{background:#fff;width:100%;max-width:420px;max-height:90vh;
