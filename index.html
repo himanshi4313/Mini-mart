@@ -424,37 +424,124 @@
 
   </div>
 
-  <!-- FOOTER -->
-  <footer class="site-footer">
+  <!-- FOOTER — only shown on home page via JS -->
+  <footer class="site-footer" id="siteFooter">
     <div class="footer-wrap">
-      <h3>About PS STORE</h3>
-      <p>PS STORE se seedhe aapke ghar tak — sabse sasta aur sabse accha saaman.</p>
-      <div class="footer-buttons">
-        <a href="mailto:psmegamartmart@gmail.com" class="fb email"><i class="fa-solid fa-envelope"></i> Email</a>
-        <a href="https://wa.me/918003219434" target="_blank" class="fb wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-        <a href="https://www.instagram.com/ps_store_live" target="_blank" class="fb ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+
+      <!-- ABOUT SECTION — Blinkit/Meesho style -->
+      <div class="about-section">
+        <div class="about-logo-row">
+          <img src="images/logo.png" alt="PS STORE" class="about-logo">
+          <div>
+            <h2 class="about-name">PS STORE</h2>
+            <p class="about-tagline">Jodhpur ka Apna Online Kirana</p>
+          </div>
+        </div>
+
+        <div class="about-stats-row">
+          <div class="about-stat">
+            <span class="as-value">4</span>
+            <span class="as-label">Branches</span>
+          </div>
+          <div class="about-stat-divider"></div>
+          <div class="about-stat">
+            <span class="as-value">500+</span>
+            <span class="as-label">Products</span>
+          </div>
+          <div class="about-stat-divider"></div>
+          <div class="about-stat">
+            <span class="as-value">20 Min</span>
+            <span class="as-label">Delivery</span>
+          </div>
+        </div>
+
+        <p class="about-desc">
+          PS STORE Jodhpur aapka bharosemand online kirana store hai. Hum 4 branches ke zariye
+          Jodhpur ke har kone mein taza aur quality products pahunchate hain — seedha aapke ghar tak.
+          Grocery se lekar dairy, cosmetics aur household items tak — sab kuch ek jagah, best prices par.
+        </p>
+
+        <div class="about-features">
+          <div class="af-item">
+            <i class="fa-solid fa-bolt" style="color:#ffc60b;"></i>
+            <span>20-30 Min Delivery</span>
+          </div>
+          <div class="af-item">
+            <i class="fa-solid fa-shield-halved" style="color:#0c831f;"></i>
+            <span>100% Fresh Products</span>
+          </div>
+          <div class="af-item">
+            <i class="fa-solid fa-tag" style="color:#df4b0b;"></i>
+            <span>Best Prices in Jodhpur</span>
+          </div>
+          <div class="af-item">
+            <i class="fa-solid fa-rotate-left" style="color:#1976d2;"></i>
+            <span>Easy Reorder</span>
+          </div>
+        </div>
       </div>
-      <div class="branch-title"><h3><i class="fa-solid fa-location-dot"></i> Our Branches</h3><div class="line"></div></div>
-      <div class="branch-card">
-        <h5>PS MEGA MART <span>Branch 1</span></h5>
-        <p>Plot No. 16, Inda Market, Near Pal Pashu Mela, Sangriya Road, Jodhpur</p>
-        <div class="btn-row"><a href="tel:+919116884100" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919116884100" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+
+      <!-- HELP & SUPPORT -->
+      <div class="footer-section">
+        <h4 class="footer-section-title">Help &amp; Support</h4>
+        <div class="support-btns">
+          <a href="https://wa.me/919784721900?text=Hi%20PS%20STORE%2C%20I%20need%20help" target="_blank" class="support-btn wa-support">
+            <i class="fa-brands fa-whatsapp"></i>
+            <div><p>Chat on WhatsApp</p><span>Fastest response</span></div>
+          </a>
+          <a href="tel:+919784721900" class="support-btn call-support">
+            <i class="fa-solid fa-phone"></i>
+            <div><p>Call Us</p><span>9784721900</span></div>
+          </a>
+          <a href="mailto:psmegamartmart@gmail.com" class="support-btn email-support">
+            <i class="fa-solid fa-envelope"></i>
+            <div><p>Email Us</p><span>psmegamartmart@gmail.com</span></div>
+          </a>
+          <a href="https://www.instagram.com/ps_store_live" target="_blank" class="support-btn ig-support">
+            <i class="fa-brands fa-instagram"></i>
+            <div><p>Instagram</p><span>@ps_store_live</span></div>
+          </a>
+        </div>
+        <p class="support-timing"><i class="fa-solid fa-clock"></i> Available: Mon-Sun, 8 AM – 10 PM</p>
       </div>
-      <div class="branch-card">
-        <h5>PRAKASH SHOPPE <span>Branch 2</span></h5>
-        <p>Devi Road, Chandana Bhaker, Jodhpur</p>
-        <div class="btn-row"><a href="tel:+919119182900" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919119182900" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+
+      <!-- PRIVACY POLICY -->
+      <div class="footer-section">
+        <h4 class="footer-section-title">Legal</h4>
+        <div class="legal-links">
+          <span onclick="showPrivacyPolicy()" class="legal-link">Privacy Policy</span>
+          <span class="legal-dot">•</span>
+          <span onclick="showPrivacyPolicy()" class="legal-link">Terms of Service</span>
+          <span class="legal-dot">•</span>
+          <span onclick="showPrivacyPolicy()" class="legal-link">Refund Policy</span>
+        </div>
       </div>
-      <div class="branch-card">
-        <h5>PG MART <span>Branch 3</span></h5>
-        <p>14/128 Choupasni Housing Board, Jodhpur</p>
-        <div class="btn-row"><a href="tel:+919119152900" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919119152900" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+
+      <!-- BRANCHES -->
+      <div class="footer-section">
+        <h4 class="footer-section-title"><i class="fa-solid fa-location-dot" style="color:#df4b0b;"></i> Our Branches</h4>
+        <div class="branch-card">
+          <h5>PS MEGA MART <span>Branch 1</span></h5>
+          <p>Plot No. 16, Inda Market, Near Pal Pashu Mela, Sangriya Road, Jodhpur</p>
+          <div class="btn-row"><a href="tel:+919116884100" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919116884100" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+        </div>
+        <div class="branch-card">
+          <h5>PRAKASH SHOPPE <span>Branch 2</span></h5>
+          <p>Devi Road, Chandana Bhaker, Jodhpur</p>
+          <div class="btn-row"><a href="tel:+919119182900" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919119182900" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+        </div>
+        <div class="branch-card">
+          <h5>PG MART <span>Branch 3</span></h5>
+          <p>14/128 Choupasni Housing Board, Jodhpur</p>
+          <div class="btn-row"><a href="tel:+919119152900" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919119152900" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+        </div>
+        <div class="branch-card">
+          <h5>PS MART SOORSAGER <span>Branch 4</span></h5>
+          <p>Main Bypass Road, Soorsager, Jodhpur</p>
+          <div class="btn-row"><a href="tel:+919680222337" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919680222337" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
+        </div>
       </div>
-      <div class="branch-card">
-        <h5>PS MART SOORSAGER <span>Branch 4</span></h5>
-        <p>Main Bypass Road, Soorsager, Jodhpur</p>
-        <div class="btn-row"><a href="tel:+919680222337" class="mini call"><i class="fa-solid fa-phone"></i> Call</a><a href="https://wa.me/919680222337" target="_blank" class="mini wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></div>
-      </div>
+
       <p class="copyright">&copy; 2026 PS STORE Jodhpur. All Rights Reserved.</p>
     </div>
   </footer>
@@ -476,6 +563,39 @@
   </div>
 
   <div id="toast"></div>
+
+  <!-- PRIVACY POLICY MODAL -->
+  <div id="privacyModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box privacy-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;font-size:17px;">Privacy Policy</h3>
+        <button onclick="document.getElementById('privacyModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:#666;">&#x2715;</button>
+      </div>
+      <div class="privacy-content">
+        <p><b>Last updated:</b> August 2026</p>
+        <h4>1. Data We Collect</h4>
+        <p>We collect: Name, Email, Mobile number, Delivery address, Location (latitude/longitude) when you place an order or sign in with Google.</p>
+        <h4>2. How We Use Your Data</h4>
+        <p>Your data is used only to process and deliver your orders, send order confirmations via WhatsApp, and improve your shopping experience.</p>
+        <h4>3. Google Login</h4>
+        <p>We use Google Sign-In for authentication. We only access your name, email and profile picture. We do not store your Google password.</p>
+        <h4>4. Location Data</h4>
+        <p>Location is collected only when you set a delivery address. It is stored in our database to help deliver your order accurately.</p>
+        <h4>5. WhatsApp Notifications</h4>
+        <p>When you place an order, your order details are sent to our shopkeeper via WhatsApp for processing.</p>
+        <h4>6. Data Security</h4>
+        <p>Your data is stored securely on MongoDB Atlas (cloud database) with encryption.</p>
+        <h4>7. No Third-Party Selling</h4>
+        <p>We never sell your personal data to any third party.</p>
+        <h4>8. Delete Your Data</h4>
+        <p>To delete your account and data, contact us at: <b>psmegamartmart@gmail.com</b> or WhatsApp: <b>9784721900</b></p>
+        <h4>9. Refund Policy</h4>
+        <p>If you receive a wrong or damaged product, contact us within 24 hours. We will replace or refund the product. Cash orders refunded via UPI.</p>
+        <h4>10. Contact Us</h4>
+        <p>PS STORE Jodhpur<br>Email: psmegamartmart@gmail.com<br>WhatsApp: 9784721900<br>Website: psstorelive.in</p>
+      </div>
+    </div>
+  </div>
 
   <!-- ORDER SUCCESS POPUP -->
   <div id="orderSuccessPopup" class="order-success-overlay" style="display:none;">

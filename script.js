@@ -1240,6 +1240,10 @@ function switchPage(pageId, element) {
     const target = document.getElementById(pageId + "-view");
     if (target) target.style.display = "block";
 
+    // Show footer only on home page
+    const footer = document.getElementById("siteFooter");
+    if (footer) footer.style.display = pageId === "home" ? "block" : "none";
+
     // Scroll to top on every page switch
     window.scrollTo({ top: 0, behavior: "instant" });
 
@@ -1521,4 +1525,16 @@ function startVoiceSearch() {
     recognition.onend = () => {
         if (mic) mic.classList.remove("listening");
     };
+}
+
+// ─────────────────────────────────────────
+//  PRIVACY POLICY & ADMIN HELPERS
+// ─────────────────────────────────────────
+function showPrivacyPolicy() {
+    document.getElementById("privacyModal").style.display = "flex";
+}
+
+function scrollToAdminForm() {
+    const form = document.getElementById("adminProductForm");
+    if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });
 }
