@@ -1534,6 +1534,15 @@ function showPrivacyPolicy() {
     document.getElementById("privacyModal").style.display = "flex";
 }
 
+function openHelpSupport() {
+    document.getElementById("profileMenu").classList.remove("open");
+    document.getElementById("helpModal").style.display = "flex";
+}
+
+function toggleFaq(el) {
+    el.classList.toggle("open");
+}
+
 function scrollToAdminForm() {
     const form = document.getElementById("adminProductForm");
     if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });

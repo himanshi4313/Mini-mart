@@ -84,7 +84,7 @@
         <li onclick="openLocationModal()"><i class="fa-solid fa-location-dot"></i> Saved Addresses</li>
         <li onclick="openWishlist()"><i class="fa-solid fa-heart"></i> Wishlist</li>
         <li id="pwaInstallBtn" style="display:none;" onclick="installPWA()"><i class="fa-solid fa-download"></i> Install App</li>
-        <li><i class="fa-solid fa-headset"></i> Help & Support</li>
+        <li onclick="openHelpSupport()"><i class="fa-solid fa-headset"></i> Help & Support</li>
         <li class="logout" onclick="signOutUser()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</li>
       </ul>
     </div>
@@ -563,6 +563,63 @@
   </div>
 
   <div id="toast"></div>
+
+  <!-- HELP & SUPPORT MODAL -->
+  <div id="helpModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:380px;max-height:85vh;overflow-y:auto;text-align:left;padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;">Help & Support</h3>
+        <button onclick="document.getElementById('helpModal').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:#666;">&times;</button>
+      </div>
+
+      <!-- Contact buttons -->
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+        <a href="https://wa.me/919784721900?text=Hi%20PS%20STORE%2C%20I%20need%20help" target="_blank" class="support-btn wa-support" onclick="document.getElementById('helpModal').style.display='none'">
+          <i class="fa-brands fa-whatsapp"></i>
+          <div><p>Chat on WhatsApp</p><span>Fastest response</span></div>
+        </a>
+        <a href="tel:+919784721900" class="support-btn call-support">
+          <i class="fa-solid fa-phone"></i>
+          <div><p>Call Us</p><span>9784721900</span></div>
+        </a>
+        <a href="mailto:psmegamartmart@gmail.com" class="support-btn email-support">
+          <i class="fa-solid fa-envelope"></i>
+          <div><p>Email Us</p><span>psmegamartmart@gmail.com</span></div>
+        </a>
+      </div>
+
+      <!-- FAQ -->
+      <h4 style="font-size:14px;font-weight:800;margin-bottom:12px;">Frequently Asked Questions</h4>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Delivery kitne time mein hoti hai?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-a">Hum 20-30 minutes mein delivery karte hain. Busy hours mein thoda zyada time lag sakta hai.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Minimum order kitna hai?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-a">Koi minimum order nahi hai. Rs.1500 se upar order pe FREE delivery milti hai.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Payment kaise karna hai?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-a">Cash on Delivery (COD) aur UPI/Online payment dono available hain.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Wrong product mila to kya karein?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-a">24 ghante ke andar WhatsApp karein. Hum replace ya refund karenge.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Order cancel ho sakta hai?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-a">Order place hone ke 5 minutes ke andar WhatsApp pe cancel kar sakte hain.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Coupon code kaise use karein?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-a">Cart page pe "Enter coupon code" box mein SAVE4 ya SAVE2.5 type karke Apply karein.</div>
+        </div>
+      </div>
+
+      <p style="font-size:11px;color:#999;text-align:center;margin-top:14px;">Available Mon-Sun, 8 AM - 10 PM</p>
+    </div>
+  </div>
 
   <!-- PRIVACY POLICY MODAL -->
   <div id="privacyModal" class="modal-overlay" style="display:none;">
