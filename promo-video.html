@@ -4,437 +4,324 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=390px, initial-scale=1.0">
 <title>PS STORE Promo</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{width:390px;height:844px;overflow:hidden;font-family:'Poppins',sans-serif;background:#000;}
+body{width:390px;height:844px;overflow:hidden;font-family:'Poppins',sans-serif;background:#000;position:relative;}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;opacity:0;transition:opacity 1s ease;pointer-events:none;padding:28px 24px;}
+.scene.active{opacity:1;pointer-events:all;}
 
-/* SCENES */
-.scene{position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;opacity:0;transition:opacity .8s;pointer-events:none;}
-.scene.active{opacity:1;}
-
-/* SCENE 1 — INTRO */
-#s1{background:linear-gradient(135deg,#1a0a00,#3d1500);}
-.logo-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,#ffc60b,#df4b0b);
+/* SCENE 1 */
+#s1{background:linear-gradient(160deg,#1a0500 0%,#4a1200 50%,#df4b0b 100%);}
+.s1-logo{width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,#ffc60b,#df4b0b);
   display:flex;align-items:center;justify-content:center;
-  animation:pulse 1.5s infinite;box-shadow:0 0 60px rgba(223,75,11,.6);}
-.logo-circle img{width:110px;height:110px;object-fit:contain;border-radius:50%;}
-.intro-title{font-size:36px;font-weight:900;color:#fff;margin-top:20px;text-align:center;
-  text-shadow:0 2px 10px rgba(0,0,0,.5);}
-.intro-sub{font-size:16px;color:#ffc60b;font-weight:700;margin-top:6px;text-align:center;}
-.intro-tagline{font-size:13px;color:rgba(255,255,255,.7);margin-top:8px;text-align:center;}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  box-shadow:0 0 0 0 rgba(255,198,11,.5);animation:sonar 2s infinite;}
+.s1-logo img{width:100px;height:100px;object-fit:contain;border-radius:50%;}
+@keyframes sonar{0%{box-shadow:0 0 0 0 rgba(255,198,11,.6)}70%{box-shadow:0 0 0 30px rgba(255,198,11,0)}100%{box-shadow:0 0 0 0 rgba(255,198,11,0)}}
+.s1-name{font-size:38px;font-weight:900;color:#fff;margin-top:20px;letter-spacing:2px;
+  text-shadow:0 4px 20px rgba(0,0,0,.4);}
+.s1-city{font-size:15px;color:#ffc60b;font-weight:700;margin-top:4px;letter-spacing:3px;text-transform:uppercase;}
+.s1-tag{font-size:14px;color:rgba(255,255,255,.75);margin-top:12px;text-align:center;line-height:1.6;}
 
-/* SCENE 2 — ANNOUNCEMENT */
-#s2{background:linear-gradient(160deg,#fff8e1,#fff3cd);}
-.announce-badge{background:#df4b0b;color:#fff;padding:8px 20px;border-radius:30px;
-  font-size:13px;font-weight:700;margin-bottom:16px;animation:bounceIn .5s;}
-.announce-title{font-size:28px;font-weight:900;color:#1a1a1a;text-align:center;line-height:1.3;}
-.announce-title span{color:#df4b0b;}
-.announce-sub{font-size:14px;color:#555;text-align:center;margin-top:10px;line-height:1.6;}
-.avatar-row{display:flex;align-items:center;gap:14px;margin-top:20px;
-  background:#fff;padding:14px 20px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);}
-.avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;
-  background:linear-gradient(135deg,#f8bbd0,#e91e63);
-  display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
-.speech{font-size:13px;color:#333;line-height:1.6;}
-.speech b{color:#df4b0b;}
-@keyframes bounceIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+/* SCENE 2 */
+#s2{background:linear-gradient(160deg,#fffbf0,#fff8e1);}
+.s2-badge{background:#df4b0b;color:#fff;font-size:13px;font-weight:700;
+  padding:8px 22px;border-radius:30px;margin-bottom:20px;letter-spacing:.5px;
+  box-shadow:0 6px 20px rgba(223,75,11,.3);}
+.s2-title{font-size:26px;font-weight:900;color:#1a1a1a;text-align:center;line-height:1.35;margin-bottom:12px;}
+.s2-title span{color:#df4b0b;}
+.s2-card{background:#fff;border-radius:20px;padding:18px 20px;width:100%;
+  box-shadow:0 8px 30px rgba(0,0,0,.1);border:1px solid #f0e8d8;}
+.s2-row{display:flex;align-items:center;gap:16px;}
+.s2-avatar{width:60px;height:60px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#fce4ec,#f48fb1);
+  display:flex;align-items:center;justify-content:center;font-size:30px;}
+.s2-text{font-size:14px;color:#333;line-height:1.7;font-weight:500;}
+.s2-text b{color:#df4b0b;font-weight:700;}
+.s2-stats{display:flex;justify-content:space-around;margin-top:14px;
+  background:#fff9f0;border-radius:12px;padding:12px 0;}
+.s2-stat{text-align:center;}
+.s2-stat-val{font-size:20px;font-weight:900;color:#df4b0b;}
+.s2-stat-lab{font-size:10px;color:#888;font-weight:600;margin-top:2px;}
 
-/* SCENE 3 — WEBSITE DEMO */
-#s3{background:#f5f6fa;}
-.phone-frame{width:240px;height:440px;background:#fff;border-radius:32px;
-  border:8px solid #1a1a1a;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);
-  position:relative;}
-.phone-header{background:linear-gradient(135deg,#ffdf3e,#ffc60b);padding:10px 12px 8px;}
-.ph-loc{font-size:9px;font-weight:800;color:#1a1a1a;}
+/* SCENE 3 */
+#s3{background:#f0f4f8;}
+.phone{width:220px;height:420px;background:#fff;border-radius:36px;border:7px solid #111;
+  overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45);flex-shrink:0;}
+.ph-bar{background:linear-gradient(135deg,#ffe03e,#ffc60b);padding:10px 12px 8px;}
+.ph-loc{font-size:8.5px;font-weight:800;color:#1a1a1a;display:flex;align-items:center;gap:4px;}
 .ph-search{background:#fff;border-radius:8px;padding:5px 10px;margin-top:6px;
   font-size:8px;color:#999;display:flex;align-items:center;gap:6px;}
-.phone-banner{width:100%;height:90px;background:linear-gradient(135deg,#1a1a2e,#0f3460);
-  display:flex;align-items:center;padding:0 12px;position:relative;overflow:hidden;}
-.pb-text{color:#fff;}
-.pb-text h3{font-size:11px;font-weight:900;}
-.pb-text p{font-size:8px;opacity:.8;}
-.pb-cta{background:#ffc60b;color:#000;font-size:8px;font-weight:700;
-  padding:4px 10px;border-radius:12px;margin-top:4px;display:inline-block;}
-.pb-img{position:absolute;right:8px;width:70px;height:75px;object-fit:contain;opacity:.9;}
-.phone-products{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;}
+.ph-banner{background:linear-gradient(135deg,#0f3460,#16213e);height:85px;
+  display:flex;align-items:center;padding:0 12px;gap:8px;}
+.ph-banner-txt h3{font-size:11px;font-weight:900;color:#fff;line-height:1.3;}
+.ph-banner-txt p{font-size:8px;color:rgba(255,255,255,.75);margin-top:2px;}
+.ph-cta{background:#ffc60b;color:#000;font-size:7.5px;font-weight:700;
+  padding:3px 9px;border-radius:10px;display:inline-block;margin-top:4px;}
+.ph-banner img{width:65px;height:75px;object-fit:contain;margin-left:auto;opacity:.9;}
+.ph-prods{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:7px;}
 .pp{background:#f8f8f8;border-radius:8px;padding:6px;text-align:center;}
-.pp img{width:40px;height:40px;object-fit:contain;}
-.pp-name{font-size:7px;font-weight:600;color:#333;margin-top:3px;}
-.pp-price{font-size:8px;font-weight:800;color:#111;}
-.pp-btn{background:#df4b0b;color:#fff;font-size:7px;padding:3px 8px;
-  border-radius:5px;margin-top:3px;display:inline-block;}
-.scene-label{font-size:13px;font-weight:700;color:#555;margin-top:16px;text-align:center;}
+.pp img{width:38px;height:38px;object-fit:contain;}
+.pp-n{font-size:7px;font-weight:600;color:#222;margin-top:2px;line-height:1.3;}
+.pp-p{font-size:8.5px;font-weight:800;color:#111;margin-top:1px;}
+.pp-b{background:#df4b0b;color:#fff;font-size:6.5px;font-weight:700;
+  padding:2px 8px;border-radius:5px;margin-top:3px;display:inline-block;}
+.s3-url{font-size:14px;font-weight:800;color:#df4b0b;margin-top:16px;
+  background:#fff;padding:8px 20px;border-radius:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);}
 
-/* SCENE 4 — FEATURES */
-#s4{background:linear-gradient(160deg,#0f2027,#203a43,#2c5364);}
-.feat-title{font-size:22px;font-weight:900;color:#fff;text-align:center;margin-bottom:20px;}
-.feat-title span{color:#ffc60b;}
-.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px;}
-.feat-card{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);
-  border-radius:16px;padding:16px;text-align:center;border:1px solid rgba(255,255,255,.15);}
-.feat-icon{font-size:32px;margin-bottom:8px;}
-.feat-name{font-size:13px;font-weight:700;color:#fff;}
-.feat-desc{font-size:11px;color:rgba(255,255,255,.7);margin-top:3px;}
+/* SCENE 4 */
+#s4{background:linear-gradient(160deg,#0a1628,#112240,#1a3a5c);}
+.s4-title{font-size:22px;font-weight:900;color:#fff;text-align:center;
+  margin-bottom:22px;line-height:1.3;}
+.s4-title span{color:#ffc60b;}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;}
+.fc{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;padding:18px 14px;text-align:center;
+  backdrop-filter:blur(10px);}
+.fc-icon{font-size:34px;margin-bottom:8px;}
+.fc-name{font-size:14px;font-weight:700;color:#fff;line-height:1.3;}
+.fc-desc{font-size:11px;color:rgba(255,255,255,.6);margin-top:4px;}
 
-/* SCENE 5 — INSTALL */
-#s5{background:linear-gradient(135deg,#0c831f,#065c15);}
-.install-title{font-size:24px;font-weight:900;color:#fff;text-align:center;margin-bottom:6px;}
-.install-sub{font-size:13px;color:rgba(255,255,255,.8);text-align:center;margin-bottom:24px;}
-.install-steps{display:flex;flex-direction:column;gap:12px;padding:0 24px;width:100%;}
-.step{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.15);
-  padding:12px 16px;border-radius:12px;backdrop-filter:blur(8px);}
-.step-num{width:32px;height:32px;background:#fff;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-weight:900;
-  color:#0c831f;font-size:14px;flex-shrink:0;}
-.step-text{font-size:13px;font-weight:600;color:#fff;}
-.step-sub{font-size:11px;color:rgba(255,255,255,.7);}
-
-/* SCENE 6 — ORDER DEMO */
-#s6{background:#fff;}
-.order-title{font-size:20px;font-weight:900;color:#111;text-align:center;margin-bottom:4px;}
-.order-sub{font-size:13px;color:#888;text-align:center;margin-bottom:16px;}
-.order-flow{display:flex;flex-direction:column;gap:8px;padding:0 20px;width:100%;}
-.of-step{display:flex;align-items:center;gap:12px;padding:12px 14px;
-  border-radius:12px;border:2px solid #f0f0f0;}
-.of-step.active-step{border-color:#df4b0b;background:#fff5f0;}
-.of-icon{font-size:24px;flex-shrink:0;}
-.of-text{font-size:13px;font-weight:700;color:#111;}
-.of-desc{font-size:11px;color:#888;}
-.wa-notify{background:#e8f5e9;border:2px solid #25d366;border-radius:12px;
-  padding:12px 14px;margin:12px 20px 0;display:flex;align-items:center;gap:10px;}
-.wa-notify-text{font-size:12px;font-weight:700;color:#0c831f;}
-
-/* SCENE 7 — OUTRO */
-#s7{background:linear-gradient(135deg,#1a0a00,#3d1500);}
-.outro-logo{width:100px;height:100px;border-radius:50%;
-  background:linear-gradient(135deg,#ffc60b,#df4b0b);
+/* SCENE 5 */
+#s5{background:linear-gradient(160deg,#0d3b1e,#1a6b35,#0c831f);}
+.s5-title{font-size:23px;font-weight:900;color:#fff;text-align:center;margin-bottom:6px;}
+.s5-sub{font-size:13px;color:rgba(255,255,255,.8);text-align:center;margin-bottom:22px;}
+.steps{display:flex;flex-direction:column;gap:10px;width:100%;}
+.step{display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,.12);border-radius:14px;padding:14px 16px;
+  backdrop-filter:blur(8px);}
+.sn{width:36px;height:36px;border-radius:50%;background:#fff;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 50px rgba(223,75,11,.5);margin-bottom:16px;}
-.outro-logo img{width:80px;height:80px;object-fit:contain;border-radius:50%;}
-.outro-title{font-size:28px;font-weight:900;color:#fff;text-align:center;}
-.outro-url{font-size:16px;color:#ffc60b;font-weight:700;margin-top:8px;}
-.outro-social{display:flex;gap:16px;margin-top:20px;}
-.os-btn{padding:10px 20px;border-radius:25px;font-size:13px;font-weight:700;
-  display:flex;align-items:center;gap:8px;}
-.os-wa{background:#25d366;color:#fff;}
-.os-ig{background:linear-gradient(135deg,#e1306c,#f77737);color:#fff;}
-.tagline-final{font-size:13px;color:rgba(255,255,255,.6);margin-top:16px;text-align:center;}
+  font-size:16px;font-weight:900;color:#0c831f;}
+.st{font-size:14px;font-weight:700;color:#fff;}
+.sd{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px;}
 
-/* SUBTITLE */
-.subtitle{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,.75);color:#fff;padding:10px 20px;border-radius:30px;
-  font-size:14px;font-weight:600;text-align:center;max-width:340px;
-  line-height:1.5;backdrop-filter:blur(10px);display:none;z-index:100;}
+/* SCENE 6 */
+#s6{background:#fff;}
+.s6-title{font-size:22px;font-weight:900;color:#111;text-align:center;margin-bottom:4px;}
+.s6-sub{font-size:13px;color:#999;text-align:center;margin-bottom:16px;}
+.oflow{display:flex;flex-direction:column;gap:8px;width:100%;}
+.ostep{display:flex;align-items:center;gap:12px;
+  border:2px solid #f0f0f0;border-radius:14px;padding:12px 14px;transition:.3s;}
+.ostep.on{border-color:#df4b0b;background:#fff5f0;}
+.oico{font-size:26px;flex-shrink:0;}
+.otx{font-size:13px;font-weight:700;color:#111;}
+.odx{font-size:11px;color:#888;margin-top:1px;}
+.wa-box{background:#e8f5e9;border:2px solid #25d366;border-radius:14px;
+  padding:12px 14px;margin-top:10px;display:flex;align-items:center;gap:10px;width:100%;}
+.wa-txt{font-size:12px;font-weight:700;color:#1b5e20;line-height:1.5;}
+
+/* SCENE 7 */
+#s7{background:linear-gradient(160deg,#1a0500,#3d1000,#df4b0b);}
+.s7-logo{width:110px;height:110px;border-radius:50%;
+  background:linear-gradient(135deg,#ffc60b,#ff8c00);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 60px rgba(255,198,11,.5);margin-bottom:18px;}
+.s7-logo img{width:86px;height:86px;object-fit:contain;border-radius:50%;}
+.s7-name{font-size:30px;font-weight:900;color:#fff;letter-spacing:2px;}
+.s7-url{font-size:17px;color:#ffc60b;font-weight:700;margin-top:8px;}
+.s7-btns{display:flex;gap:12px;margin-top:20px;}
+.s7-btn{padding:11px 22px;border-radius:25px;font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:8px;text-decoration:none;}
+.s7-wa{background:#25d366;color:#fff;}
+.s7-ig{background:linear-gradient(135deg,#e1306c,#f77737);color:#fff;}
+.s7-tag{font-size:13px;color:rgba(255,255,255,.65);margin-top:18px;text-align:center;line-height:1.7;}
 
 /* PROGRESS */
-.progress-bar{position:fixed;top:0;left:0;height:3px;background:#df4b0b;
-  transition:width .3s;z-index:200;}
+.pbar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,#ffc60b,#df4b0b);
+  transition:width .4s linear;z-index:999;border-radius:0 2px 2px 0;}
 
-/* PLAY BTN */
-.play-btn{position:fixed;bottom:20px;right:20px;width:50px;height:50px;
-  border-radius:50%;background:#df4b0b;color:#fff;border:none;cursor:pointer;
-  font-size:18px;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 16px rgba(223,75,11,.4);z-index:300;}
+/* SCENE COUNTER */
+.scnt{position:fixed;top:10px;right:14px;font-size:11px;font-weight:700;
+  color:rgba(255,255,255,.6);z-index:999;background:rgba(0,0,0,.3);
+  padding:3px 10px;border-radius:20px;backdrop-filter:blur(6px);}
+
+/* TAP TO START */
+.tap-start{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;z-index:9999;cursor:pointer;}
+.tap-icon{font-size:70px;animation:bounce2 1.2s infinite;}
+.tap-text{font-size:20px;font-weight:700;color:#fff;margin-top:16px;}
+.tap-sub{font-size:13px;color:rgba(255,255,255,.6);margin-top:6px;}
+@keyframes bounce2{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 </style>
 </head>
 <body>
 
-<div class="progress-bar" id="progressBar"></div>
+<div class="pbar" id="pbar" style="width:0%"></div>
+<div class="scnt" id="scnt" style="display:none;"></div>
 
-<!-- SCENE 1 — LOGO INTRO -->
+<!-- SCENE 1 -->
 <div class="scene active" id="s1">
-  <div class="logo-circle">
-    <img src="images/logo.png" alt="PS STORE">
-  </div>
-  <div class="intro-title">PS STORE</div>
-  <div class="intro-sub">Jodhpur ka Apna Online Kirana</div>
-  <div class="intro-tagline">Ab Ghar Baithe Mangao Sab Kuch!</div>
+  <div class="s1-logo"><img src="images/logo.png" alt="PS STORE"></div>
+  <div class="s1-name">PS STORE</div>
+  <div class="s1-city">Jodhpur</div>
+  <div class="s1-tag">Ghar Ki Zaroorat<br>Ab Ghar Ke Dwar Tak</div>
 </div>
 
-<!-- SCENE 2 — ANNOUNCEMENT -->
+<!-- SCENE 2 -->
 <div class="scene" id="s2">
-  <div class="announce-badge">🎉 Ab Online Available!</div>
-  <div class="announce-title">PS STORE<br><span>Ab Digital Ho Gaya!</span></div>
-  <div class="announce-sub">Jodhpur ki sabse trusted<br>kirana shop — ab aapke phone mein!</div>
-  <div class="avatar-row">
-    <div class="avatar">👩</div>
-    <div class="speech">
-      "Namaste! Main hun aapki<br>
-      <b>PS STORE Assistant.</b><br>
-      Aaj main aapko bataungi<br>
-      kaise kare online order!"
+  <div class="s2-badge">🎉 Ab Digital Ho Gaye Hain!</div>
+  <div class="s2-title">PS STORE<br>Ab Aapke <span>Phone Mein!</span></div>
+  <div class="s2-card">
+    <div class="s2-row">
+      <div class="s2-avatar">👩</div>
+      <div class="s2-text">
+        Namaste! <b>PS Store</b> — Jodhpur ki<br>
+        sabse purani kirana dukaan —<br>
+        ab aa gayi hai <b>digital roop mein!</b>
+      </div>
+    </div>
+    <div class="s2-stats">
+      <div class="s2-stat"><div class="s2-stat-val">500+</div><div class="s2-stat-lab">Products</div></div>
+      <div class="s2-stat"><div class="s2-stat-val">4</div><div class="s2-stat-lab">Branches</div></div>
+      <div class="s2-stat"><div class="s2-stat-val">20 Min</div><div class="s2-stat-lab">Delivery</div></div>
     </div>
   </div>
 </div>
 
-<!-- SCENE 3 — WEBSITE DEMO -->
+<!-- SCENE 3 -->
 <div class="scene" id="s3">
-  <div class="phone-frame">
-    <div class="phone-header">
-      <div class="ph-loc">📍 Delivery in 20-30 Min | Jodhpur</div>
+  <div class="phone">
+    <div class="ph-bar">
+      <div class="ph-loc">📍 Delivery in 20-30 Min · Jodhpur</div>
       <div class="ph-search">🔍 Search "atta", "milk", "oil"...</div>
     </div>
-    <div class="phone-banner">
-      <div class="pb-text">
+    <div class="ph-banner">
+      <div class="ph-banner-txt">
         <h3>Fresh Grocery</h3>
-        <p>Best prices in Jodhpur</p>
-        <span class="pb-cta">Shop Now →</span>
+        <p>Best prices guaranteed</p>
+        <span class="ph-cta">Shop Now →</span>
       </div>
-      <img src="images/banner1.jpg" class="pb-img" alt="">
+      <img src="images/banner1.jpg" alt="">
     </div>
-    <div class="phone-products">
-      <div class="pp">
-        <img src="images/aashirvaad_aata.jpg" alt="">
-        <div class="pp-name">Aashirvaad Atta</div>
-        <div class="pp-price">₹266</div>
-        <div class="pp-btn">Add</div>
-      </div>
-      <div class="pp">
-        <img src="images/milk.jpg" alt="">
-        <div class="pp-name">Amul Milk 1L</div>
-        <div class="pp-price">₹68</div>
-        <div class="pp-btn">Add</div>
-      </div>
-      <div class="pp">
-        <img src="images/coke.jpg" alt="">
-        <div class="pp-name">Coca Cola</div>
-        <div class="pp-price">₹45</div>
-        <div class="pp-btn">Add</div>
-      </div>
-      <div class="pp">
-        <img src="images/colgate.jpg" alt="">
-        <div class="pp-name">Colgate 200g</div>
-        <div class="pp-price">₹110</div>
-        <div class="pp-btn">Add</div>
-      </div>
+    <div class="ph-prods">
+      <div class="pp"><img src="images/aashirvaad_aata.jpg" alt=""><div class="pp-n">Aashirvaad Atta 5kg</div><div class="pp-p">₹266</div><div class="pp-b">Add</div></div>
+      <div class="pp"><img src="images/milk.jpg" alt=""><div class="pp-n">Amul Milk 1L</div><div class="pp-p">₹68</div><div class="pp-b">Add</div></div>
+      <div class="pp"><img src="images/coke.jpg" alt=""><div class="pp-n">Coca Cola 750ml</div><div class="pp-p">₹45</div><div class="pp-b">Add</div></div>
+      <div class="pp"><img src="images/colgate.jpg" alt=""><div class="pp-n">Colgate 200g</div><div class="pp-p">₹110</div><div class="pp-b">Add</div></div>
     </div>
   </div>
-  <div class="scene-label">🌐 psstorelive.in</div>
+  <div class="s3-url">🌐 psstorelive.in</div>
 </div>
 
-<!-- SCENE 4 — FEATURES -->
+<!-- SCENE 4 -->
 <div class="scene" id="s4">
-  <div class="feat-title">Kyun Choose Karein<br><span>PS STORE?</span></div>
+  <div class="s4-title">Kyun Chunein<br><span>PS STORE?</span></div>
   <div class="feat-grid">
-    <div class="feat-card">
-      <div class="feat-icon">⚡</div>
-      <div class="feat-name">20-30 Min</div>
-      <div class="feat-desc">Super Fast Delivery</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">💰</div>
-      <div class="feat-name">Best Prices</div>
-      <div class="feat-desc">Jodhpur mein sab se sasta</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">🏪</div>
-      <div class="feat-name">4 Branches</div>
-      <div class="feat-desc">Poore Jodhpur mein</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">✅</div>
-      <div class="feat-name">100% Fresh</div>
-      <div class="feat-desc">Quality Guaranteed</div>
-    </div>
+    <div class="fc"><div class="fc-icon">⚡</div><div class="fc-name">20-30 Min Delivery</div><div class="fc-desc">Super fast, ghar tak</div></div>
+    <div class="fc"><div class="fc-icon">💰</div><div class="fc-name">Best Prices</div><div class="fc-desc">Jodhpur mein sab se saste</div></div>
+    <div class="fc"><div class="fc-icon">🏪</div><div class="fc-name">4 Branches</div><div class="fc-desc">Jodhpur ke har kone mein</div></div>
+    <div class="fc"><div class="fc-icon">✅</div><div class="fc-name">100% Fresh</div><div class="fc-desc">Quality ki guarantee</div></div>
   </div>
 </div>
 
-<!-- SCENE 5 — INSTALL -->
+<!-- SCENE 5 -->
 <div class="scene" id="s5">
-  <div class="install-title">App Kaise Install Karein?</div>
-  <div class="install-sub">Sirf 3 simple steps!</div>
-  <div class="install-steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div>
-        <div class="step-text">Chrome mein Open Karein</div>
-        <div class="step-sub">psstorelive.in type karein</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div>
-        <div class="step-text">Profile Icon Tap Karein</div>
-        <div class="step-sub">"Install App" button dikhega</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div>
-        <div class="step-text">Install Karein — Done!</div>
-        <div class="step-sub">Phone ke home screen pe app ready!</div>
-      </div>
-    </div>
+  <div class="s5-title">App Install Karein</div>
+  <div class="s5-sub">Bilkul Free — Sirf 3 Steps!</div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div><div class="st">Chrome mein kholein</div><div class="sd">psstorelive.in type karein</div></div></div>
+    <div class="step"><div class="sn">2</div><div><div class="st">Profile icon tap karein</div><div class="sd">"Install App" button dikhega</div></div></div>
+    <div class="step"><div class="sn">3</div><div><div class="st">Install — Ho Gaya!</div><div class="sd">Phone pe app ready hai!</div></div></div>
   </div>
 </div>
 
-<!-- SCENE 6 — ORDER DEMO -->
+<!-- SCENE 6 -->
 <div class="scene" id="s6">
-  <div class="order-title">Order Karna Hai Aasan!</div>
-  <div class="order-sub">Sirf 4 steps mein order ready</div>
-  <div class="order-flow">
-    <div class="of-step active-step">
-      <div class="of-icon">🛒</div>
-      <div>
-        <div class="of-text">Products Select Karein</div>
-        <div class="of-desc">500+ products available</div>
-      </div>
-    </div>
-    <div class="of-step">
-      <div class="of-icon">📍</div>
-      <div>
-        <div class="of-text">Location Set Karein</div>
-        <div class="of-desc">GPS se exact location</div>
-      </div>
-    </div>
-    <div class="of-step">
-      <div class="of-icon">💳</div>
-      <div>
-        <div class="of-text">Payment Chunein</div>
-        <div class="of-desc">COD ya UPI — dono available</div>
-      </div>
-    </div>
-    <div class="of-step">
-      <div class="of-icon">✅</div>
-      <div>
-        <div class="of-text">Order Confirm!</div>
-        <div class="of-desc">20-30 min mein delivery</div>
-      </div>
-    </div>
+  <div class="s6-title">Order Karna Aasaan!</div>
+  <div class="s6-sub">Sirf 4 simple steps</div>
+  <div class="oflow">
+    <div class="ostep on"><div class="oico">🛒</div><div><div class="otx">Products Chuniye</div><div class="odx">500+ products available</div></div></div>
+    <div class="ostep"><div class="oico">📍</div><div><div class="otx">Location Set Karein</div><div class="odx">GPS se exact address</div></div></div>
+    <div class="ostep"><div class="oico">💳</div><div><div class="otx">Payment Karein</div><div class="odx">COD ya UPI — dono available</div></div></div>
+    <div class="ostep"><div class="oico">🏠</div><div><div class="otx">Delivery Aapke Darwaaze Par!</div><div class="odx">20-30 minutes mein</div></div></div>
   </div>
-  <div class="wa-notify">
-    <span style="font-size:22px;">💬</span>
-    <div class="wa-notify-text">Shopkeeper ko turant<br>WhatsApp notification milta hai!</div>
+  <div class="wa-box">
+    <span style="font-size:24px;">💬</span>
+    <div class="wa-txt">Shopkeeper ko turant<br>WhatsApp pe order milta hai!</div>
   </div>
 </div>
 
-<!-- SCENE 7 — OUTRO -->
+<!-- SCENE 7 -->
 <div class="scene" id="s7">
-  <div class="outro-logo">
-    <img src="images/logo.png" alt="PS STORE">
+  <div class="s7-logo"><img src="images/logo.png" alt="PS STORE"></div>
+  <div class="s7-name">PS STORE</div>
+  <div class="s7-url">🌐 psstorelive.in</div>
+  <div class="s7-btns">
+    <a href="https://wa.me/919784721900" target="_blank" class="s7-btn s7-wa">💬 WhatsApp</a>
+    <a href="https://instagram.com/ps_store_live" target="_blank" class="s7-btn s7-ig">📸 Instagram</a>
   </div>
-  <div class="outro-title">PS STORE Jodhpur</div>
-  <div class="outro-url">🌐 psstorelive.in</div>
-  <div class="outro-social">
-    <div class="os-btn os-wa">💬 WhatsApp</div>
-    <div class="os-btn os-ig">📸 Instagram</div>
-  </div>
-  <div class="tagline-final">"Ghar Ki Zaroorat,<br>Ghar Ke Dwar Tak!"</div>
+  <div class="s7-tag">"Ghar Ki Zaroorat,<br>Ghar Ke Dwar Tak!"<br><br>Aaj hi visit karein!</div>
 </div>
 
-<!-- SUBTITLE -->
-<div class="subtitle" id="subtitle"></div>
-
-<button class="play-btn" id="playBtn" onclick="startVideo()">▶</button>
+<!-- TAP TO START -->
+<div class="tap-start" id="tapStart" onclick="startVideo()">
+  <div class="tap-icon">▶️</div>
+  <div class="tap-text">Tap to Play</div>
+  <div class="tap-sub">PS STORE Promo Video</div>
+</div>
 
 <script>
+// Scene timings in milliseconds
 const SCENES = [
-  {
-    id: "s1", duration: 4000,
-    subtitle: "PS STORE Jodhpur — Ghar Ka Apna Kirana!",
-    enter: () => {}
-  },
-  {
-    id: "s2", duration: 6000,
-    subtitle: "Namaste! Main hun aapki PS STORE Assistant. Aaj main aapko bataungi kaise karein online order!",
-    enter: () => {}
-  },
-  {
-    id: "s3", duration: 6000,
-    subtitle: "Ye hai hamari website — psstorelive.in. Yahan aapko milenge 500 se zyada products, best prices par!",
-    enter: () => {}
-  },
-  {
-    id: "s4", duration: 5000,
-    subtitle: "PS STORE kyun? 20-30 minute delivery, 4 branches, 100% fresh products, aur Jodhpur ke best prices!",
-    enter: () => {}
-  },
-  {
-    id: "s5", duration: 6000,
-    subtitle: "App install karna bahut aasaan hai! Chrome mein psstorelive.in kholein, Profile icon tap karein, aur Install App press karein. Ho gaya!",
-    enter: () => {}
-  },
-  {
-    id: "s6", duration: 6000,
-    subtitle: "Order karna bhi ekdum simple hai! Products chunein, location set karein, payment karein — aur 20 minute mein delivery!",
-    enter: () => {}
-  },
-  {
-    id: "s7", duration: 5000,
-    subtitle: "Abhi visit karein psstorelive.in — Jodhpur ka sabse bharosemand online kirana store!",
-    enter: () => {}
-  }
+  { id:"s1", ms:4500  },
+  { id:"s2", ms:8000  },
+  { id:"s3", ms:8000  },
+  { id:"s4", ms:7000  },
+  { id:"s5", ms:8000  },
+  { id:"s6", ms:9000  },
+  { id:"s7", ms:7000  }
 ];
 
-let currentScene = 0;
-let timer = null;
-let speaking = false;
+const TOTAL = SCENES.reduce((a,b) => a + b.ms, 0);
+let cur = 0, startTime = 0, rafId = null;
 
-function showScene(index) {
+function showScene(i) {
   document.querySelectorAll(".scene").forEach(s => s.classList.remove("active"));
-  const s = document.getElementById(SCENES[index].id);
-  if (s) s.classList.add("active");
-
-  // Progress bar
-  const totalTime = SCENES.reduce((a, b) => a + b.duration, 0);
-  const elapsed   = SCENES.slice(0, index).reduce((a, b) => a + b.duration, 0);
-  document.getElementById("progressBar").style.width =
-    ((elapsed / totalTime) * 100) + "%";
-
-  // Subtitle
-  const sub = document.getElementById("subtitle");
-  sub.style.display = "block";
-  sub.textContent   = SCENES[index].subtitle;
-
-  // Text to Speech
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(SCENES[index].subtitle);
-    utter.lang  = "hi-IN";
-    utter.rate  = 0.9;
-    utter.pitch = 1.1;
-    // Try to find a female voice
-    const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(v =>
-      v.lang.startsWith("hi") && v.name.toLowerCase().includes("female")
-    ) || voices.find(v => v.lang.startsWith("hi"));
-    if (femaleVoice) utter.voice = femaleVoice;
-    window.speechSynthesis.speak(utter);
-  }
-
-  SCENES[index].enter();
+  document.getElementById(SCENES[i].id).classList.add("active");
+  document.getElementById("scnt").textContent = (i+1) + " / " + SCENES.length;
 }
 
-function nextScene() {
-  currentScene++;
-  if (currentScene >= SCENES.length) {
-    document.getElementById("progressBar").style.width = "100%";
-    document.getElementById("playBtn").style.display = "flex";
-    document.getElementById("playBtn").textContent = "↺";
-    currentScene = 0;
-    return;
+function tick(ts) {
+  if (!startTime) startTime = ts;
+  const elapsed = ts - startTime;
+
+  // Progress bar
+  document.getElementById("pbar").style.width = Math.min(100, (elapsed/TOTAL)*100) + "%";
+
+  // Which scene
+  let acc = 0;
+  for (let i = 0; i < SCENES.length; i++) {
+    acc += SCENES[i].ms;
+    if (elapsed < acc) {
+      if (cur !== i) { cur = i; showScene(i); }
+      break;
+    }
   }
-  showScene(currentScene);
-  timer = setTimeout(nextScene, SCENES[currentScene - 1 >= 0 ? currentScene - 1 : 0].duration);
+
+  if (elapsed < TOTAL) {
+    rafId = requestAnimationFrame(tick);
+  } else {
+    // End — show replay
+    document.getElementById("pbar").style.width = "100%";
+    showScene(SCENES.length - 1);
+    document.getElementById("tapStart").style.display = "flex";
+    document.querySelector(".tap-icon").textContent = "🔁";
+    document.querySelector(".tap-text").textContent = "Replay";
+    document.querySelector(".tap-sub").textContent = "Tap to watch again";
+  }
 }
 
 function startVideo() {
-  const btn = document.getElementById("playBtn");
-  btn.style.display = "none";
-  currentScene = 0;
-  window.speechSynthesis && window.speechSynthesis.cancel();
+  document.getElementById("tapStart").style.display = "none";
+  document.getElementById("scnt").style.display = "block";
+  cur = 0; startTime = 0;
+  cancelAnimationFrame(rafId);
   showScene(0);
-  clearTimeout(timer);
-  timer = setTimeout(nextScene, SCENES[0].duration);
+  rafId = requestAnimationFrame(tick);
 }
-
-// Load voices
-window.speechSynthesis && window.addEventListener("load", () => {
-  window.speechSynthesis.getVoices();
-});
 </script>
 </body>
 </html>
