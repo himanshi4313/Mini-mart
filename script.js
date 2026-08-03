@@ -120,6 +120,7 @@ function renderProducts(list, targetId) {
                 </button>
             </div>
             <h2>${p.name}</h2>
+            ${p.unit ? `<span class="product-unit">${p.unit}</span>` : ""}
             <div class="card-price-row">
                 <span class="card-price">Rs.${finalPrice}</span>
                 ${p.discount ? `<span class="card-mrp">Rs.${p.price}</span>` : ""}
@@ -175,44 +176,126 @@ function filterCategory(name, el) {
 }
 
 // ─────────────────────────────────────────
-//  SEARCH
+//  HINDI → ENGLISH WORD MAP (voice search)
 // ─────────────────────────────────────────
-function searchProducts() {
-    const kw = document.getElementById("searchInput").value.toLowerCase().trim();
+const HINDI_MAP = {
+    "दूध":"milk","दुध":"milk","दूद":"milk",
+    "आटा":"atta","अटा":"atta","गेहूं":"wheat",
+    "चीनी":"sugar","शक्कर":"sugar",
+    "चावल":"rice","राइस":"rice",
+    "तेल":"oil","सरसों":"mustard",
+    "साबुन":"soap","सोप":"soap",
+    "शैम्पू":"shampoo","शैंपू":"shampoo",
+    "टूथपेस्ट":"toothpaste","पेस्ट":"toothpaste",
+    "बिस्कुट":"biscuit","कुकीज":"cookies",
+    "नमक":"salt","हल्दी":"turmeric",
+    "मिर्च":"chilli","धनिया":"coriander",
+    "कोल्ड ड्रिंक":"cold drink","कोक":"coke","कोला":"cola",
+    "जूस":"juice","पानी":"water",
+    "मक्खन":"butter","घी":"ghee",
+    "दही":"curd","पनीर":"paneer",
+    "चाय":"tea","कॉफी":"coffee","काफी":"coffee",
+    "ब्रेड":"bread","पाव":"bread",
+    "अंडे":"egg","अंडा":"egg",
+    "चॉकलेट":"chocolate","टॉफी":"toffee",
+    "चिप्स":"chips","नमकीन":"namkeen","कुरकुरे":"kurkure",
+    "डिटर्जेंट":"detergent","वाशिंग":"washing",
+    "झाड़ू":"broom","पोछा":"mop",
+    "फिनाइल":"phenyl","हार्पिक":"harpic",
+    "लोशन":"lotion","क्रीम":"cream",
+    "डियो":"deo","परफ्यूम":"perfume",
+    "फेस वाश":"face wash","टॉनर":"toner"
+};
 
-    // Show all products on home page when searching
+function translateHindiToEnglish(text) {
+    let translated = text.toLowerCase();
+    Object.keys(HINDI_MAP).forEach(hindi => {
+        translated = translated.replace(new RegExp(hindi, "g"), HINDI_MAP[hindi]);
+    });
+    return translated;
+}
+function searchProducts() {
+function searchProducts() {
+    const raw      = document.getElementById("searchInput").value.trim();
+    const kw       = translateHindiToEnglish(raw).toLowerCase();
+    const rawLow   = raw.toLowerCase();
+
     const homeVisible  = document.getElementById("home-view").style.display !== "none";
     const catVisible   = document.getElementById("category-view").style.display !== "none";
     const adminVisible = document.getElementById("admin-view").style.display !== "none";
 
-    if (kw === "") {
-        // Empty search — reset to default
+    if (!kw) {
         if (homeVisible) {
             const deals = allProducts.filter(p => p.discount > 0);
             renderProducts(deals.length ? deals : allProducts, "productList");
+            const t = document.querySelector("#home-view .sec-title");
+            if (t) t.textContent = "Best Deals";
         }
-        if (catVisible) renderProducts(allProducts, "categoryProductList");
+        if (catVisible)   renderProducts(allProducts, "categoryProductList");
         if (adminVisible) renderAdminInventory(allProducts);
         return;
     }
 
-    const filtered = allProducts.filter(p =>
-        p.name.toLowerCase().includes(kw) ||
-        (p.category && p.category.toLowerCase().includes(kw))
-    );
+    const filtered = allProducts.filter(p => {
+        const name = p.name.toLowerCase();
+        const cat  = (p.category || "").toLowerCase();
+        const unit = (p.unit || "").toLowerCase();
+        return name.includes(kw) || cat.includes(kw) ||
+               name.includes(rawLow) || cat.includes(rawLow) ||
+               unit.includes(kw);
+    });
 
     if (homeVisible) {
-        // Show all matching products on home when searching
-        const sectionHeader = document.querySelector("#home-view .section-header");
-        if (sectionHeader) {
-            sectionHeader.querySelector(".sec-title").textContent = filtered.length
-                ? `Results for "${document.getElementById("searchInput").value}"`
-                : "No results found";
+        const t = document.querySelector("#home-view .sec-title");
+        if (filtered.length) {
+            if (t) t.textContent = `"${raw}" — ${filtered.length} results`;
+            renderProducts(filtered, "productList");
+        } else {
+            if (t) t.textContent = `"${raw}" — koi product nahi mila`;
+            // Show related products
+            const related = allProducts.filter(p => p.discount > 0).slice(0, 6);
+            renderProductsWithMsg("productList", raw, related);
         }
-        renderProducts(filtered, "productList");
     }
-    if (catVisible)   renderProducts(filtered, "categoryProductList");
-    if (adminVisible) renderAdminInventory(filtered);
+    if (catVisible)   renderProducts(filtered.length ? filtered : allProducts, "categoryProductList");
+    if (adminVisible) renderAdminInventory(filtered.length ? filtered : allProducts);
+}
+
+function renderProductsWithMsg(targetId, query, related) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    let html = `
+    <div style="grid-column:1/-1;text-align:center;padding:16px 0 8px;">
+        <div style="font-size:36px;margin-bottom:8px;">🔍</div>
+        <p style="font-weight:700;color:#333;font-size:14px;">"${query}" nahi mila</p>
+        <p style="color:#999;font-size:12px;margin-top:4px;">Ye products dekh sakte hain:</p>
+    </div>`;
+    related.forEach(p => {
+        const fp = p.discount ? Math.round(p.price - p.price * p.discount / 100) : p.price;
+        const isW = wishlist.includes(p._id);
+        const hc  = isW ? "#e53935" : "#ccc";
+        const hi  = isW ? "fa-solid fa-heart" : "fa-regular fa-heart";
+        const unit = p.unit ? `<span class="product-unit">${p.unit}</span>` : "";
+        html += `<div class="card">
+            <div class="card-img-wrap">
+                <img src="images/${p.image}" alt="${p.name}" onerror="this.src='images/default.png'">
+                ${p.discount ? `<span class="offer">${p.discount}% OFF</span>` : ""}
+                <button class="wish-btn" onclick="toggleWishlist('${p._id}',this)"><i class="${hi}" style="color:${hc};"></i></button>
+            </div>
+            <h2>${p.name}</h2>${unit}
+            <div class="card-price-row">
+                <span class="card-price">Rs.${fp}</span>
+                ${p.discount ? `<span class="card-mrp">Rs.${p.price}</span>` : ""}
+            </div>
+            <p class="card-stock">Stock: ${p.stock}</p>
+            <input type="number" value="1" min="1" max="${p.stock}" class="qty">
+            <div class="card-btn-row">
+                <button class="card-add-btn" onclick="addToCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${fp},${p.price},'${p.image}',${p.discount||0},this)">Add</button>
+                <button class="card-buy-btn" onclick="buyNow('${p._id}','${p.name.replace(/'/g,"\\'")}',${fp},${p.price},'${p.image}',${p.discount||0})">Buy Now</button>
+            </div>
+        </div>`;
+    });
+    el.innerHTML = html;
 }
 
 function searchAdminProducts(kw) {
@@ -1105,7 +1188,8 @@ function saveProductAction() {
         price:    parseFloat(document.getElementById("pPrice").value),
         discount: parseFloat(document.getElementById("pDiscount").value) || 0,
         stock:    parseInt(document.getElementById("pStock").value),
-        image:    document.getElementById("pIdentity").value.trim()
+        image:    document.getElementById("pIdentity").value.trim(),
+        unit:     (document.getElementById("pUnit") ? document.getElementById("pUnit").value.trim() : "")
     };
 
     if (!payload.name || !payload.price) { showToast("Name and Price are required"); return; }
@@ -1557,7 +1641,12 @@ function startVoiceSearch() {
     recognition.onresult = (e) => {
         const transcript = e.results[0][0].transcript;
         const input = document.getElementById("searchInput");
-        if (input) { input.value = transcript; searchProducts(); }
+        if (input) {
+            // Show original Hindi text but search with translation
+            input.value = transcript;
+            searchProducts();
+            showSearchSuggestions(transcript);
+        }
         if (mic) mic.classList.remove("listening");
     };
 
