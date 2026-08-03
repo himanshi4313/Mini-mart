@@ -776,6 +776,46 @@
     </div>
   </div>
 
+  <!-- PRODUCT DETAIL MODAL -->
+  <div id="productDetailModal" class="modal-overlay" style="display:none;" onclick="closeProductDetail(event)">
+    <div class="pd-box" onclick="event.stopPropagation()">
+      <button class="pd-close" onclick="closeProductDetail()">&#x2715;</button>
+      <div class="pd-img-wrap">
+        <img id="pdImage" src="" alt="">
+        <span id="pdOffer" class="pd-offer" style="display:none;"></span>
+      </div>
+      <div class="pd-body">
+        <div class="pd-cat" id="pdCategory"></div>
+        <h2 class="pd-name" id="pdName"></h2>
+        <div class="pd-unit-label" id="pdUnitLabel" style="display:none;">Select Unit</div>
+        <div class="pd-variants" id="pdVariants"></div>
+        <div class="pd-price-row">
+          <span class="pd-price" id="pdPrice"></span>
+          <span class="pd-mrp" id="pdMrp" style="display:none;"></span>
+          <span class="pd-save" id="pdSave" style="display:none;"></span>
+        </div>
+        <p class="pd-tax">Inclusive of all taxes</p>
+        <div class="pd-stock" id="pdStock"></div>
+        <div class="pd-qty-row">
+          <div class="pd-qty-ctrl">
+            <button onclick="changePdQty(-1)">&#8722;</button>
+            <span id="pdQty">1</span>
+            <button onclick="changePdQty(1)">+</button>
+          </div>
+          <button class="pd-add-btn" id="pdAddBtn" onclick="addFromDetail()">
+            <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+          </button>
+        </div>
+        <div class="pd-why">
+          <h4>Why shop from PS STORE?</h4>
+          <div class="pd-why-row"><span class="pd-why-icon">⚡</span><div><b>20-30 Min Delivery</b><p>Super fast delivery to your doorstep</p></div></div>
+          <div class="pd-why-row"><span class="pd-why-icon">✅</span><div><b>100% Fresh Products</b><p>Quality guaranteed on every item</p></div></div>
+          <div class="pd-why-row"><span class="pd-why-icon">💰</span><div><b>Best Prices</b><p>Lowest prices in Jodhpur</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ORDER SUCCESS POPUP -->
   <div id="orderSuccessPopup" class="order-success-overlay" style="display:none;">
     <div class="order-success-box">
