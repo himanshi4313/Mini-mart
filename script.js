@@ -215,7 +215,6 @@ function translateHindiToEnglish(text) {
     return translated;
 }
 function searchProducts() {
-function searchProducts() {
     const raw      = document.getElementById("searchInput").value.trim();
     const kw       = translateHindiToEnglish(raw).toLowerCase();
     const rawLow   = raw.toLowerCase();
