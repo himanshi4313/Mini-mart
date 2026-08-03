@@ -1075,7 +1075,7 @@ function renderAdminOrderCard(o) {
     const date  = new Date(o.createdAt).toLocaleString("en-IN");
     const items = Array.isArray(o.items) ? o.items.map(i => `${i.name} ×${i.qty}`).join(", ") : o.items || "";
     const mapsLink = (o.latitude && o.longitude) ? `https://www.google.com/maps?q=${o.latitude},${o.longitude}` : null;
-    const waMsg = encodeURIComponent(`Hi ${o.userName}! Aapka PS STORE order ${o.orderId} ka status ab hai: *${o.status}*. Delivery 20-30 min mein. Thank you! 🛒`);
+    const waMsg = encodeURIComponent(`Hi ${o.userName}! Your PS STORE order ${o.orderId} status: *${o.status}*. Delivery in 20-30 mins. Thank you! 🛒`);
     return `
     <div class="admin-order-card">
         <div class="admin-order-header">
@@ -1119,7 +1119,7 @@ function updateOrderStatus(id, orderId, userName, mobile, status) {
         showToast(`Status updated: ${status}`);
         // Send WhatsApp to customer
         if (mobile) {
-            const msg = `Hi ${userName}! Aapka *PS STORE* order *${orderId}* ka status update hua hai.\n\n*Status: ${status}*\n\n${status === "Out for Delivery" ? "Aapka order raste mein hai! 🚚" : status === "Delivered" ? "Order deliver ho gaya! Thank you 🙏" : status === "Accepted" ? "Aapka order accept ho gaya! Tayaari ho rahi hai 📦" : status === "Packed" ? "Order pack ho gaya, delivery hone wali hai! 📦" : "Aapka order received hai!"}\n\nThank you for shopping with PS STORE! 🛒`;
+            const msg = `Hi ${userName}! Your *PS STORE* order *${orderId}* has been updated.\n\n*Status: ${status}*\n\n${status === "Out for Delivery" ? "Your order is on the way! 🚚" : status === "Delivered" ? "Order delivered! Thank you for shopping with us 🙏" : status === "Accepted" ? "Your order has been accepted! We are preparing it 📦" : status === "Packed" ? "Your order is packed and ready for delivery! 📦" : "Your order has been received!"}\n\nThank you for shopping with PS STORE Jodhpur! 🛒\npsstorelive.in`;
             window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`, "_blank");
         }
         loadAdminOrders();
