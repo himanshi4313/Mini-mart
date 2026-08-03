@@ -1828,48 +1828,106 @@ function selectSuggestionProduct(name) {
 //  BILL PDF
 // ─────────────────────────────────────────
 function downloadBillPDF(order) {
+    // Build bill HTML for PDF
     const items = Array.isArray(order.items)
-        ? order.items.map(i => `${i.name} x${i.qty} = Rs.${i.price * i.qty}`).join("\n")
-        : order.items || "";
+        ? order.items.map(i => `
+            <tr>
+                <td>${i.name}${i.unit ? ` (${i.unit})` : ""}</td>
+                <td style="text-align:center;">${i.qty}</td>
+                <td style="text-align:right;">Rs.${i.price}</td>
+                <td style="text-align:right;">Rs.${i.price * i.qty}</td>
+            </tr>`).join("")
+        : `<tr><td colspan="4">${order.items}</td></tr>`;
 
-    const content = `
-PS STORE JODHPUR
-psstorelive.in | 9784721900
-================================
-ORDER BILL
-================================
-Order ID  : ${order.orderId}
-Date      : ${new Date(order.createdAt).toLocaleString("en-IN")}
-Customer  : ${order.userName}
-Mobile    : ${order.mobile}
-Address   : ${order.address}
---------------------------------
-ITEMS:
-${items}
---------------------------------
-Items Total     : Rs.${order.total}
-Product Discount: -Rs.${order.productDiscount || 0}
-Coupon          : -Rs.${order.couponDiscount || 0}
-Delivery        : Rs.${order.deliveryCharge || 0}
-================================
-GRAND TOTAL     : Rs.${order.grandTotal}
-Payment         : ${order.paymentMethod || "COD"}
-================================
-Status          : ${order.status}
-================================
-Thank you for shopping with
-PS STORE Jodhpur!
-Ghar Ki Zaroorat, Ghar Ke Dwar Tak
-    `.trim();
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bill - ${order.orderId}</title>
+<style>
+  body{font-family:Arial,sans-serif;max-width:400px;margin:0 auto;padding:20px;color:#111;}
+  .header{text-align:center;border-bottom:2px solid #df4b0b;padding-bottom:12px;margin-bottom:12px;}
+  .header h2{margin:0;color:#df4b0b;font-size:20px;}
+  .header p{margin:3px 0;font-size:12px;color:#555;}
+  .info{font-size:12px;margin-bottom:12px;}
+  .info tr td{padding:2px 4px;}
+  .info td:first-child{font-weight:700;color:#444;}
+  table.items{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px;}
+  table.items th{background:#df4b0b;color:#fff;padding:7px 6px;text-align:left;}
+  table.items th:not(:first-child){text-align:center;}
+  table.items th:last-child{text-align:right;}
+  table.items td{padding:6px;border-bottom:1px solid #eee;}
+  .totals{font-size:13px;border-top:1px dashed #ccc;padding-top:10px;}
+  .totals tr td{padding:3px 4px;}
+  .totals td:last-child{text-align:right;font-weight:600;}
+  .grand{font-size:15px;font-weight:900;color:#df4b0b;border-top:2px solid #df4b0b;padding-top:6px;}
+  .footer{text-align:center;margin-top:20px;padding-top:12px;border-top:1px solid #eee;}
+  .footer p{font-size:11px;color:#777;margin:3px 0;}
+  .computer-bill{font-size:10px;color:#999;text-align:center;margin-top:16px;
+    border-top:1px dashed #ddd;padding-top:8px;font-style:italic;}
+  @media print{body{padding:0;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h2>PS STORE JODHPUR</h2>
+  <p>Devi Road, Chandana Bhaker, Jodhpur, Rajasthan 342001</p>
+  <p>📞 9784721900 | 🌐 psstorelive.in</p>
+  <p>📧 psmegamartmart@gmail.com</p>
+</div>
 
-    const blob = new Blob([content], { type: "text/plain" });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement("a");
-    a.href     = url;
-    a.download = `PSStore-Bill-${order.orderId}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast("Bill downloaded!");
+<table class="info">
+  <tr><td>Order ID</td><td>: ${order.orderId}</td></tr>
+  <tr><td>Date</td><td>: ${new Date(order.createdAt).toLocaleString("en-IN")}</td></tr>
+  <tr><td>Customer</td><td>: ${order.userName}</td></tr>
+  <tr><td>Mobile</td><td>: ${order.mobile}</td></tr>
+  <tr><td>Address</td><td>: ${order.address}</td></tr>
+  <tr><td>Payment</td><td>: ${order.paymentMethod || "COD"}</td></tr>
+  <tr><td>Status</td><td>: ${order.status}</td></tr>
+</table>
+
+<table class="items">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th style="text-align:center;">Qty</th>
+      <th style="text-align:right;">Price</th>
+      <th style="text-align:right;">Amount</th>
+    </tr>
+  </thead>
+  <tbody>${items}</tbody>
+</table>
+
+<table class="totals" width="100%">
+  <tr><td>Items Total</td><td>Rs.${order.total}</td></tr>
+  ${order.productDiscount > 0 ? `<tr><td>Product Discount</td><td>- Rs.${order.productDiscount}</td></tr>` : ""}
+  ${order.couponDiscount > 0 ? `<tr><td>Coupon (${order.couponCode})</td><td>- Rs.${order.couponDiscount}</td></tr>` : ""}
+  <tr><td>Delivery Charge</td><td>Rs.${order.deliveryCharge || 0}</td></tr>
+  <tr class="grand"><td><b>GRAND TOTAL</b></td><td><b>Rs.${order.grandTotal}</b></td></tr>
+</table>
+
+<div class="footer">
+  <p>Thank you for shopping with <b>PS STORE Jodhpur!</b></p>
+  <p>Visit us again at <b>psstorelive.in</b></p>
+  <p>🛒 Ghar Ki Zaroorat, Ghar Ke Dwar Tak!</p>
+</div>
+
+<div class="computer-bill">
+  This is a computer generated bill and does not require a signature.
+</div>
+</body>
+</html>`;
+
+    // Open in new window and trigger print/save as PDF
+    const win = window.open("", "_blank", "width=480,height=700");
+    if (win) {
+        win.document.write(html);
+        win.document.close();
+        win.onload = () => {
+            win.print();
+        };
+    }
+    showToast("Bill opened — Save as PDF!");
 }
 
 // ─────────────────────────────────────────
