@@ -30,6 +30,13 @@
       navigator.serviceWorker.getRegistrations().then(r => r.forEach(s => s.unregister()));
       caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
     }
+    // Force hide splash after 3s even if JS is slow
+    setTimeout(() => {
+      const s = document.getElementById("splash-screen");
+      if (s) s.style.display = "none";
+      const n = document.querySelector(".bottom-nav");
+      if (n) n.style.display = "flex";
+    }, 3000);
   </script>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-3T1Q6T4ZH1"></script>

@@ -39,7 +39,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (splash) splash.style.display = "none";
         const nav = document.querySelector(".bottom-nav");
         if (nav) nav.style.display = "flex";
-    }, 2500);
+    }, 1500);
 
     loadAllData();
     startBannerRotation();
