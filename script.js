@@ -103,33 +103,58 @@ function renderProducts(list, targetId) {
     }
     let html = "";
     list.forEach(p => {
-        const finalPrice = p.discount
-            ? Math.round(p.price - (p.price * p.discount / 100))
-            : p.price;
-        const isWishlisted = wishlist.includes(p._id);
-        const heartColor   = isWishlisted ? "#e53935" : "#ccc";
-        const heartIcon    = isWishlisted ? "fa-solid fa-heart" : "fa-regular fa-heart";
+        const hasVariants = p.variants && p.variants.length > 0;
+        const defaultVariant = hasVariants ? p.variants[0] : null;
+        const finalPrice = hasVariants
+            ? defaultVariant.price
+            : (p.discount ? Math.round(p.price - (p.price * p.discount / 100)) : p.price);
+        const originalPrice = hasVariants ? defaultVariant.price : p.price;
+        const displayUnit   = hasVariants ? defaultVariant.unit : (p.unit || "");
+        const isWishlisted  = wishlist.includes(p._id);
+        const heartColor    = isWishlisted ? "#e53935" : "#ccc";
+        const heartIcon     = isWishlisted ? "fa-solid fa-heart" : "fa-regular fa-heart";
+
+        // Variant buttons HTML
+        let variantBtns = "";
+        if (hasVariants) {
+            variantBtns = `<div class="variant-row" id="vr-${p._id}">` +
+                p.variants.map((v, i) => `
+                <button class="variant-btn ${i === 0 ? "active-variant" : ""}"
+                    onclick="selectVariant('${p._id}', ${i}, this)"
+                    data-price="${v.price}" data-unit="${v.unit}" data-stock="${v.stock}">
+                    <span class="vb-unit">${v.unit}</span>
+                    <span class="vb-price">Rs.${v.price}</span>
+                </button>`).join("") +
+            `</div>`;
+        }
 
         html += `
-        <div class="card">
+        <div class="card" id="card-${p._id}">
             <div class="card-img-wrap">
                 <img src="images/${p.image}" alt="${p.name}" onerror="this.src='images/default.png'">
-                ${p.discount ? `<span class="offer">${p.discount}% OFF</span>` : ""}
+                ${p.discount && !hasVariants ? `<span class="offer">${p.discount}% OFF</span>` : ""}
                 <button class="wish-btn" onclick="toggleWishlist('${p._id}',this)">
                     <i class="${heartIcon}" style="color:${heartColor};"></i>
                 </button>
             </div>
             <h2>${p.name}</h2>
-            ${p.unit ? `<span class="product-unit">${p.unit}</span>` : ""}
+            ${variantBtns}
+            ${!hasVariants && displayUnit ? `<span class="product-unit">${displayUnit}</span>` : ""}
             <div class="card-price-row">
-                <span class="card-price">Rs.${finalPrice}</span>
-                ${p.discount ? `<span class="card-mrp">Rs.${p.price}</span>` : ""}
+                <span class="card-price" id="price-${p._id}">Rs.${finalPrice}</span>
+                ${p.discount && !hasVariants ? `<span class="card-mrp">Rs.${p.price}</span>` : ""}
             </div>
-            <p class="card-stock ${p.stock <= 5 ? "low-stock" : ""}">Stock: ${p.stock}</p>
-            <input type="number" value="1" min="1" max="${p.stock}" class="qty">
+            <p class="card-stock ${p.stock <= 5 && !hasVariants ? "low-stock" : ""}" id="stock-${p._id}">
+                Stock: ${hasVariants ? defaultVariant.stock : p.stock}
+            </p>
+            <input type="number" value="1" min="1" max="${hasVariants ? defaultVariant.stock : p.stock}" class="qty" id="qty-${p._id}">
             <div class="card-btn-row">
-                <button class="card-add-btn" onclick="addToCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0},this)">Add to Cart</button>
-                <button class="card-buy-btn" onclick="buyNow('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${p.price},'${p.image}',${p.discount||0})">Buy Now</button>
+                <button class="card-add-btn" onclick="addToCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${originalPrice},'${p.image}',${p.discount||0},this)">
+                    Add to Cart
+                </button>
+                <button class="card-buy-btn" onclick="buyNow('${p._id}','${p.name.replace(/'/g,"\\'")}',${finalPrice},${originalPrice},'${p.image}',${p.discount||0})">
+                    Buy Now
+                </button>
             </div>
         </div>`;
     });
@@ -302,6 +327,42 @@ function searchAdminProducts(kw) {
         ? allProducts.filter(p => p.name.toLowerCase().includes(kw.toLowerCase()))
         : allProducts;
     renderAdminInventory(filtered);
+}
+
+// ─────────────────────────────────────────
+//  VARIANT SELECTOR
+// ─────────────────────────────────────────
+function selectVariant(productId, variantIndex, btn) {
+    // Update active button
+    const row = document.getElementById(`vr-${productId}`);
+    if (row) row.querySelectorAll(".variant-btn").forEach(b => b.classList.remove("active-variant"));
+    if (btn) btn.classList.add("active-variant");
+
+    // Update price, stock, qty
+    const price = btn.dataset.price;
+    const stock = btn.dataset.stock;
+
+    const priceEl = document.getElementById(`price-${productId}`);
+    const stockEl = document.getElementById(`stock-${productId}`);
+    const qtyEl   = document.getElementById(`qty-${productId}`);
+
+    if (priceEl) priceEl.textContent = `Rs.${price}`;
+    if (stockEl) stockEl.textContent = `Stock: ${stock}`;
+    if (qtyEl)   qtyEl.max = stock;
+
+    // Update add to cart / buy now buttons with new price
+    const card = document.getElementById(`card-${productId}`);
+    if (card) {
+        const addBtn = card.querySelector(".card-add-btn");
+        const buyBtn = card.querySelector(".card-buy-btn");
+        const name   = card.querySelector("h2").textContent;
+        const img    = card.querySelector("img").src.split("/images/")[1] || "default.png";
+
+        if (addBtn) addBtn.setAttribute("onclick",
+            `addToCart('${productId}','${name.replace(/'/g,"\\'")}',${price},${price},'${img}',0,this)`);
+        if (buyBtn) buyBtn.setAttribute("onclick",
+            `buyNow('${productId}','${name.replace(/'/g,"\\'")}',${price},${price},'${img}',0)`);
+    }
 }
 
 // ─────────────────────────────────────────
@@ -1181,14 +1242,24 @@ function populateEditForm(id) {
 }
 
 function saveProductAction() {
+    const variantRows = document.querySelectorAll(".variant-row-input");
+    const variants = [];
+    variantRows.forEach(row => {
+        const unit  = row.querySelector(".v-unit").value.trim();
+        const price = parseFloat(row.querySelector(".v-price").value);
+        const stock = parseInt(row.querySelector(".v-stock").value) || 0;
+        if (unit && price) variants.push({ unit, price, stock });
+    });
+
     const payload = {
         name:     document.getElementById("pName").value.trim(),
         category: document.getElementById("pCategory").value,
-        price:    parseFloat(document.getElementById("pPrice").value),
+        price:    parseFloat(document.getElementById("pPrice").value) || 0,
         discount: parseFloat(document.getElementById("pDiscount").value) || 0,
-        stock:    parseInt(document.getElementById("pStock").value),
+        stock:    parseInt(document.getElementById("pStock").value) || 0,
         image:    document.getElementById("pIdentity").value.trim(),
-        unit:     (document.getElementById("pUnit") ? document.getElementById("pUnit").value.trim() : "")
+        unit:     (document.getElementById("pUnit") ? document.getElementById("pUnit").value.trim() : ""),
+        variants
     };
 
     if (!payload.name || !payload.price) { showToast("Name and Price are required"); return; }
@@ -1208,12 +1279,13 @@ function saveProductAction() {
 
 function resetProductForm() {
     editProductId = null;
-    ["pName","pPrice","pStock","pIdentity"].forEach(id => {
+    ["pName","pPrice","pStock","pIdentity","pUnit"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = "";
     });
     document.getElementById("pCategory").value = "";
     document.getElementById("pDiscount").value = "0";
+    document.getElementById("variantRows").innerHTML = "";
     document.getElementById("saveProductBtn").innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save to Database`;
     document.getElementById("formTitle").innerHTML      = `<i class="fa-solid fa-plus-circle"></i> Add New Product`;
     document.getElementById("cancelEditBtn").style.display = "none";
@@ -1815,3 +1887,56 @@ function trackEvent(action, category, label) {
 setInterval(() => {
     fetch(API + "/test").catch(() => {});
 }, 4 * 60 * 1000);
+
+// ─────────────────────────────────────────
+//  VARIANT ADMIN HELPERS
+// ─────────────────────────────────────────
+function addVariantRow(unit = "", price = "", stock = "") {
+    const container = document.getElementById("variantRows");
+    if (!container) return;
+    const div = document.createElement("div");
+    div.className = "variant-row-input";
+    div.style.cssText = "display:flex;gap:8px;align-items:center;";
+    div.innerHTML = `
+        <input type="text" class="v-unit" placeholder="Unit e.g. 500ml" value="${unit}"
+            style="flex:1.5;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;">
+        <input type="number" class="v-price" placeholder="Price" value="${price}"
+            style="flex:1;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;">
+        <input type="number" class="v-stock" placeholder="Stock" value="${stock}"
+            style="flex:1;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;">
+        <button type="button" onclick="this.parentElement.remove()"
+            style="background:#ffebee;color:#e53935;border:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;">✕</button>
+    `;
+    container.appendChild(div);
+}
+
+// populateEditForm — load variants
+const _origPopulateEditForm = populateEditForm;
+function populateEditForm(id) {
+    const p = allProducts.find(x => x._id === id);
+    if (!p) return;
+    editProductId = id;
+
+    document.getElementById("pName").value     = p.name;
+    document.getElementById("pCategory").value = p.category;
+    document.getElementById("pPrice").value    = p.price;
+    document.getElementById("pDiscount").value = p.discount;
+    document.getElementById("pStock").value    = p.stock;
+    document.getElementById("pIdentity").value = p.image;
+    const unitEl = document.getElementById("pUnit");
+    if (unitEl) unitEl.value = p.unit || "";
+
+    // Load variants
+    const variantRows = document.getElementById("variantRows");
+    if (variantRows) {
+        variantRows.innerHTML = "";
+        if (p.variants && p.variants.length) {
+            p.variants.forEach(v => addVariantRow(v.unit, v.price, v.stock));
+        }
+    }
+
+    document.getElementById("saveProductBtn").innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Update Product`;
+    document.getElementById("formTitle").innerHTML      = `<i class="fa-solid fa-pen"></i> Edit Product`;
+    document.getElementById("cancelEditBtn").style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}

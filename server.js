@@ -192,10 +192,14 @@ app.get("/products", async (req, res) => {
 
 app.post("/products", async (req, res) => {
     try {
-        const { name, price, stock, image, discount, category, unit } = req.body;
+        const { name, price, stock, image, discount, category, unit, variants } = req.body;
         const result = await col("products").insertOne({
-            name, price, stock, image, discount: discount || 0, category,
-            unit: unit || "", createdAt: new Date()
+            name, price, stock, image,
+            discount: discount || 0,
+            category,
+            unit: unit || "",
+            variants: variants || [],
+            createdAt: new Date()
         });
         res.json({ success: true, id: result.insertedId });
     } catch (e) { res.status(500).json({ message: e.message }); }

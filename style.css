@@ -816,3 +816,17 @@ body{
   font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;
   margin:2px 0 4px;border:1px solid #e0e8f0;}
 .dark-mode .product-unit{background:#2a2a2a !important;color:#aaa !important;border-color:#444 !important;}
+
+/* ── PRODUCT VARIANTS (Blinkit style) ── */
+.variant-row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;}
+.variant-btn{padding:5px 10px;border-radius:8px;border:1.5px solid #e0e0e0;
+  background:#fff;cursor:pointer;text-align:center;transition:.2s;min-width:54px;}
+.variant-btn .vb-unit{display:block;font-size:11px;font-weight:700;color:#333;}
+.variant-btn .vb-price{display:block;font-size:12px;font-weight:800;color:#111;margin-top:1px;}
+.variant-btn.active-variant{border-color:var(--primary-color);background:#fff5f0;}
+.variant-btn.active-variant .vb-unit{color:var(--primary-color);}
+.variant-btn.active-variant .vb-price{color:var(--primary-color);}
+.dark-mode .variant-btn{background:#2a2a2a !important;border-color:#444 !important;}
+.dark-mode .variant-btn .vb-unit{color:#ccc !important;}
+.dark-mode .variant-btn .vb-price{color:#fff !important;}
+.dark-mode .variant-btn.active-variant{border-color:var(--primary-color) !important;background:#2a1500 !important;}
