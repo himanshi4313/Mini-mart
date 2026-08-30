@@ -539,12 +539,29 @@ body{
 .mic-icon{transition:.2s;}
 .mic-icon.listening{color:#e53935 !important;}
 
-/* ── NEW FOOTER ─────────────────────── */
-.site-footer{background:#fff;border-top:1px solid var(--border);margin-bottom:70px;}
-.footer-wrap{max-width:600px;margin:0 auto;padding:0 15px 20px;}
-.footer-section{padding:20px 0;border-bottom:1px solid var(--border);}
-.footer-section-title{font-size:14px;font-weight:800;color:#111;margin-bottom:14px;
-  display:flex;align-items:center;gap:8px;}
+/* ── NEW FOOTER — Simple Clean ────────── */
+.site-footer{background:#fff;border-top:1px solid var(--border);
+  margin-bottom:70px;padding:20px 15px;}
+.footer-wrap{max-width:480px;margin:0 auto;text-align:center;}
+.footer-brand-row{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:14px;}
+.footer-logo{width:44px;height:44px;border-radius:10px;object-fit:contain;background:#fff8e1;padding:3px;}
+.footer-brand-name{font-size:20px;font-weight:900;color:#df4b0b;margin:0;}
+.footer-brand-tag{font-size:12px;color:#777;margin:2px 0 0;}
+.footer-social-row{display:flex;justify-content:center;gap:12px;margin-bottom:14px;}
+.fsoc{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:18px;text-decoration:none;transition:.2s;}
+.fsoc:hover{transform:scale(1.1);}
+.fsoc.wa{background:#e8f5e9;color:#25d366;}
+.fsoc.ig{background:#fce4ec;color:#e91e63;}
+.fsoc.em{background:#e3f2fd;color:#1976d2;}
+.fsoc.ph{background:#fff3e0;color:#e65100;}
+.footer-links-row{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.footer-link{font-size:12px;color:#df4b0b;cursor:pointer;font-weight:600;}
+.footer-link:hover{text-decoration:underline;}
+.footer-dot{color:#ccc;font-size:10px;}
+.dark-mode .site-footer{background:#1e1e1e !important;border-color:#333 !important;}
+.dark-mode .footer-brand-name{color:#df4b0b !important;}
+.dark-mode .footer-brand-tag,.dark-mode .footer-link,.dark-mode .copyright{color:#aaa !important;}
 
 /* ABOUT */
 .about-section{padding:24px 0 20px;border-bottom:1px solid var(--border);}

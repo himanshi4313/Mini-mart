@@ -1716,6 +1716,10 @@ function showPrivacyPolicy() {
     document.getElementById("privacyModal").style.display = "flex";
 }
 
+function openAboutModal() {
+    document.getElementById("aboutModal").style.display = "flex";
+}
+
 function openHelpSupport() {
     document.getElementById("profileMenu").classList.remove("open");
     document.getElementById("helpModal").style.display = "flex";
