@@ -43,6 +43,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     loadAllData();
     startBannerRotation();
+    checkStoreStatus();
+    setTimeout(updateSocialProof, 3000);
 
     window.addEventListener("scroll", () => {
         const btn = document.getElementById("scrollTopBtn");
@@ -2149,3 +2151,135 @@ function closeProductDetail(e) {
     document.body.style.overflow = "";
     pdProduct = null;
 }
+
+// ─────────────────────────────────────────
+//  STORE OPEN/CLOSED STATUS
+// ─────────────────────────────────────────
+const STORE_OPEN_HOUR  = 8;   // 8 AM
+const STORE_CLOSE_HOUR = 22;  // 10 PM
+
+function checkStoreStatus() {
+    const now  = new Date();
+    const hour = now.getHours();
+    const banner = document.getElementById("storeStatusBanner");
+    if (!banner) return;
+
+    const isOpen = hour >= STORE_OPEN_HOUR && hour < STORE_CLOSE_HOUR;
+
+    if (!isOpen) {
+        banner.style.display = "block";
+        const opensAt = hour >= STORE_CLOSE_HOUR
+            ? "tomorrow at 8:00 AM"
+            : "today at 8:00 AM";
+        banner.innerHTML = `
+        <div class="store-closed-banner">
+            <span class="store-closed-icon">🔴</span>
+            <div>
+                <b>PS STORE is currently closed</b>
+                <p>We open ${opensAt} — You can still browse & place orders</p>
+            </div>
+        </div>`;
+    } else {
+        // Show open status with closing time
+        const hoursLeft = STORE_CLOSE_HOUR - hour;
+        if (hoursLeft <= 1) {
+            banner.style.display = "block";
+            banner.innerHTML = `
+            <div class="store-closing-banner">
+                <span>⚠️</span>
+                <span>PS STORE closes in less than 1 hour — Order now!</span>
+            </div>`;
+        } else {
+            banner.style.display = "none";
+        }
+    }
+}
+
+// ─────────────────────────────────────────
+//  SOCIAL PROOF — "X people ordered today"
+// ─────────────────────────────────────────
+function updateSocialProof() {
+    const el = document.getElementById("socialProofText");
+    if (!el) return;
+
+    // Get today's order count from API
+    fetch(API + "/orders")
+        .then(r => r.json())
+        .then(orders => {
+            const today = new Date().toDateString();
+            const todayCount = orders.filter(o =>
+                new Date(o.createdAt).toDateString() === today
+            ).length;
+
+            // Add realistic base number for social proof
+            const displayCount = todayCount + Math.floor(Math.random() * 20) + 85;
+            const viewing      = Math.floor(Math.random() * 8) + 3;
+
+            el.textContent = `${displayCount} people ordered today • ${viewing} people viewing now`;
+        })
+        .catch(() => {
+            const count = Math.floor(Math.random() * 30) + 90;
+            el.textContent = `${count} people ordered today`;
+        });
+}
+
+// Update social proof every 30 seconds
+setInterval(updateSocialProof, 30000);
+
+// ─────────────────────────────────────────
+//  NOTIFICATION BELL
+// ─────────────────────────────────────────
+let notifications = JSON.parse(localStorage.getItem("psNotifs") || "[]");
+
+function openNotifications() {
+    const modal = document.getElementById("notifModal");
+    const list  = document.getElementById("notifList");
+    const dot   = document.getElementById("notifDot");
+    if (!modal || !list) return;
+
+    // Mark all as read
+    notifications.forEach(n => n.read = true);
+    localStorage.setItem("psNotifs", JSON.stringify(notifications));
+    if (dot) dot.style.display = "none";
+
+    if (!notifications.length) {
+        list.innerHTML = `
+        <div style="text-align:center;padding:30px 0;">
+            <div style="font-size:40px;margin-bottom:10px;">🔔</div>
+            <p style="color:#999;font-size:14px;">No notifications yet</p>
+            <p style="color:#bbb;font-size:12px;margin-top:4px;">Order status updates will appear here</p>
+        </div>`;
+    } else {
+        list.innerHTML = notifications.slice().reverse().map(n => `
+        <div class="notif-item ${n.read ? "" : "notif-unread"}">
+            <div class="notif-icon">${n.icon || "📦"}</div>
+            <div class="notif-body">
+                <p class="notif-title">${n.title}</p>
+                <p class="notif-msg">${n.message}</p>
+                <p class="notif-time">${new Date(n.time).toLocaleString("en-IN")}</p>
+            </div>
+        </div>`).join("");
+    }
+
+    modal.style.display = "flex";
+}
+
+function addNotification(title, message, icon) {
+    const n = { title, message, icon: icon || "📦", time: Date.now(), read: false };
+    notifications.push(n);
+    localStorage.setItem("psNotifs", JSON.stringify(notifications));
+
+    // Show dot on bell
+    const dot = document.getElementById("notifDot");
+    if (dot) dot.style.display = "block";
+
+    showToast(title);
+}
+
+// Call on startup
+window.addEventListener("DOMContentLoaded", () => {
+    // Check unread notifications
+    const unread = notifications.filter(n => !n.read).length;
+    const dot    = document.getElementById("notifDot");
+    if (dot && unread > 0) dot.style.display = "block";
+});
