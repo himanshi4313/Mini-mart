@@ -828,6 +828,7 @@ function placeOrder() {
     if (!address) { showToast("Please enter delivery address"); return; }
 
     const payment = document.querySelector('input[name="payment"]:checked')?.value || "COD";
+    const txnId   = (window._txnId || document.getElementById("txnId")?.value || "").trim();
 
     // Recalculate totals
     let itemsTotal   = cart.reduce((s, i) => s + i.originalPrice * i.qty, 0);
@@ -865,7 +866,7 @@ function placeOrder() {
             couponCode,
             deliveryCharge:  delivery,
             grandTotal,
-            paymentMethod:   payment,
+            paymentMethod:   payment + (txnId ? ` (TxnID: ${txnId})` : ""),
             address,
             location:        currentLocText || "",
             latitude:        currentLat,
@@ -2286,4 +2287,170 @@ window.addEventListener("DOMContentLoaded", () => {
     const unread = notifications.filter(n => !n.read).length;
     const dot    = document.getElementById("notifDot");
     if (dot && unread > 0) dot.style.display = "block";
+});
+
+// ─────────────────────────────────────────
+//  UPI PAYMENT SYSTEM
+// ─────────────────────────────────────────
+const UPI_ID   = "8003219434@ybl";    // PhonePe UPI ID
+const UPI_NAME = "PS STORE Jodhpur";  // Payee name
+
+function showUpiSection() {
+    const sec = document.getElementById("upiSection");
+    if (sec) {
+        sec.style.display = "block";
+        generateUpiQR();
+    }
+}
+
+function hidUpiSection() {
+    const sec = document.getElementById("upiSection");
+    if (sec) sec.style.display = "none";
+}
+
+function generateUpiQR() {
+    // Get current grand total
+    const totalEl = document.getElementById("coGrandTotal");
+    const amount  = totalEl ? totalEl.textContent.replace(/[^0-9.]/g, "") : "0";
+
+    // Get customer name from form
+    const nameEl  = document.getElementById("custName");
+    const name    = nameEl ? (nameEl.value.trim() || "Customer") : "Customer";
+
+    // Update amount text
+    const amtText = document.getElementById("upiAmountText");
+    if (amtText) amtText.textContent = `Amount: Rs.${amount}`;
+
+    // Generate QR using free API
+    const upiString = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent("PS STORE Order by " + name)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}&bgcolor=ffffff&color=000000&margin=10`;
+
+    const qrImg = document.getElementById("upiQrImg");
+    if (qrImg) qrImg.src = qrUrl;
+
+    // Update deep links for UPI apps
+    updateUpiDeepLinks(amount, name);
+}
+
+function updateUpiDeepLinks(amount, name) {
+    const note = encodeURIComponent("PS STORE Order by " + name);
+    const base = `pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${note}`;
+
+    const phonepeBtn = document.getElementById("phonepayBtn");
+    const gpayBtn    = document.getElementById("gpayBtn");
+    const paytmBtn   = document.getElementById("paytmBtn");
+
+    if (phonepeBtn) phonepeBtn.href = `phonepe://pay?${base}`;
+    if (gpayBtn)    gpayBtn.href    = `tez://upi/pay?${base}`;
+    if (paytmBtn)   paytmBtn.href   = `paytmmp://upi/pay?${base}`;
+}
+
+function openUpiApp(app) {
+    const totalEl = document.getElementById("coGrandTotal");
+    const amount  = totalEl ? totalEl.textContent.replace(/[^0-9.]/g, "") : "0";
+    const nameEl  = document.getElementById("custName");
+    const name    = nameEl ? (nameEl.value.trim() || "Customer") : "Customer";
+    const note    = encodeURIComponent("PS STORE Order by " + name);
+    const base    = `pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${note}`;
+
+    let url = "";
+    if (app === "phonepe") url = `phonepe://pay?${base}`;
+    else if (app === "gpay") url = `tez://upi/pay?${base}`;
+    else if (app === "paytm") url = `paytmmp://upi/pay?${base}`;
+    else url = `upi://pay?${base}`;
+
+    // Try to open app — if fails, show QR
+    const win = window.open(url, "_self");
+
+    // After 2 sec check if payment done
+    setTimeout(() => {
+        showPaymentConfirmPopup(amount, name);
+    }, 2500);
+}
+
+// ── PAYMENT CONFIRM/STATUS POPUP ────────
+function showPaymentConfirmPopup(amount, name) {
+    const modal = document.getElementById("paymentConfirmModal");
+    if (!modal) return;
+
+    const amtEl = document.getElementById("pcAmount");
+    if (amtEl) amtEl.textContent = `Rs.${amount}`;
+
+    modal.style.display = "flex";
+}
+
+function paymentSuccess() {
+    const modal = document.getElementById("paymentConfirmModal");
+    if (modal) modal.style.display = "none";
+
+    // Get txn ID
+    const txnEl = document.getElementById("txnId");
+    const txnId = txnEl ? txnEl.value.trim() : "";
+
+    if (!txnId) {
+        showPaymentStatusPopup("error", "Please enter Transaction ID", "Transaction ID missing. Enter the ID from your payment app.");
+        return;
+    }
+
+    // Store txn ID and proceed to place order
+    window._txnId = txnId;
+    showPaymentStatusPopup("success", "Payment Successful!", `Transaction ID: ${txnId}\nPlacing your order now...`);
+
+    setTimeout(() => {
+        const statusModal = document.getElementById("paymentStatusModal");
+        if (statusModal) statusModal.style.display = "none";
+        placeOrder();
+    }, 2000);
+}
+
+function paymentFailed() {
+    const modal = document.getElementById("paymentConfirmModal");
+    if (modal) modal.style.display = "none";
+
+    showPaymentStatusPopup("error", "Payment Failed", "Koi baat nahi! Aap COD (Cash on Delivery) se order place kar sakte hain.");
+
+    // Switch to COD
+    setTimeout(() => {
+        const codRadio = document.querySelector('input[name="payment"][value="COD"]');
+        if (codRadio) {
+            codRadio.checked = true;
+            hidUpiSection();
+        }
+        const statusModal = document.getElementById("paymentStatusModal");
+        if (statusModal) statusModal.style.display = "none";
+    }, 3000);
+}
+
+function showPaymentStatusPopup(type, title, message) {
+    const modal    = document.getElementById("paymentStatusModal");
+    const iconEl   = document.getElementById("psIcon");
+    const titleEl  = document.getElementById("psTitle");
+    const msgEl    = document.getElementById("psMessage");
+
+    if (!modal) return;
+
+    if (type === "success") {
+        iconEl.innerHTML  = `<div class="ps-success-icon">✓</div>`;
+        titleEl.textContent = title;
+        titleEl.style.color = "#0c831f";
+    } else {
+        iconEl.innerHTML  = `<div class="ps-error-icon">✗</div>`;
+        titleEl.textContent = title;
+        titleEl.style.color = "#e53935";
+    }
+    msgEl.textContent = message;
+    modal.style.display = "flex";
+}
+
+// Auto-update QR when name is typed
+document.addEventListener("DOMContentLoaded", () => {
+    const nameInput = document.getElementById("custName");
+    if (nameInput) {
+        nameInput.addEventListener("input", () => {
+            const upiSec = document.getElementById("upiSection");
+            if (upiSec && upiSec.style.display !== "none") {
+                generateUpiQR();
+            }
+        });
+    }
 });

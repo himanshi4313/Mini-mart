@@ -983,3 +983,45 @@ body{
 .dark-mode .notif-bell{background:rgba(255,255,255,.1) !important;color:#e0e0e0 !important;}
 .dark-mode .store-closed-banner{background:#2a1500 !important;}
 .dark-mode .social-proof{color:#aaa !important;}
+
+/* ── UPI PAYMENT INTERFACE ─────────── */
+.upi-apps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.upi-app-btn{display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 6px;border-radius:12px;cursor:pointer;text-decoration:none;
+  border:2px solid #f0f0f0;background:#fff;transition:.2s;font-size:11px;
+  font-weight:700;color:#333;}
+.upi-app-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
+.upi-app-btn img{width:32px;height:32px;object-fit:contain;}
+.upi-app-btn.phonepe{border-color:#e8d5f5;background:#f9f0ff;}
+.upi-app-btn.phonepe span{color:#5f259f;}
+.upi-app-btn.gpay{border-color:#d5e8f5;background:#f0f7ff;}
+.upi-app-btn.gpay span{color:#1976d2;}
+.upi-app-btn.paytm{border-color:#d5eef5;background:#f0faff;}
+.upi-app-btn.paytm span{color:#00b9f1;}
+.upi-app-btn.other{border-color:#e0e0e0;background:#f5f5f5;}
+
+.upi-or-row{display:flex;align-items:center;gap:10px;margin:12px 0;}
+.upi-or-row span{flex:1;height:1px;background:#e0e0e0;}
+.upi-or-row p{font-size:12px;color:#999;font-weight:600;white-space:nowrap;}
+
+.upi-qr-box{background:#fff;border:2px solid #e0e0e0;border-radius:16px;
+  padding:16px;text-align:center;}
+.upi-qr-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;
+  justify-content:center;}
+.phonepe-logo{width:36px;height:36px;background:#5f259f;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;}
+.upi-qr-img{width:180px;height:180px;border-radius:8px;border:1px solid #eee;}
+
+/* Payment status icons */
+.ps-success-icon{width:70px;height:70px;background:#e8f5e9;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  color:#0c831f;margin:0 auto;font-weight:900;
+  border:3px solid #0c831f;}
+.ps-error-icon{width:70px;height:70px;background:#ffebee;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  color:#e53935;margin:0 auto;font-weight:900;
+  border:3px solid #e53935;}
+
+/* Dark mode */
+.dark-mode .upi-app-btn{background:#2a2a2a !important;border-color:#444 !important;}
+.dark-mode .upi-qr-box{background:#2a2a2a !important;border-color:#444 !important;}
