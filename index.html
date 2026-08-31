@@ -364,8 +364,67 @@
         </div>
         <div class="checkout-form" style="margin-top:14px;">
           <h4 style="color:var(--primary-color);margin-bottom:14px;"><i class="fa-solid fa-wallet"></i> Payment Method</h4>
-          <label class="radio-option"><input type="radio" name="payment" value="COD" checked><span><i class="fa-solid fa-money-bill"></i> Cash on Delivery</span></label>
-          <label class="radio-option"><input type="radio" name="payment" value="UPI"><span><i class="fa-solid fa-qrcode"></i> UPI / Online Payment</span></label>
+
+          <label class="radio-option" onclick="hidUpiSection()">
+            <input type="radio" name="payment" value="COD" checked>
+            <span><i class="fa-solid fa-money-bill" style="color:#0c831f;"></i> Cash on Delivery</span>
+          </label>
+
+          <label class="radio-option" onclick="showUpiSection()">
+            <input type="radio" name="payment" value="UPI">
+            <span><i class="fa-solid fa-qrcode" style="color:#5f259f;"></i> UPI / Online Payment</span>
+          </label>
+
+          <!-- UPI SECTION -->
+          <div id="upiSection" style="display:none;margin-top:14px;">
+            <p style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">Pay using any UPI app:</p>
+            <div class="upi-apps-row">
+              <a id="phonepayBtn" class="upi-app-btn phonepe" href="#" onclick="event.preventDefault();openUpiApp('phonepe')">
+                <i class="fa-solid fa-p" style="font-size:22px;color:#5f259f;font-weight:900;"></i>
+                <span>PhonePe</span>
+              </a>
+              <a id="gpayBtn" class="upi-app-btn gpay" href="#" onclick="event.preventDefault();openUpiApp('gpay')">
+                <i class="fa-brands fa-google" style="font-size:22px;color:#1976d2;"></i>
+                <span>GPay</span>
+              </a>
+              <a id="paytmBtn" class="upi-app-btn paytm" href="#" onclick="event.preventDefault();openUpiApp('paytm')">
+                <i class="fa-solid fa-mobile-screen" style="font-size:22px;color:#00b9f1;"></i>
+                <span>Paytm</span>
+              </a>
+              <a class="upi-app-btn other" onclick="openUpiApp('other')">
+                <i class="fa-solid fa-ellipsis" style="font-size:22px;color:#555;"></i>
+                <span>Other</span>
+              </a>
+            </div>
+
+            <div class="upi-or-row"><span></span><p>OR Scan QR Code</p><span></span></div>
+
+            <div class="upi-qr-box">
+              <div class="upi-qr-header">
+                <div class="phonepe-logo"><i class="fa-solid fa-p" style="color:#fff;font-size:16px;font-weight:900;"></i></div>
+                <div>
+                  <p style="font-weight:800;font-size:14px;color:#5f259f;margin:0;">PhonePe Accepted</p>
+                  <p style="font-size:11px;color:#777;margin:2px 0 0;">Scan & Pay using any UPI App</p>
+                </div>
+              </div>
+              <img id="upiQrImg" src="" alt="UPI QR Code" class="upi-qr-img">
+              <p style="font-size:14px;font-weight:700;color:#111;margin-top:8px;" id="upiAmountText"></p>
+              <p style="font-size:12px;color:#555;margin:2px 0;">PS STORE Jodhpur</p>
+              <p style="font-size:11px;color:#999;">UPI: 8003219434@ybl</p>
+            </div>
+
+            <div style="margin-top:14px;">
+              <label style="font-size:13px;font-weight:700;color:#333;display:block;margin-bottom:6px;">
+                <i class="fa-solid fa-check-circle" style="color:#0c831f;"></i>
+                Payment ke baad Transaction ID enter karein *
+              </label>
+              <input type="text" id="txnId" placeholder="e.g. T2024080312345678"
+                style="width:100%;padding:12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:inherit;outline:none;">
+              <p style="font-size:11px;color:#999;margin-top:5px;">
+                Transaction ID milegi PhonePe/GPay app mein payment ke baad
+              </p>
+            </div>
+          </div>
         </div>
         <button class="place-order-btn" onclick="placeOrder()" id="placeOrderBtn">
           <i class="fa-solid fa-check-circle"></i> Place Order

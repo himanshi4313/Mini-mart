@@ -830,6 +830,15 @@ function placeOrder() {
     const payment = document.querySelector('input[name="payment"]:checked')?.value || "COD";
     const txnId   = (window._txnId || document.getElementById("txnId")?.value || "").trim();
 
+    // UPI validation — transaction ID zaroori hai
+    if (payment === "UPI" && !txnId) {
+        showToast("Please enter Transaction ID after UPI payment");
+        document.getElementById("txnId")?.focus();
+        const btn2 = document.getElementById("placeOrderBtn");
+        if (btn2) { btn2.disabled = false; btn2.innerHTML = `<i class="fa-solid fa-check-circle"></i> Place Order`; }
+        return;
+    }
+
     // Recalculate totals
     let itemsTotal   = cart.reduce((s, i) => s + i.originalPrice * i.qty, 0);
     let productDisc  = cart.reduce((s, i) => s + (i.originalPrice - i.price) * i.qty, 0);
@@ -2343,6 +2352,31 @@ function updateUpiDeepLinks(amount, name) {
     if (phonepeBtn) phonepeBtn.href = `phonepe://pay?${base}`;
     if (gpayBtn)    gpayBtn.href    = `tez://upi/pay?${base}`;
     if (paytmBtn)   paytmBtn.href   = `paytmmp://upi/pay?${base}`;
+}
+
+function openUpiApp(app) {
+    // Get current grand total
+    const totalEl = document.getElementById("coGrandTotal");
+    const amount  = totalEl ? totalEl.textContent.replace(/[^0-9.]/g, "") : "0";
+    const nameEl  = document.getElementById("custName");
+    const name    = nameEl ? (nameEl.value.trim() || "Customer") : "Customer";
+    const note    = encodeURIComponent("PS STORE Order by " + name);
+    const base    = `pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${note}`;
+
+    let url = "";
+    if (app === "phonepe") url = `phonepe://pay?${base}`;
+    else if (app === "gpay") url = `tez://upi/pay?${base}`;
+    else if (app === "paytm") url = `paytmmp://upi/pay?${base}`;
+    else url = `upi://pay?${base}`;  // generic UPI
+
+    window.location.href = url;
+
+    // Show txn ID input with reminder after 2 sec
+    setTimeout(() => {
+        showToast("Payment done? Enter Transaction ID below");
+        document.getElementById("txnId")?.scrollIntoView({ behavior: "smooth" });
+        document.getElementById("txnId")?.focus();
+    }, 2000);
 }
 
 function openUpiApp(app) {
