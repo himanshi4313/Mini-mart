@@ -87,6 +87,11 @@ app.get("/script.js", (req, res) => {
     });
 });
 
+app.get("/.well-known/assetlinks.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.sendFile(path.join(__dirname, ".well-known/assetlinks.json"));
+});
+
 app.get("/", (req, res) => {
     const htmlPath = path.join(__dirname, "index.html");
     fs.readFile(htmlPath, "utf8", (err, data) => {
