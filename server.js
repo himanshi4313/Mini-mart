@@ -89,7 +89,16 @@ app.get("/script.js", (req, res) => {
 
 app.get("/.well-known/assetlinks.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
-    res.sendFile(path.join(__dirname, ".well-known/assetlinks.json"));
+    res.json([{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "in.psstorelive.app",
+            "sha256_cert_fingerprints": [
+                "F5:E0:D0:3B:EA:6C:26:FF:06:EF:93:4D:A3:91:46:EF:CC:7D:6C:D4:7A:1B:15:EC:39:44:71:0F:3F:AB:E3:32"
+            ]
+        }
+    }]);
 });
 
 app.get("/", (req, res) => {
