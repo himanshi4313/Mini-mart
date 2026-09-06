@@ -45,6 +45,7 @@ window.addEventListener("DOMContentLoaded", () => {
     startBannerRotation();
     checkStoreStatus();
     setTimeout(updateSocialProof, 3000);
+    checkOnboarding();
 
     window.addEventListener("scroll", () => {
         const btn = document.getElementById("scrollTopBtn");
@@ -802,15 +803,16 @@ window.addEventListener("load", () => {
 //  CHECKOUT & PLACE ORDER
 // ─────────────────────────────────────────
 function showCheckoutPage() {
-    if (!cart.length) { alert("Your cart is empty!"); return; }
-    const user = getUser();
-    if (!user) { openGoogleLogin(); return; }
+    if (!cart.length) { showToast("Your cart is empty!"); return; }
 
-    // Pre-fill name/mobile from user
-    const nameEl   = document.getElementById("custName");
-    const mobileEl = document.getElementById("custMobile");
-    if (nameEl   && !nameEl.value)   nameEl.value   = user.name  || "";
-    if (mobileEl && !mobileEl.value) mobileEl.value = user.mobile || "";
+    // Pre-fill name/mobile if logged in
+    const user = getUser();
+    if (user) {
+        const nameEl   = document.getElementById("custName");
+        const mobileEl = document.getElementById("custMobile");
+        if (nameEl   && !nameEl.value)   nameEl.value   = user.name  || "";
+        if (mobileEl && !mobileEl.value) mobileEl.value = user.mobile || "";
+    }
 
     switchPage("checkout");
 }
@@ -1370,17 +1372,24 @@ function updateUserUI() {
     const userEl      = document.getElementById("profileUser");
     if (!guestEl || !userEl) return;
 
+    // Default silhouette avatar
+    const defaultAvatar = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23e0e0e0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%23bdbdbd'/%3E%3Cellipse cx='50' cy='85' rx='30' ry='22' fill='%23bdbdbd'/%3E%3C/svg%3E";
+
     if (user) {
         guestEl.style.display = "none";
         userEl.style.display  = "block";
         setEl("pmName",  user.name  || "User");
         setEl("pmEmail", user.email || "");
-        const avatar = user.picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=df4b0b&color=fff`;
-        document.getElementById("pmAvatar").src      = avatar;
-        document.getElementById("profileAvatar").src = avatar;
+        const avatar = user.picture || defaultAvatar;
+        const pmAvatar = document.getElementById("pmAvatar");
+        const profileAvatar = document.getElementById("profileAvatar");
+        if (pmAvatar) pmAvatar.src = avatar;
+        if (profileAvatar) profileAvatar.src = avatar;
     } else {
         guestEl.style.display = "block";
         userEl.style.display  = "none";
+        const profileAvatar = document.getElementById("profileAvatar");
+        if (profileAvatar) profileAvatar.src = defaultAvatar;
     }
 }
 
@@ -2301,7 +2310,7 @@ window.addEventListener("DOMContentLoaded", () => {
 // ─────────────────────────────────────────
 //  UPI PAYMENT SYSTEM
 // ─────────────────────────────────────────
-const UPI_ID   = "8003219434@ybl";    // PhonePe UPI ID
+const UPI_ID   = "prakashgehlot94@axl";  // PhonePe UPI ID
 const UPI_NAME = "PS STORE Jodhpur";  // Payee name
 
 function showUpiSection() {
@@ -2488,3 +2497,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// ─────────────────────────────────────────
+//  ONBOARDING (first time only)
+// ─────────────────────────────────────────
+function checkOnboarding() {
+    const done = localStorage.getItem("psOnboarded");
+    if (!done) {
+        const overlay = document.getElementById("onboardingOverlay");
+        if (overlay) overlay.style.display = "block";
+    }
+}
+
+function nextOnboarding(current) {
+    document.getElementById(`ob${current}`).classList.remove("active");
+    document.getElementById(`ob${current + 1}`).classList.add("active");
+}
+
+function skipOnboarding() {
+    const overlay = document.getElementById("onboardingOverlay");
+    if (overlay) overlay.style.display = "none";
+    localStorage.setItem("psOnboarded", "1");
+}

@@ -314,7 +314,6 @@ app.post("/orders", async (req, res) => {
 
 👤 *Customer:* ${userName}
 📞 *Mobile:* ${mobile}
-📧 *Email:* ${userEmail}
 
 📍 *Address:* ${address}
 🗺️ *Location:* ${location || "—"}

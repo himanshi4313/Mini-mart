@@ -52,6 +52,78 @@
 </head>
 <body>
 
+  <!-- ONBOARDING SCREENS (first time only) -->
+  <div id="onboardingOverlay" style="display:none;position:fixed;inset:0;z-index:99998;background:#fff;">
+    <div class="ob-slides">
+
+      <!-- Slide 1 -->
+      <div class="ob-slide active" id="ob1">
+        <div class="ob-top" style="background:linear-gradient(135deg,#ffc60b,#df4b0b);">
+          <img src="images/logo.png" alt="PS STORE" style="width:120px;height:120px;object-fit:contain;border-radius:20px;background:#fff;padding:8px;">
+        </div>
+        <div class="ob-body">
+          <h2>Welcome to PS STORE!</h2>
+          <p>Jodhpur ki sabse trusted online kirana shop — ab aapke phone mein!</p>
+        </div>
+        <div class="ob-footer">
+          <div class="ob-dots">
+            <span class="ob-dot active"></span>
+            <span class="ob-dot"></span>
+            <span class="ob-dot"></span>
+          </div>
+          <button class="ob-next-btn" onclick="nextOnboarding(1)">Next</button>
+        </div>
+        <button class="ob-skip" onclick="skipOnboarding()">Skip</button>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="ob-slide" id="ob2">
+        <div class="ob-top" style="background:linear-gradient(135deg,#e8f5e9,#0c831f);">
+          <div style="font-size:80px;">🚚</div>
+        </div>
+        <div class="ob-body">
+          <h2>20-30 Min Delivery</h2>
+          <p>Ghar baithe order karein — taza aur quality products seedhe aapke darwaaze par!</p>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+            <div class="ob-feat"><span>⚡</span> Fast</div>
+            <div class="ob-feat"><span>✅</span> Fresh</div>
+            <div class="ob-feat"><span>💰</span> Best Price</div>
+          </div>
+        </div>
+        <div class="ob-footer">
+          <div class="ob-dots">
+            <span class="ob-dot"></span>
+            <span class="ob-dot active"></span>
+            <span class="ob-dot"></span>
+          </div>
+          <button class="ob-next-btn" onclick="nextOnboarding(2)">Next</button>
+        </div>
+        <button class="ob-skip" onclick="skipOnboarding()">Skip</button>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="ob-slide" id="ob3">
+        <div class="ob-top" style="background:linear-gradient(135deg,#fff3e0,#df4b0b);">
+          <div style="font-size:80px;">🛒</div>
+        </div>
+        <div class="ob-body">
+          <h2>Easy Ordering!</h2>
+          <p>Products chunein, location set karein, aur COD ya UPI se pay karein. Bas!</p>
+          <div style="font-size:13px;color:#0c831f;font-weight:700;margin-top:12px;">🚚 Free Delivery on Rs.1500+</div>
+        </div>
+        <div class="ob-footer">
+          <div class="ob-dots">
+            <span class="ob-dot"></span>
+            <span class="ob-dot"></span>
+            <span class="ob-dot active"></span>
+          </div>
+          <button class="ob-next-btn" style="background:#0c831f;" onclick="skipOnboarding()">Get Started</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- SPLASH -->
   <div id="splash-screen">
     <img src="images/logo.png" class="splash-logo" alt="PS STORE Logo">
@@ -80,7 +152,7 @@
           <span class="notif-dot" id="notifDot" style="display:none;"></span>
         </button>
         <div class="profile-btn" id="profileBtn" onclick="toggleProfileMenu()">
-          <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Guest&background=df4b0b&color=fff&bold=true" alt="Profile">
+          <img id="profileAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Profile">
         </div>
       </div>
     </div>
