@@ -88,7 +88,9 @@ app.get("/script.js", (req, res) => {
 });
 
 app.get("/favicon.ico", (req, res) => {
-    res.sendFile(path.join(__dirname, "images/logo.png"));
+    res.setHeader("Content-Type", "image/x-icon");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.sendFile(path.join(__dirname, "favicon.ico"));
 });
 
 app.get("/.well-known/assetlinks.json", (req, res) => {
