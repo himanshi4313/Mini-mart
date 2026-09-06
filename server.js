@@ -87,6 +87,10 @@ app.get("/script.js", (req, res) => {
     });
 });
 
+app.get("/favicon.ico", (req, res) => {
+    res.sendFile(path.join(__dirname, "images/logo.png"));
+});
+
 app.get("/.well-known/assetlinks.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.json([{
