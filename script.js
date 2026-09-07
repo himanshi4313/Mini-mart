@@ -45,7 +45,6 @@ window.addEventListener("DOMContentLoaded", () => {
     startBannerRotation();
     checkStoreStatus();
     setTimeout(updateSocialProof, 3000);
-    checkOnboarding();
 
     window.addEventListener("scroll", () => {
         const btn = document.getElementById("scrollTopBtn");
