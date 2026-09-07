@@ -45,6 +45,8 @@ window.addEventListener("DOMContentLoaded", () => {
     startBannerRotation();
     checkStoreStatus();
     setTimeout(updateSocialProof, 3000);
+    // Init notifications if already logged in
+    if (getUser()) setTimeout(initPushNotifications, 2000);
 
     window.addEventListener("scroll", () => {
         const btn = document.getElementById("scrollTopBtn");
@@ -1336,6 +1338,7 @@ async function fetchGoogleProfile(accessToken) {
         updateUserUI();
         closeGoogleLogin();
         showToast(`Welcome, ${user.name}! ✅`);
+        setTimeout(initPushNotifications, 1000);
 
         // Sync to DB
         fetch(API + "/users/sync", {
@@ -2517,4 +2520,54 @@ function skipOnboarding() {
     const overlay = document.getElementById("onboardingOverlay");
     if (overlay) overlay.style.display = "none";
     localStorage.setItem("psOnboarded", "1");
+}
+
+// ─────────────────────────────────────────
+//  FIREBASE PUSH NOTIFICATIONS
+// ─────────────────────────────────────────
+const FIREBASE_VAPID = "BAyB8k_zFCiMaD8zFAmkwklFWMx_UUzaXBq78L3fSuKwHUtsnf6bTOprND_3yEhWvJeSwqMHcKcEh8R-hqyTfJQ";
+
+async function initPushNotifications() {
+    const user = getUser();
+    if (!user) return;
+    if (!("Notification" in window)) return;
+
+    try {
+        // Request permission
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") return;
+
+        // Register service worker for FCM
+        const reg = await navigator.serviceWorker.register("/firebase-sw.js");
+
+        // Import Firebase scripts dynamically
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js");
+        const { getMessaging, getToken } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging.js");
+
+        const firebaseConfig = {
+            projectId: "ps-store-jodhpur",
+            messagingSenderId: "66716451867",
+            appId: "1:66716451867:web:psstore"
+        };
+
+        const app  = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        const token = await getToken(messaging, {
+            vapidKey: FIREBASE_VAPID,
+            serviceWorkerRegistration: reg
+        });
+
+        if (token) {
+            // Save token to server
+            await fetch(API + `/users/${user.email}/fcm-token`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token })
+            });
+            console.log("✅ FCM Token saved");
+        }
+    } catch(e) {
+        console.log("FCM init:", e.message);
+    }
 }

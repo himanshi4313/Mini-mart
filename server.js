@@ -7,15 +7,29 @@ try {
     const dns = require("dns");
     dns.setDefaultResultOrder("ipv4first");
     dns.setServers(["8.8.8.8", "8.8.4.4"]);
-} catch (e) {
-    // ignore in serverless environments
-}
+} catch (e) {}
 
 const express        = require("express");
 const cors           = require("cors");
 const axios          = require("axios");
 const { MongoClient, ObjectId } = require("mongodb");
 const path           = require("path");
+
+// ── Firebase Admin Init ────────────────
+let firebaseAdmin = null;
+try {
+    const admin = require("firebase-admin");
+    const serviceAccount = require("./serviceAccount.json");
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+    }
+    firebaseAdmin = admin;
+    console.log("✅ Firebase Admin Ready");
+} catch(e) {
+    console.log("⚠️ Firebase:", e.message);
+}
 
 const app = express();
 app.use(cors({
@@ -87,6 +101,11 @@ app.get("/script.js", (req, res) => {
     });
 });
 
+app.get("/firebase-sw.js", (req, res) => {
+    res.setHeader("Content-Type", "application/javascript");
+    res.sendFile(path.join(__dirname, "firebase-sw.js"));
+});
+
 app.get("/favicon.ico", (req, res) => {
     res.setHeader("Content-Type", "image/x-icon");
     res.setHeader("Cache-Control", "public, max-age=86400");
@@ -142,6 +161,73 @@ app.use(async (req, res, next) => {
     } catch (e) {
         res.status(503).json({ message: "Database connection failed: " + e.message });
     }
+});
+
+// ─────────────────────────────────────────
+//  PUSH NOTIFICATIONS — FCM
+// ─────────────────────────────────────────
+
+// Save FCM token for user
+app.post("/users/:email/fcm-token", async (req, res) => {
+    try {
+        const { token } = req.body;
+        await col("users").updateOne(
+            { email: req.params.email },
+            { $set: { fcmToken: token } }
+        );
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ message: e.message }); }
+});
+
+// Send notification helper
+async function sendNotification(token, title, body, data = {}) {
+    if (!firebaseAdmin || !token) return;
+    try {
+        const message = {
+            token,
+            notification: {
+                title: `PS STORE — ${title}`,
+                body
+            },
+            android: {
+                notification: {
+                    icon: "ic_launcher",
+                    color: "#DF4B0B",
+                    sound: "default",
+                    channelId: "psstore_orders"
+                },
+                priority: "high"
+            },
+            webpush: {
+                notification: {
+                    title: `PS STORE — ${title}`,
+                    body,
+                    icon: "https://psstorelive.in/images/logo.png",
+                    badge: "https://psstorelive.in/images/logo.png"
+                },
+                fcmOptions: { link: "https://psstorelive.in" }
+            },
+            data: { ...data, click_action: "https://psstorelive.in" }
+        };
+        await firebaseAdmin.messaging().send(message);
+        console.log("✅ Notification sent:", title);
+    } catch(e) {
+        console.log("❌ Notification error:", e.message);
+    }
+}
+
+// Broadcast notification to all users (admin)
+app.post("/notifications/broadcast", async (req, res) => {
+    try {
+        const { title, body } = req.body;
+        const users = await col("users").find({ fcmToken: { $exists: true, $ne: "" } }).toArray();
+        let sent = 0;
+        for (const user of users) {
+            await sendNotification(user.fcmToken, title, body);
+            sent++;
+        }
+        res.json({ success: true, sent });
+    } catch (e) { res.status(500).json({ message: e.message }); }
 });
 
 // ─────────────────────────────────────────
@@ -368,10 +454,34 @@ app.get("/orders/user/:email", async (req, res) => {
 
 app.put("/orders/:id/status", async (req, res) => {
     try {
+        const { status } = req.body;
         await col("orders").updateOne(
             { _id: new ObjectId(req.params.id) },
-            { $set: { status: req.body.status } }
+            { $set: { status } }
         );
+
+        // Send push notification to customer
+        const order = await col("orders").findOne({ _id: new ObjectId(req.params.id) });
+        if (order && order.userEmail) {
+            const user = await col("users").findOne({ email: order.userEmail });
+            if (user && user.fcmToken) {
+                const messages = {
+                    "Accepted":         { title: "Order Accepted! 📦", body: `Your order ${order.orderId} is being prepared.` },
+                    "Packed":           { title: "Order Packed! 🎁",   body: `Your order ${order.orderId} is ready for delivery!` },
+                    "Out for Delivery": { title: "Out for Delivery 🚚", body: `Your order is on the way! Expected in 20-30 mins.` },
+                    "Delivered":        { title: "Order Delivered! ✅", body: `Your order ${order.orderId} has been delivered. Thank you!` }
+                };
+                if (messages[status]) {
+                    await sendNotification(
+                        user.fcmToken,
+                        messages[status].title,
+                        messages[status].body,
+                        { orderId: order.orderId, status }
+                    );
+                }
+            }
+        }
+
         res.json({ success: true });
     } catch (e) { res.status(500).json({ message: e.message }); }
 });
